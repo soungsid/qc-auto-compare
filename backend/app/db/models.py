@@ -20,8 +20,8 @@ from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 
 def utcnow() -> datetime:
-    """Return current UTC time (timezone-aware)."""
-    return datetime.now(timezone.utc)
+    """Return current UTC time as a naive datetime (required by TIMESTAMP WITHOUT TIME ZONE columns)."""
+    return datetime.now(timezone.utc).replace(tzinfo=None)
 
 
 def new_uuid() -> str:

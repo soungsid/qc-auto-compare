@@ -32,7 +32,7 @@ from app.schemas.ingest import (
 
 
 def utcnow() -> datetime:
-    return datetime.now(timezone.utc)
+    return datetime.now(timezone.utc).replace(tzinfo=None)
 
 
 def _payload_hash(payload: VehicleIngestPayload) -> str:
