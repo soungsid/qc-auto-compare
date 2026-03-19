@@ -19,17 +19,22 @@ export function FilterBar({ filters, onChange, onReset }: Props) {
   const num = (val: string) => (val === '' ? undefined : Number(val))
   const str = (val: string) => (val === '' ? undefined : val)
 
+  const selectClasses = "rounded-lg border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 px-3 py-1.5 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 transition-colors"
+  const inputClasses = "rounded-lg border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 px-3 py-1.5 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 transition-colors"
+  const labelClasses = "text-xs font-medium text-gray-500 dark:text-gray-400"
+
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+    <div className="rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4 shadow-sm transition-colors" data-testid="filter-bar">
       <div className="flex flex-wrap items-end gap-3">
 
         {/* Make */}
         <div className="flex flex-col gap-1">
-          <label className="text-xs font-medium text-gray-500">Marque</label>
+          <label className={labelClasses}>Marque</label>
           <select
-            className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className={selectClasses}
             value={filters.make ?? ''}
             onChange={(e) => onChange({ make: str(e.target.value), page: 1 })}
+            data-testid="filter-make"
           >
             {MAKES.map((m) => (
               <option key={m} value={m}>{m || 'Toutes'}</option>
@@ -39,23 +44,25 @@ export function FilterBar({ filters, onChange, onReset }: Props) {
 
         {/* Model */}
         <div className="flex flex-col gap-1">
-          <label className="text-xs font-medium text-gray-500">Modèle</label>
+          <label className={labelClasses}>Modèle</label>
           <input
             type="text"
             placeholder="Ex: Kicks"
-            className="w-32 rounded-lg border border-gray-200 bg-gray-50 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className={`w-32 ${inputClasses}`}
             value={filters.model ?? ''}
             onChange={(e) => onChange({ model: str(e.target.value), page: 1 })}
+            data-testid="filter-model"
           />
         </div>
 
         {/* Condition */}
         <div className="flex flex-col gap-1">
-          <label className="text-xs font-medium text-gray-500">Condition</label>
+          <label className={labelClasses}>Condition</label>
           <select
-            className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className={selectClasses}
             value={filters.condition ?? ''}
             onChange={(e) => onChange({ condition: str(e.target.value), page: 1 })}
+            data-testid="filter-condition"
           >
             {CONDITIONS.map((c) => (
               <option key={c} value={c}>{c === '' ? 'Toutes' : c === 'new' ? 'Neuf' : c === 'used' ? 'Usagé' : 'Certifié'}</option>
@@ -65,11 +72,12 @@ export function FilterBar({ filters, onChange, onReset }: Props) {
 
         {/* Drivetrain */}
         <div className="flex flex-col gap-1">
-          <label className="text-xs font-medium text-gray-500">Traction</label>
+          <label className={labelClasses}>Traction</label>
           <select
-            className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className={selectClasses}
             value={filters.drivetrain ?? ''}
             onChange={(e) => onChange({ drivetrain: str(e.target.value), page: 1 })}
+            data-testid="filter-drivetrain"
           >
             {DRIVETRAINS.map((d) => (
               <option key={d} value={d}>{d || 'Toutes'}</option>
@@ -79,11 +87,12 @@ export function FilterBar({ filters, onChange, onReset }: Props) {
 
         {/* City */}
         <div className="flex flex-col gap-1">
-          <label className="text-xs font-medium text-gray-500">Ville</label>
+          <label className={labelClasses}>Ville</label>
           <select
-            className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className={selectClasses}
             value={filters.city ?? ''}
             onChange={(e) => onChange({ city: str(e.target.value), page: 1 })}
+            data-testid="filter-city"
           >
             {CITIES.map((c) => (
               <option key={c} value={c}>{c || 'Toutes'}</option>
@@ -93,32 +102,35 @@ export function FilterBar({ filters, onChange, onReset }: Props) {
 
         {/* Max price */}
         <div className="flex flex-col gap-1">
-          <label className="text-xs font-medium text-gray-500">Prix max ($)</label>
+          <label className={labelClasses}>Prix max ($)</label>
           <input
             type="number"
             placeholder="Ex: 30000"
-            className="w-32 rounded-lg border border-gray-200 bg-gray-50 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className={`w-32 ${inputClasses}`}
             value={filters.max_price ?? ''}
             onChange={(e) => onChange({ max_price: num(e.target.value), page: 1 })}
+            data-testid="filter-max-price"
           />
         </div>
 
         {/* Max monthly payment */}
         <div className="flex flex-col gap-1">
-          <label className="text-xs font-medium text-gray-500">Pmt/mois max ($)</label>
+          <label className={labelClasses}>Pmt/mois max ($)</label>
           <input
             type="number"
             placeholder="Ex: 350"
-            className="w-32 rounded-lg border border-gray-200 bg-gray-50 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className={`w-32 ${inputClasses}`}
             value={filters.max_monthly_payment ?? ''}
             onChange={(e) => onChange({ max_monthly_payment: num(e.target.value), page: 1 })}
+            data-testid="filter-max-monthly"
           />
         </div>
 
         {/* Reset button */}
         <button
           onClick={onReset}
-          className="ml-auto rounded-lg border border-gray-200 bg-white px-4 py-1.5 text-sm font-medium text-gray-600 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-400"
+          data-testid="filter-reset-btn"
+          className="ml-auto rounded-lg border border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700 px-4 py-1.5 text-sm font-medium text-gray-600 dark:text-gray-300 shadow-sm hover:bg-gray-50 dark:hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-500 transition-colors"
         >
           Réinitialiser
         </button>

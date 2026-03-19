@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { FilterBar } from '../components/FilterBar'
+import { ThemeToggle } from '../components/ThemeToggle'
 import { VehicleTable } from '../components/VehicleTable'
 import { useStats, useVehicles } from '../hooks/useVehicles'
 import { DEFAULT_FILTERS, type VehicleFilters } from '../types'
@@ -31,28 +32,34 @@ export function ListingPage() {
     : null
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 transition-colors" data-testid="listing-page">
       {/* Header */}
-      <header className="border-b border-gray-200 bg-white shadow-sm">
+      <header className="border-b border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm transition-colors">
         <div className="mx-auto flex max-w-screen-2xl items-center justify-between px-6 py-4">
           <div>
-            <h1 className="text-xl font-bold text-gray-900">
-              🚗 QC Auto Compare
+            <h1 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+              <svg className="w-7 h-7 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+              </svg>
+              QC Auto Compare
             </h1>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-gray-500 dark:text-gray-400">
               Voitures neuves chez les concessionnaires directs — Montréal &amp; Québec
             </p>
           </div>
-          <div className="text-right text-xs text-gray-400">
-            {stats && (
-              <>
-                <p>
-                  {stats.active_vehicles.toLocaleString('fr-CA')} véhicules ·{' '}
-                  {stats.total_dealers} concessionnaires
-                </p>
-                {lastUpdated && <p>Mis à jour {lastUpdated}</p>}
-              </>
-            )}
+          <div className="flex items-center gap-4">
+            <div className="text-right text-xs text-gray-400 dark:text-gray-500 hidden sm:block">
+              {stats && (
+                <>
+                  <p data-testid="stats-summary">
+                    {stats.active_vehicles.toLocaleString('fr-CA')} véhicules ·{' '}
+                    {stats.total_dealers} concessionnaires
+                  </p>
+                  {lastUpdated && <p>Mis à jour {lastUpdated}</p>}
+                </>
+              )}
+            </div>
+            <ThemeToggle />
           </div>
         </div>
       </header>
@@ -60,7 +67,7 @@ export function ListingPage() {
       <main className="mx-auto flex max-w-screen-2xl flex-col gap-4 px-6 py-6">
         {/* Source summary pills */}
         {stats?.vehicles_by_source && (
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2" data-testid="source-pills">
             {Object.entries(stats.vehicles_by_source).map(([source, count]) => (
               <button
                 key={source}
@@ -70,10 +77,11 @@ export function ListingPage() {
                     page: 1,
                   })
                 }
+                data-testid={`source-pill-${source}`}
                 className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
                   filters.ingest_source === source
                     ? 'bg-blue-600 text-white'
-                    : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
+                    : 'bg-white dark:bg-slate-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700'
                 }`}
               >
                 {source}: {count}
@@ -91,9 +99,9 @@ export function ListingPage() {
 
         {/* Error state */}
         {isError && (
-          <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+          <div className="rounded-lg border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 p-4 text-sm text-red-700 dark:text-red-400" data-testid="error-message">
             Impossible de charger les données. Vérifiez que le backend est démarré sur{' '}
-            <code className="rounded bg-red-100 px-1">http://localhost:8000</code>.
+            <code className="rounded bg-red-100 dark:bg-red-900/40 px-1">http://localhost:8000</code>.
           </div>
         )}
 
@@ -106,6 +114,13 @@ export function ListingPage() {
           isLoading={isLoading}
         />
       </main>
+
+      {/* Footer */}
+      <footer className="border-t border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 py-4 transition-colors">
+        <div className="mx-auto max-w-screen-2xl px-6 text-center text-xs text-gray-400 dark:text-gray-500">
+          QC Auto Compare — Comparateur de véhicules neufs au Québec
+        </div>
+      </footer>
     </div>
   )
 }

@@ -3,9 +3,25 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Comparateur de voitures neuves au Québec - Comparez les prix des concessionnaires à Montréal et Québec" />
+    <meta name="theme-color" content="#3b82f6" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <title>QC Auto Compare — Comparer les voitures neuves au Québec</title>
+    <script>
+      // Apply saved theme before page renders to prevent flash
+      (function() {
+        const theme = localStorage.getItem('theme') || 'system';
+        const isDark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        if (isDark) document.documentElement.classList.add('dark');
+      })();
+    </script>
+    <style>
+      body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+    </style>
   </head>
-  <body>
+  <body class="bg-gray-50 dark:bg-slate-900">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
