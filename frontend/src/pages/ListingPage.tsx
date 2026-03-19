@@ -4,6 +4,7 @@ import { ThemeToggle } from '../components/ThemeToggle'
 import { VehicleTable } from '../components/VehicleTable'
 import { VehicleGrid } from '../components/VehicleGrid'
 import { useStats, useVehicles } from '../hooks/useVehicles'
+import { useFiltersFromUrl } from '../hooks/useFiltersFromUrl'
 import { DEFAULT_FILTERS, type VehicleFilters } from '../types'
 
 type ViewMode = 'table' | 'cards'
@@ -11,9 +12,11 @@ type ViewMode = 'table' | 'cards'
 /**
  * Main listing page — the primary entry point of the application.
  * FEATURE #2: Added toggle between table and card views
+ * AMÉLIORATION #4: Filters are now synced with URL for sharing/bookmarking
  */
 export function ListingPage() {
-  const [filters, setFilters] = useState<VehicleFilters>(DEFAULT_FILTERS)
+  // AMÉLIORATION #4: Use URL-synced filters instead of local state
+  const { filters, setFilters, resetFilters } = useFiltersFromUrl()
   
   // View mode state with localStorage persistence
   const [viewMode, setViewMode] = useState<ViewMode>(() => {
@@ -32,11 +35,11 @@ export function ListingPage() {
   const { data: stats } = useStats()
 
   const handleFiltersChange = (updated: Partial<VehicleFilters>) => {
-    setFilters((prev) => ({ ...prev, ...updated }))
+    setFilters(updated)
   }
 
   const handleReset = () => {
-    setFilters(DEFAULT_FILTERS)
+    resetFilters()
   }
 
   const lastUpdated = stats?.last_updated_at

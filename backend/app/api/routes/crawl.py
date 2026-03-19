@@ -150,3 +150,89 @@ async def get_stats(db: AsyncSession = Depends(get_db)) -> StatsResponse:
         vehicles_by_source=vehicles_by_source,
         last_updated_at=last_updated_row,
     )
+
+
+# ---------------------------------------------------------------------------
+# BUG #7: Reconciliation endpoint for soft-deleting stale vehicles
+# ---------------------------------------------------------------------------
+
+class ReconcileRequest(BaseModel):
+    """Request body for reconciliation endpoint."""
+    dealer_slug: str
+    seen_fingerprints: list[str]
+
+
+class ReconcileResponse(BaseModel):
+    """Response from reconciliation endpoint."""
+    dealer_slug: str
+    total_for_dealer: int
+    deactivated_count: int
+    kept_active_count: int
+
+
+@router.post("/reconcile", response_model=ReconcileResponse)
+async def reconcile_dealer_inventory(
+    payload: ReconcileRequest,
+    db: AsyncSession = Depends(get_db),
+) -> ReconcileResponse:
+    """
+    BUG #7 FIX: Mark vehicles as inactive if they weren't seen in the latest crawl.
+    
+    This endpoint should be called after a complete crawl of a dealer's inventory.
+    Any vehicles belonging to that dealer that are NOT in the seen_fingerprints list
+    will be marked as is_active=False (soft delete).
+    
+    This prevents sold vehicles from appearing in search results indefinitely.
+    """
+    # Find the dealer
+    dealer_result = await db.execute(
+        select(Dealer).where(Dealer.slug == payload.dealer_slug)
+    )
+    dealer = dealer_result.scalar_one_or_none()
+    
+    if not dealer:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Dealer with slug '{payload.dealer_slug}' not found."
+        )
+    
+    # Count total active vehicles for this dealer before reconciliation
+    total_before = await db.scalar(
+        select(func.count(Vehicle.id))
+        .where(Vehicle.dealer_id == dealer.id)
+        .where(Vehicle.is_active == True)
+    ) or 0
+    
+    # Deactivate vehicles not in the seen list
+    if payload.seen_fingerprints:
+        # Update vehicles that are active but NOT in the seen list
+        from sqlalchemy import update
+        result = await db.execute(
+            update(Vehicle)
+            .where(Vehicle.dealer_id == dealer.id)
+            .where(Vehicle.is_active == True)
+            .where(Vehicle.fingerprint.notin_(payload.seen_fingerprints))
+            .values(is_active=False, updated_at=datetime.now(timezone.utc))
+        )
+        deactivated_count = result.rowcount
+    else:
+        # If no fingerprints provided, deactivate ALL vehicles for this dealer
+        from sqlalchemy import update
+        result = await db.execute(
+            update(Vehicle)
+            .where(Vehicle.dealer_id == dealer.id)
+            .where(Vehicle.is_active == True)
+            .values(is_active=False, updated_at=datetime.now(timezone.utc))
+        )
+        deactivated_count = result.rowcount
+    
+    await db.commit()
+    
+    kept_active = total_before - deactivated_count
+    
+    return ReconcileResponse(
+        dealer_slug=payload.dealer_slug,
+        total_for_dealer=total_before,
+        deactivated_count=deactivated_count,
+        kept_active_count=kept_active,
+    )

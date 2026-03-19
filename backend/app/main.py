@@ -66,12 +66,13 @@ def create_app() -> FastAPI:
     )
 
     # ---- Routers -----------------------------------------------------------
-    from app.api.routes import crawl, dealers, ingest, vehicles
+    from app.api.routes import crawl, dealers, filters, ingest, vehicles
 
     app.include_router(vehicles.router, prefix="/api")
     app.include_router(dealers.router, prefix="/api")
     app.include_router(ingest.router, prefix="/api")
     app.include_router(crawl.router, prefix="/api")
+    app.include_router(filters.router, prefix="/api")
 
     # ---- Health check ------------------------------------------------------
     @app.get("/health", tags=["Health"])

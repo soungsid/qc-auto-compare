@@ -141,9 +141,58 @@ class QCAutoCompareAPITester:
         """Test dealers endpoint"""
         return self.run_test("Dealers List", "GET", "/api/dealers", 200)
 
+    def test_filters_options_endpoint(self):
+        """Test BUG #3: Dynamic filter options endpoint"""
+        success, data = self.run_test("Filter Options", "GET", "/api/filters/options", 200)
+        if success:
+            # Verify the response structure
+            expected_fields = ['makes', 'conditions', 'drivetrains', 'transmissions', 'cities', 'years', 'ingest_sources', 'price_range', 'mileage_range']
+            missing_fields = [field for field in expected_fields if field not in data]
+            if missing_fields:
+                print(f"   ⚠️ Missing fields: {missing_fields}")
+            else:
+                print(f"   ✅ All expected fields present")
+                print(f"   Available makes: {len(data.get('makes', []))}")
+                print(f"   Available conditions: {data.get('conditions', [])}")
+                print(f"   Price range: ${data.get('price_range', {}).get('min', 'N/A')} - ${data.get('price_range', {}).get('max', 'N/A')}")
+        return success, data
+
+    def test_crawl_reconcile_endpoint(self):
+        """Test BUG #7: Reconciliation endpoint for soft-deleting stale vehicles"""
+        # First, let's try with a test dealer (this may not exist, but tests the endpoint structure)
+        test_data = {
+            "dealer_slug": "test-dealer",
+            "seen_fingerprints": ["test_fingerprint_1", "test_fingerprint_2"]
+        }
+        # This will likely return 404 (dealer not found), which is expected for testing
+        success, data = self.run_test("Crawl Reconcile (Test)", "POST", "/api/crawl/reconcile", expected_status=404, data=test_data)
+        
+        # Even if 404, we can check the endpoint exists and has proper validation
+        if not success and data.get('status_code') == 404:
+            print(f"   ✅ Endpoint exists and validates dealer (404 expected for test dealer)")
+            return True, data
+        return success, data
+
+    def test_crawl_status_endpoint(self):
+        """Test crawl status endpoint"""
+        return self.run_test("Crawl Status", "GET", "/api/crawl/status", 200)
+
+    def test_vehicles_active_only(self):
+        """Test BUG #7: Verify only active vehicles appear in search results"""
+        success, data = self.run_test("Active Vehicles Only", "GET", "/api/vehicles", 200)
+        if success:
+            vehicles = data.get('items', [])
+            inactive_count = sum(1 for v in vehicles if not v.get('is_active', True))
+            if inactive_count > 0:
+                print(f"   ⚠️ Found {inactive_count} inactive vehicles in results")
+                return False, data
+            else:
+                print(f"   ✅ All {len(vehicles)} vehicles are active")
+        return success, data
+
     def run_all_tests(self):
         """Run all backend API tests"""
-        print("🚀 Starting QC Auto Compare Backend API Tests")
+        print("🚀 Starting QC Auto Compare Backend API Tests - Phase 2")
         print("=" * 60)
 
         # Core functionality tests
@@ -153,6 +202,13 @@ class QCAutoCompareAPITester:
         self.test_vehicles_with_filters()
         self.test_crawl_stats()
         self.test_dealers_endpoint()
+
+        # Phase 2 specific tests
+        print("\n🆕 Testing Phase 2 Features...")
+        self.test_filters_options_endpoint()  # BUG #3
+        self.test_vehicles_active_only()      # BUG #7
+        self.test_crawl_reconcile_endpoint()  # BUG #7
+        self.test_crawl_status_endpoint()
 
         # Data ingestion tests
         print("\n📤 Testing Data Ingestion...")

@@ -175,6 +175,65 @@ def _slugify(s: str) -> str:
 
 
 # ---------------------------------------------------------------------------
+# BUG #6 FIX: Upsert lease offers to prevent duplicates
+# ---------------------------------------------------------------------------
+
+async def _upsert_lease_offers(
+    db: AsyncSession,
+    vehicle_id: str,
+    lease_offers: list,
+    ingest_source: str,
+) -> None:
+    """
+    Upsert lease offers for a vehicle.
+    
+    Instead of blindly appending new offers, this function:
+    1. Checks if an offer with the same (term_months, payment_frequency, offer_type) exists
+    2. If yes, updates the existing offer with new values
+    3. If no, creates a new offer
+    
+    This prevents duplicate lease offers from accumulating with each re-ingest.
+    """
+    from app.schemas.ingest import LeaseOfferPayload
+    
+    for offer_data in lease_offers:
+        # Build the unique key for this offer
+        if isinstance(offer_data, LeaseOfferPayload):
+            offer_dict = offer_data.model_dump(exclude_none=True)
+        else:
+            offer_dict = offer_data
+        
+        term_months = offer_dict.get("term_months")
+        payment_frequency = offer_dict.get("payment_frequency", "monthly")
+        offer_type = offer_dict.get("offer_type", "lease")
+        
+        # Try to find existing offer with same key
+        existing_offer = await db.scalar(
+            select(LeaseOffer).where(
+                LeaseOffer.vehicle_id == vehicle_id,
+                LeaseOffer.term_months == term_months,
+                LeaseOffer.payment_frequency == payment_frequency,
+                LeaseOffer.offer_type == offer_type,
+            )
+        )
+        
+        if existing_offer:
+            # Update existing offer
+            for key, value in offer_dict.items():
+                if value is not None and hasattr(existing_offer, key):
+                    setattr(existing_offer, key, value)
+            existing_offer.ingest_source = ingest_source
+        else:
+            # Create new offer
+            new_offer = LeaseOffer(
+                vehicle_id=vehicle_id,
+                ingest_source=ingest_source,
+                **offer_dict,
+            )
+            db.add(new_offer)
+
+
+# ---------------------------------------------------------------------------
 # Core ingest logic
 # ---------------------------------------------------------------------------
 
@@ -276,15 +335,10 @@ async def ingest_vehicle(
             existing.last_seen_at = utcnow()
             existing.is_active = True  # Re-activate if it was marked stale
 
-            # Append new lease offers (don't replace existing ones)
+            # BUG #6 FIX: Upsert lease offers instead of blindly appending
+            # This prevents duplicates when re-ingesting the same vehicle
             if payload.lease_offers:
-                for offer_data in payload.lease_offers:
-                    offer = LeaseOffer(
-                        vehicle_id=vehicle_id,
-                        ingest_source=payload.ingest_source,
-                        **offer_data.model_dump(exclude_none=True),
-                    )
-                    db.add(offer)
+                await _upsert_lease_offers(db, vehicle_id, payload.lease_offers, payload.ingest_source)
 
     except Exception as exc:
         action = "error"

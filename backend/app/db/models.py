@@ -10,6 +10,7 @@ from sqlalchemy import (
     Boolean,
     Date,
     ForeignKey,
+    Index,
     Integer,
     Numeric,
     String,
@@ -36,6 +37,10 @@ class Dealer(Base):
     """An authorized vehicle dealer in Quebec."""
 
     __tablename__ = "dealers"
+    __table_args__ = (
+        # BUG #5: Index for city filtering
+        Index("idx_dealers_city", "city"),
+    )
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_uuid)
     slug: Mapped[str] = mapped_column(String(100), unique=True, nullable=False)
@@ -61,7 +66,16 @@ class Vehicle(Base):
     """A vehicle listing from a Quebec dealer."""
 
     __tablename__ = "vehicles"
-    __table_args__ = (UniqueConstraint("fingerprint", name="uq_vehicles_fingerprint"),)
+    __table_args__ = (
+        UniqueConstraint("fingerprint", name="uq_vehicles_fingerprint"),
+        # BUG #5: Performance indexes for commonly filtered columns
+        Index("idx_vehicles_condition", "condition"),
+        Index("idx_vehicles_make", "make"),
+        Index("idx_vehicles_year", "year"),
+        Index("idx_vehicles_sale_price", "sale_price"),
+        Index("idx_vehicles_is_active", "is_active"),
+        Index("idx_vehicles_dealer_id", "dealer_id"),
+    )
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_uuid)
     fingerprint: Mapped[str] = mapped_column(String(64), unique=True, nullable=False)
@@ -117,6 +131,13 @@ class LeaseOffer(Base):
     """A financing or lease offer associated with a vehicle."""
 
     __tablename__ = "lease_offers"
+    __table_args__ = (
+        # BUG #6: Unique constraint to prevent duplicate lease offers
+        UniqueConstraint(
+            "vehicle_id", "term_months", "payment_frequency", "offer_type",
+            name="uq_lease_offers_vehicle_term_freq_type"
+        ),
+    )
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_uuid)
     vehicle_id: Mapped[str] = mapped_column(

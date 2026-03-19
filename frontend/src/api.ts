@@ -1,7 +1,7 @@
 import axios from 'axios'
 import type { StatsResponse, VehicleFilters, VehicleListResponse } from './types'
 
-const api = axios.create({
+export const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || '',
 })
 
