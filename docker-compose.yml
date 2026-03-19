@@ -12,13 +12,13 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD:-supersecret}
     volumes:
       - pgdata:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-qc_auto_user} -d qc_auto"]
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - qc-auto-network
 
   # ---------------------------------------------------------------------------
   # FastAPI Backend (includes APScheduler)
@@ -32,14 +32,13 @@ services:
     environment:
       DATABASE_URL: postgresql+asyncpg://${DB_USER:-qc_auto_user}:${DB_PASSWORD:-supersecret}@postgres:5432/qc_auto
       BACKEND_INGEST_URL: http://backend:8000/api/ingest/batch
-    ports:
-      - "8000:8000"
+    expose:
+      - "8000"
     depends_on:
       postgres:
         condition: service_healthy
-    volumes:
-      - ./backend:/app
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    networks:
+      - qc-auto-network
 
   # ---------------------------------------------------------------------------
   # Scrapy Crawler (run on-demand or scheduled externally)
@@ -56,25 +55,42 @@ services:
       CRAWLER_BATCH_SIZE: "50"
     depends_on:
       - backend
-    volumes:
-      - ./crawler:/app
     profiles:
       - crawl   # Only starts when: docker compose --profile crawl up crawler
+    networks:
+      - qc-auto-network
 
   # ---------------------------------------------------------------------------
-  # React Frontend
+  # React Frontend (nginx) — exposed via Traefik
+  # nginx proxies /api/ to backend internally; Traefik handles TLS + routing
   # ---------------------------------------------------------------------------
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
     restart: unless-stopped
-    ports:
-      - "3000:3000"
+    expose:
+      - "3000"
     depends_on:
       - backend
-    environment:
-      VITE_API_URL: http://localhost:8000
+    networks:
+      - qc-auto-network
+      - traefik_network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik_network"
+      - "traefik.http.services.qc-auto-frontend.loadbalancer.server.port=3000"
+      - "traefik.http.routers.qc-auto-frontend.rule=Host(`auto.canadaquebec.ca`)"
+      - "traefik.http.routers.qc-auto-frontend.tls=true"
+      - "traefik.http.routers.qc-auto-frontend.tls.certresolver=myhttpchallenge"
+      - "traefik.http.routers.qc-auto-frontend.middlewares=qc-auto-https-headers"
+      - "traefik.http.middlewares.qc-auto-https-headers.headers.customRequestHeaders.X-Forwarded-Proto=https"
 
 volumes:
   pgdata:
+
+networks:
+  qc-auto-network:
+    driver: bridge
+  traefik_network:
+    external: true
