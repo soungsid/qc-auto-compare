@@ -1,0 +1,80 @@
+services:
+
+  # ---------------------------------------------------------------------------
+  # PostgreSQL 16
+  # ---------------------------------------------------------------------------
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: qc_auto
+      POSTGRES_USER: ${DB_USER:-qc_auto_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-supersecret}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-qc_auto_user} -d qc_auto"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ---------------------------------------------------------------------------
+  # FastAPI Backend (includes APScheduler)
+  # ---------------------------------------------------------------------------
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://${DB_USER:-qc_auto_user}:${DB_PASSWORD:-supersecret}@postgres:5432/qc_auto
+      BACKEND_INGEST_URL: http://backend:8000/api/ingest/batch
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  # ---------------------------------------------------------------------------
+  # Scrapy Crawler (run on-demand or scheduled externally)
+  # ---------------------------------------------------------------------------
+  crawler:
+    build:
+      context: ./crawler
+      dockerfile: Dockerfile
+    restart: "no"
+    environment:
+      BACKEND_INGEST_URL: http://backend:8000/api/ingest/batch
+      CRAWL_DELAY_MIN: "2"
+      CRAWL_DELAY_MAX: "5"
+      CRAWLER_BATCH_SIZE: "50"
+    depends_on:
+      - backend
+    volumes:
+      - ./crawler:/app
+    profiles:
+      - crawl   # Only starts when: docker compose --profile crawl up crawler
+
+  # ---------------------------------------------------------------------------
+  # React Frontend
+  # ---------------------------------------------------------------------------
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    environment:
+      VITE_API_URL: http://localhost:8000
+
+volumes:
+  pgdata:
