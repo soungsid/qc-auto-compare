@@ -7,13 +7,13 @@ services:
     image: postgres:16-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_DB: qc_auto
+      POSTGRES_DB: ${DB_NAME:-qc_auto}
       POSTGRES_USER: ${DB_USER:-qc_auto_user}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-supersecret}
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-qc_auto_user} -d qc_auto"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-qc_auto_user} -d ${DB_NAME:-qc_auto}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -30,10 +30,10 @@ services:
     restart: unless-stopped
     env_file: .env
     environment:
-      DATABASE_URL: postgresql+asyncpg://${DB_USER:-qc_auto_user}:${DB_PASSWORD:-supersecret}@postgres:5432/qc_auto
-      BACKEND_INGEST_URL: http://backend:8000/api/ingest/batch
+      DATABASE_URL: postgresql+asyncpg://${DB_USER:-qc_auto_user}:${DB_PASSWORD:-supersecret}@postgres:5432/${DB_NAME:-qc_auto}
+      BACKEND_INGEST_URL: http://backend:${BACKEND_PORT:-8000}/api/ingest/batch
     expose:
-      - "8000"
+      - "${BACKEND_PORT:-8000}"
     depends_on:
       postgres:
         condition: service_healthy
@@ -49,10 +49,10 @@ services:
       dockerfile: Dockerfile
     restart: "no"
     environment:
-      BACKEND_INGEST_URL: http://backend:8000/api/ingest/batch
-      CRAWL_DELAY_MIN: "2"
-      CRAWL_DELAY_MAX: "5"
-      CRAWLER_BATCH_SIZE: "50"
+      BACKEND_INGEST_URL: http://backend:${BACKEND_PORT:-8000}/api/ingest/batch
+      CRAWL_DELAY_MIN: "${CRAWL_DELAY_MIN:-2}"
+      CRAWL_DELAY_MAX: "${CRAWL_DELAY_MAX:-5}"
+      CRAWLER_BATCH_SIZE: "${CRAWLER_BATCH_SIZE:-50}"
     depends_on:
       - backend
     profiles:
@@ -70,7 +70,7 @@ services:
       dockerfile: Dockerfile
     restart: unless-stopped
     expose:
-      - "3000"
+      - "${FRONTEND_PORT:-3000}"
     depends_on:
       - backend
     networks:
@@ -79,10 +79,10 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=traefik_network"
-      - "traefik.http.services.qc-auto-frontend.loadbalancer.server.port=3000"
-      - "traefik.http.routers.qc-auto-frontend.rule=Host(`auto.canadaquebec.ca`)"
-      - "traefik.http.routers.qc-auto-frontend.tls=true"
-      - "traefik.http.routers.qc-auto-frontend.tls.certresolver=myhttpchallenge"
+      - "traefik.http.services.qc-auto-frontend.loadbalancer.server.port=${FRONTEND_PORT:-3000}"
+      - "traefik.http.routers.qc-auto-frontend.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.qc-auto-frontend.tls=${TRAEFIK_TLS:-true}"
+      - "traefik.http.routers.qc-auto-frontend.tls.certresolver=${TRAEFIK_CERT_RESOLVER:-myhttpchallenge}"
       - "traefik.http.routers.qc-auto-frontend.middlewares=qc-auto-https-headers"
       - "traefik.http.middlewares.qc-auto-https-headers.headers.customRequestHeaders.X-Forwarded-Proto=https"
 
