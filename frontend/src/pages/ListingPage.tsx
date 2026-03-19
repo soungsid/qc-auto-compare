@@ -1,20 +1,32 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { FilterBar } from '../components/FilterBar'
 import { ThemeToggle } from '../components/ThemeToggle'
 import { VehicleTable } from '../components/VehicleTable'
+import { VehicleGrid } from '../components/VehicleGrid'
 import { useStats, useVehicles } from '../hooks/useVehicles'
 import { DEFAULT_FILTERS, type VehicleFilters } from '../types'
 
+type ViewMode = 'table' | 'cards'
+
 /**
  * Main listing page — the primary entry point of the application.
- *
- * Layout:
- *   Header (logo + last-updated timestamp)
- *   FilterBar
- *   VehicleTable (with pagination + CSV export)
+ * FEATURE #2: Added toggle between table and card views
  */
 export function ListingPage() {
   const [filters, setFilters] = useState<VehicleFilters>(DEFAULT_FILTERS)
+  
+  // View mode state with localStorage persistence
+  const [viewMode, setViewMode] = useState<ViewMode>(() => {
+    if (typeof window !== 'undefined') {
+      return (localStorage.getItem('qc-auto-view-mode') as ViewMode) || 'table'
+    }
+    return 'table'
+  })
+
+  // Persist view mode preference
+  useEffect(() => {
+    localStorage.setItem('qc-auto-view-mode', viewMode)
+  }, [viewMode])
 
   const { data, isLoading, isError } = useVehicles(filters)
   const { data: stats } = useStats()
@@ -97,6 +109,67 @@ export function ListingPage() {
           onReset={handleReset}
         />
 
+        {/* View mode toggle + Sort controls */}
+        <div className="flex items-center justify-between">
+          {/* View mode toggle - FEATURE #2 */}
+          <div className="flex items-center gap-1 p-1 bg-gray-100 dark:bg-slate-800 rounded-lg" data-testid="view-mode-toggle">
+            <button
+              onClick={() => setViewMode('table')}
+              data-testid="view-mode-table"
+              className={`flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
+                viewMode === 'table'
+                  ? 'bg-white dark:bg-slate-700 text-gray-900 dark:text-white shadow-sm'
+                  : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+              }`}
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+              </svg>
+              Tableau
+            </button>
+            <button
+              onClick={() => setViewMode('cards')}
+              data-testid="view-mode-cards"
+              className={`flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
+                viewMode === 'cards'
+                  ? 'bg-white dark:bg-slate-700 text-gray-900 dark:text-white shadow-sm'
+                  : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+              }`}
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM14 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4zM14 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" />
+              </svg>
+              Cartes
+            </button>
+          </div>
+
+          {/* Sort controls for card view */}
+          {viewMode === 'cards' && (
+            <div className="flex items-center gap-2">
+              <label className="text-xs text-gray-500 dark:text-gray-400">Trier par:</label>
+              <select
+                value={filters.sort}
+                onChange={(e) => handleFiltersChange({ sort: e.target.value, page: 1 })}
+                className="rounded-lg border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 px-2 py-1 text-sm text-gray-900 dark:text-gray-100"
+                data-testid="sort-select"
+              >
+                <option value="sale_price">Prix</option>
+                <option value="year">Année</option>
+                <option value="make">Marque</option>
+                <option value="mileage_km">Kilométrage</option>
+                <option value="created_at">Date d'ajout</option>
+              </select>
+              <button
+                onClick={() => handleFiltersChange({ order: filters.order === 'asc' ? 'desc' : 'asc', page: 1 })}
+                className="rounded-lg border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 px-2 py-1 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-600"
+                data-testid="sort-order-toggle"
+              >
+                {filters.order === 'asc' ? '↑ Croissant' : '↓ Décroissant'}
+              </button>
+            </div>
+          )}
+        </div>
+
         {/* Error state */}
         {isError && (
           <div className="rounded-lg border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 p-4 text-sm text-red-700 dark:text-red-400" data-testid="error-message">
@@ -105,14 +178,24 @@ export function ListingPage() {
           </div>
         )}
 
-        {/* Table */}
-        <VehicleTable
-          data={data?.items ?? []}
-          total={data?.total ?? 0}
-          filters={filters}
-          onFiltersChange={handleFiltersChange}
-          isLoading={isLoading}
-        />
+        {/* Table or Grid view based on viewMode */}
+        {viewMode === 'table' ? (
+          <VehicleTable
+            data={data?.items ?? []}
+            total={data?.total ?? 0}
+            filters={filters}
+            onFiltersChange={handleFiltersChange}
+            isLoading={isLoading}
+          />
+        ) : (
+          <VehicleGrid
+            data={data?.items ?? []}
+            total={data?.total ?? 0}
+            filters={filters}
+            onFiltersChange={handleFiltersChange}
+            isLoading={isLoading}
+          />
+        )}
       </main>
 
       {/* Footer */}

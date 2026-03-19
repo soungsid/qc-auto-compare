@@ -74,6 +74,9 @@ export interface VehicleFilters {
   city?: string
   min_price?: number
   max_price?: number
+  year_min?: number
+  year_max?: number
+  mileage_max?: number
   max_monthly_payment?: number
   payment_frequency?: string
   ingest_source?: string

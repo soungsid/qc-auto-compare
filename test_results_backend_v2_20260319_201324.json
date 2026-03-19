@@ -1,0 +1,245 @@
+{
+  "timestamp": "20260319_201324",
+  "base_url": "https://7bc22109-d5aa-4f60-9e7b-2484a1ddf954.preview.emergentagent.com",
+  "summary": {
+    "tests_run": 18,
+    "tests_passed": 16,
+    "success_rate": 88.88888888888889
+  },
+  "test_results": [
+    {
+      "name": "Health Check",
+      "method": "GET",
+      "endpoint": "/health",
+      "expected_status": 200,
+      "actual_status": 200,
+      "success": true,
+      "url": "https://7bc22109-d5aa-4f60-9e7b-2484a1ddf954.preview.emergentagent.com/health",
+      "params": null
+    },
+    {
+      "name": "Basic Vehicle List",
+      "method": "GET",
+      "endpoint": "/api/vehicles",
+      "expected_status": 200,
+      "actual_status": 200,
+      "success": true,
+      "url": "https://7bc22109-d5aa-4f60-9e7b-2484a1ddf954.preview.emergentagent.com/api/vehicles",
+      "params": null
+    },
+    {
+      "name": "Sort by Price ascending",
+      "method": "GET",
+      "endpoint": "/api/vehicles",
+      "expected_status": 200,
+      "actual_status": 200,
+      "success": true,
+      "url": "https://7bc22109-d5aa-4f60-9e7b-2484a1ddf954.preview.emergentagent.com/api/vehicles",
+      "params": {
+        "sort": "sale_price",
+        "order": "asc",
+        "limit": 10
+      }
+    },
+    {
+      "name": "Sort by Price descending",
+      "method": "GET",
+      "endpoint": "/api/vehicles",
+      "expected_status": 200,
+      "actual_status": 200,
+      "success": true,
+      "url": "https://7bc22109-d5aa-4f60-9e7b-2484a1ddf954.preview.emergentagent.com/api/vehicles",
+      "params": {
+        "sort": "sale_price",
+        "order": "desc",
+        "limit": 10
+      }
+    },
+    {
+      "name": "Sort by Year descending",
+      "method": "GET",
+      "endpoint": "/api/vehicles",
+      "expected_status": 200,
+      "actual_status": 200,
+      "success": true,
+      "url": "https://7bc22109-d5aa-4f60-9e7b-2484a1ddf954.preview.emergentagent.com/api/vehicles",
+      "params": {
+        "sort": "year",
+        "order": "desc",
+        "limit": 10
+      }
+    },
+    {
+      "name": "Sort by Make alphabetical",
+      "method": "GET",
+      "endpoint": "/api/vehicles",
+      "expected_status": 200,
+      "actual_status": 200,
+      "success": true,
+      "url": "https://7bc22109-d5aa-4f60-9e7b-2484a1ddf954.preview.emergentagent.com/api/vehicles",
+      "params": {
+        "sort": "make",
+        "order": "asc",
+        "limit": 10
+      }
+    },
+    {
+      "name": "Sort by Mileage ascending",
+      "method": "GET",
+      "endpoint": "/api/vehicles",
+      "expected_status": 200,
+      "actual_status": 200,
+      "success": true,
+      "url": "https://7bc22109-d5aa-4f60-9e7b-2484a1ddf954.preview.emergentagent.com/api/vehicles",
+      "params": {
+        "sort": "mileage_km",
+        "order": "asc",
+        "limit": 10
+      }
+    },
+    {
+      "name": "Sort by Newest first",
+      "method": "GET",
+      "endpoint": "/api/vehicles",
+      "expected_status": 200,
+      "actual_status": 200,
+      "success": true,
+      "url": "https://7bc22109-d5aa-4f60-9e7b-2484a1ddf954.preview.emergentagent.com/api/vehicles",
+      "params": {
+        "sort": "created_at",
+        "order": "desc",
+        "limit": 10
+      }
+    },
+    {
+      "name": "Year Min Filter (2020+)",
+      "method": "GET",
+      "endpoint": "/api/vehicles",
+      "expected_status": 200,
+      "actual_status": 200,
+      "success": true,
+      "url": "https://7bc22109-d5aa-4f60-9e7b-2484a1ddf954.preview.emergentagent.com/api/vehicles",
+      "params": {
+        "year_min": 2020,
+        "limit": 20
+      }
+    },
+    {
+      "name": "Year Max Filter (<=2022)",
+      "method": "GET",
+      "endpoint": "/api/vehicles",
+      "expected_status": 200,
+      "actual_status": 200,
+      "success": true,
+      "url": "https://7bc22109-d5aa-4f60-9e7b-2484a1ddf954.preview.emergentagent.com/api/vehicles",
+      "params": {
+        "year_max": 2022,
+        "limit": 20
+      }
+    },
+    {
+      "name": "Year Range Filter (2020-2023)",
+      "method": "GET",
+      "endpoint": "/api/vehicles",
+      "expected_status": 200,
+      "actual_status": 200,
+      "success": true,
+      "url": "https://7bc22109-d5aa-4f60-9e7b-2484a1ddf954.preview.emergentagent.com/api/vehicles",
+      "params": {
+        "year_min": 2020,
+        "year_max": 2023,
+        "limit": 20
+      }
+    },
+    {
+      "name": "Mileage Max Filter (<=50000km)",
+      "method": "GET",
+      "endpoint": "/api/vehicles",
+      "expected_status": 200,
+      "actual_status": 200,
+      "success": true,
+      "url": "https://7bc22109-d5aa-4f60-9e7b-2484a1ddf954.preview.emergentagent.com/api/vehicles",
+      "params": {
+        "mileage_max": 50000,
+        "limit": 20
+      }
+    },
+    {
+      "name": "Initial Vehicle Ingest",
+      "method": "POST",
+      "endpoint": "/api/ingest/batch",
+      "expected_status": 200,
+      "actual_status": 200,
+      "success": true,
+      "url": "https://7bc22109-d5aa-4f60-9e7b-2484a1ddf954.preview.emergentagent.com/api/ingest/batch",
+      "params": null
+    },
+    {
+      "name": "Update Changeable Fields",
+      "method": "POST",
+      "endpoint": "/api/ingest/batch",
+      "expected_status": 200,
+      "actual_status": 200,
+      "success": true,
+      "url": "https://7bc22109-d5aa-4f60-9e7b-2484a1ddf954.preview.emergentagent.com/api/ingest/batch",
+      "params": null
+    },
+    {
+      "name": "Combined Filters Test",
+      "method": "GET",
+      "endpoint": "/api/vehicles",
+      "expected_status": 200,
+      "actual_status": 200,
+      "success": true,
+      "url": "https://7bc22109-d5aa-4f60-9e7b-2484a1ddf954.preview.emergentagent.com/api/vehicles",
+      "params": {
+        "make": "Toyota",
+        "condition": "new",
+        "year_min": 2020,
+        "year_max": 2024,
+        "max_price": 50000,
+        "sort": "sale_price",
+        "order": "asc"
+      }
+    },
+    {
+      "name": "Invalid Sort Field",
+      "method": "GET",
+      "endpoint": "/api/vehicles",
+      "expected_status": 200,
+      "actual_status": 200,
+      "success": true,
+      "url": "https://7bc22109-d5aa-4f60-9e7b-2484a1ddf954.preview.emergentagent.com/api/vehicles",
+      "params": {
+        "sort": "invalid_field",
+        "order": "asc"
+      }
+    },
+    {
+      "name": "Invalid Order",
+      "method": "GET",
+      "endpoint": "/api/vehicles",
+      "expected_status": 200,
+      "actual_status": 422,
+      "success": false,
+      "url": "https://7bc22109-d5aa-4f60-9e7b-2484a1ddf954.preview.emergentagent.com/api/vehicles",
+      "params": {
+        "sort": "sale_price",
+        "order": "invalid"
+      }
+    },
+    {
+      "name": "Extreme Year Values",
+      "method": "GET",
+      "endpoint": "/api/vehicles",
+      "expected_status": 200,
+      "actual_status": 422,
+      "success": false,
+      "url": "https://7bc22109-d5aa-4f60-9e7b-2484a1ddf954.preview.emergentagent.com/api/vehicles",
+      "params": {
+        "year_min": 1800,
+        "year_max": 3000
+      }
+    }
+  ]
+}

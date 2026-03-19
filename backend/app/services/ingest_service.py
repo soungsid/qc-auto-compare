@@ -54,12 +54,38 @@ CHANGEABLE_FIELDS = {
     "freight_pdi",
     "color_ext",
     "color_int",
+    "condition",      # BUG #2 fix - allow condition updates
+    "drivetrain",     # BUG #2 fix - allow drivetrain updates
+    "transmission",   # BUG #2 fix - allow transmission updates
+    "mileage_km",     # BUG #2 fix - allow mileage updates
 }
+
+
+def _validate_condition_from_url(condition: str, listing_url: str | None) -> str:
+    """
+    BUG #2 Volet C: Validate and fix condition based on listing URL.
+    If URL contains /occasion/ but condition is 'new', correct to 'used'.
+    If URL contains /neufs/ but condition is 'used', correct to 'new'.
+    """
+    if not listing_url:
+        return condition
+    
+    url_lower = listing_url.lower()
+    if "/occasion/" in url_lower and condition == "new":
+        return "used"
+    if ("/neufs/" in url_lower or "/neuf/" in url_lower) and condition == "used":
+        return "new"
+    
+    return condition
 
 
 def _detect_changes(existing: Vehicle, payload: VehicleIngestPayload) -> dict:
     """Return a dict of {field: new_value} for fields that have changed."""
     changes: dict = {}
+
+    # Normalize condition and validate against URL
+    normalized_condition = normalize_condition(payload.condition)
+    validated_condition = _validate_condition_from_url(normalized_condition, payload.listing_url)
 
     field_map = {
         "sale_price": normalize_price(payload.sale_price),
@@ -69,6 +95,10 @@ def _detect_changes(existing: Vehicle, payload: VehicleIngestPayload) -> dict:
         "listing_url": payload.listing_url,
         "color_ext": payload.color_ext,
         "color_int": payload.color_int,
+        "condition": validated_condition,
+        "drivetrain": normalize_drivetrain(payload.drivetrain),
+        "transmission": normalize_transmission(payload.transmission),
+        "mileage_km": payload.mileage_km,
     }
 
     for field, new_value in field_map.items():
@@ -78,6 +108,9 @@ def _detect_changes(existing: Vehicle, payload: VehicleIngestPayload) -> dict:
         # Compare floats with a small epsilon to avoid floating-point noise
         if isinstance(new_value, float) and isinstance(existing_value, float):
             if abs(new_value - existing_value) > 0.01:
+                changes[field] = new_value
+        elif isinstance(new_value, int) and isinstance(existing_value, int):
+            if new_value != existing_value:
                 changes[field] = new_value
         elif new_value != existing_value:
             changes[field] = new_value

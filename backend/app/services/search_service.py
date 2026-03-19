@@ -42,6 +42,9 @@ async def search_vehicles(
     cities: Optional[list[str]] = None,
     min_price: Optional[float] = None,
     max_price: Optional[float] = None,
+    year_min: Optional[int] = None,
+    year_max: Optional[int] = None,
+    mileage_max: Optional[int] = None,
     max_monthly_payment: Optional[float] = None,
     payment_frequency: Optional[str] = None,
     ingest_source: Optional[str] = None,
@@ -64,6 +67,9 @@ async def search_vehicles(
         cities:               Filter by dealer cities (OR).
         min_price:            Minimum sale_price.
         max_price:            Maximum sale_price.
+        year_min:             Minimum year (BUG #4 fix).
+        year_max:             Maximum year (BUG #4 fix).
+        mileage_max:          Maximum mileage in km (BUG #4 fix).
         max_monthly_payment:  Max monthly lease payment (joins lease_offers).
         payment_frequency:    Payment frequency filter for lease_offers.
         ingest_source:        Filter by ingestion source (for debugging).
@@ -105,6 +111,13 @@ async def search_vehicles(
         stmt = stmt.where(Vehicle.sale_price >= min_price)
     if max_price is not None:
         stmt = stmt.where(Vehicle.sale_price <= max_price)
+    # BUG #4 fix: Add year and mileage filters
+    if year_min is not None:
+        stmt = stmt.where(Vehicle.year >= year_min)
+    if year_max is not None:
+        stmt = stmt.where(Vehicle.year <= year_max)
+    if mileage_max is not None:
+        stmt = stmt.where(Vehicle.mileage_km <= mileage_max)
     if cities:
         city_filters = [Vehicle.dealer.has(Dealer.city.ilike(c)) for c in cities]
         stmt = stmt.where(or_(*city_filters))

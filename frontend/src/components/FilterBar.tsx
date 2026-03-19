@@ -11,9 +11,14 @@ const DRIVETRAINS = ['', 'FWD', 'AWD', 'RWD', '4WD']
 const CONDITIONS = ['', 'new', 'used', 'certified']
 const CITIES = ['', 'Montréal', 'Laval', 'Brossard', 'Québec', 'Lévis']
 
+// Generate year options from current year + 1 to 2015
+const currentYear = new Date().getFullYear()
+const YEARS = Array.from({ length: currentYear - 2014 + 2 }, (_, i) => currentYear + 1 - i)
+
 /**
  * Filter bar for the vehicle listing page.
  * Calls onChange with partial filter updates on every input change.
+ * BUG #4 fix: Added year_min, year_max, mileage_max filters
  */
 export function FilterBar({ filters, onChange, onReset }: Props) {
   const num = (val: string) => (val === '' ? undefined : Number(val))
@@ -48,7 +53,7 @@ export function FilterBar({ filters, onChange, onReset }: Props) {
           <input
             type="text"
             placeholder="Ex: Kicks"
-            className={`w-32 ${inputClasses}`}
+            className={`w-28 ${inputClasses}`}
             value={filters.model ?? ''}
             onChange={(e) => onChange({ model: str(e.target.value), page: 1 })}
             data-testid="filter-model"
@@ -57,7 +62,7 @@ export function FilterBar({ filters, onChange, onReset }: Props) {
 
         {/* Condition */}
         <div className="flex flex-col gap-1">
-          <label className={labelClasses}>Condition</label>
+          <label className={labelClasses}>État</label>
           <select
             className={selectClasses}
             value={filters.condition ?? ''}
@@ -65,7 +70,41 @@ export function FilterBar({ filters, onChange, onReset }: Props) {
             data-testid="filter-condition"
           >
             {CONDITIONS.map((c) => (
-              <option key={c} value={c}>{c === '' ? 'Toutes' : c === 'new' ? 'Neuf' : c === 'used' ? 'Usagé' : 'Certifié'}</option>
+              <option key={c} value={c}>
+                {c === '' ? 'Tous' : c === 'new' ? 'Neuf' : c === 'used' ? 'Occasion' : 'Certifié'}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Year Min - BUG #4 fix */}
+        <div className="flex flex-col gap-1">
+          <label className={labelClasses}>Année min</label>
+          <select
+            className={selectClasses}
+            value={filters.year_min ?? ''}
+            onChange={(e) => onChange({ year_min: num(e.target.value), page: 1 })}
+            data-testid="filter-year-min"
+          >
+            <option value="">Toutes</option>
+            {YEARS.map((y) => (
+              <option key={y} value={y}>{y}</option>
+            ))}
+          </select>
+        </div>
+
+        {/* Year Max - BUG #4 fix */}
+        <div className="flex flex-col gap-1">
+          <label className={labelClasses}>Année max</label>
+          <select
+            className={selectClasses}
+            value={filters.year_max ?? ''}
+            onChange={(e) => onChange({ year_max: num(e.target.value), page: 1 })}
+            data-testid="filter-year-max"
+          >
+            <option value="">Toutes</option>
+            {YEARS.map((y) => (
+              <option key={y} value={y}>{y}</option>
             ))}
           </select>
         </div>
@@ -100,26 +139,52 @@ export function FilterBar({ filters, onChange, onReset }: Props) {
           </select>
         </div>
 
+        {/* Min price - BUG #4 fix */}
+        <div className="flex flex-col gap-1">
+          <label className={labelClasses}>Prix min ($)</label>
+          <input
+            type="number"
+            placeholder="Ex: 15000"
+            className={`w-28 ${inputClasses}`}
+            value={filters.min_price ?? ''}
+            onChange={(e) => onChange({ min_price: num(e.target.value), page: 1 })}
+            data-testid="filter-min-price"
+          />
+        </div>
+
         {/* Max price */}
         <div className="flex flex-col gap-1">
           <label className={labelClasses}>Prix max ($)</label>
           <input
             type="number"
             placeholder="Ex: 30000"
-            className={`w-32 ${inputClasses}`}
+            className={`w-28 ${inputClasses}`}
             value={filters.max_price ?? ''}
             onChange={(e) => onChange({ max_price: num(e.target.value), page: 1 })}
             data-testid="filter-max-price"
           />
         </div>
 
+        {/* Mileage max - BUG #4 fix */}
+        <div className="flex flex-col gap-1">
+          <label className={labelClasses}>Km max</label>
+          <input
+            type="number"
+            placeholder="Ex: 50000"
+            className={`w-28 ${inputClasses}`}
+            value={filters.mileage_max ?? ''}
+            onChange={(e) => onChange({ mileage_max: num(e.target.value), page: 1 })}
+            data-testid="filter-mileage-max"
+          />
+        </div>
+
         {/* Max monthly payment */}
         <div className="flex flex-col gap-1">
-          <label className={labelClasses}>Pmt/mois max ($)</label>
+          <label className={labelClasses}>Pmt/mois max</label>
           <input
             type="number"
             placeholder="Ex: 350"
-            className={`w-32 ${inputClasses}`}
+            className={`w-24 ${inputClasses}`}
             value={filters.max_monthly_payment ?? ''}
             onChange={(e) => onChange({ max_monthly_payment: num(e.target.value), page: 1 })}
             data-testid="filter-max-monthly"
