@@ -144,12 +144,36 @@
     "active": true
   },
   {
+    "slug": "capitale-nissan",
+    "name": "Capitale Nissan",
+    "brand": "Nissan",
+    "city": "Québec",
+    "address": "125 Rue du Marais, Québec, QC G1M 3C8",
+    "phone": "418-681-0011",
+    "website": "https://www.capitalenissan.ca",
+    "inventory_url": "https://www.capitalenissan.ca/inventaire/neuf/",
+    "spider": "nissan_qc_spider",
+    "active": true
+  },
+  {
+    "slug": "ste-foy-nissan",
+    "name": "Ste-Foy Nissan",
+    "brand": "Nissan",
+    "city": "Québec",
+    "address": "3111 Avenue Watt, Québec, QC G1X 3W2",
+    "phone": "418-650-5353",
+    "website": "https://www.stefoynissan.com",
+    "inventory_url": "https://www.stefoynissan.com/inventaire/neuf/",
+    "spider": "nissan_qc_spider",
+    "active": true
+  },
+  {
     "slug": "beauport-nissan",
     "name": "Beauport Nissan",
     "brand": "Nissan",
     "city": "Québec",
-    "address": "323 Rue Seigneuriale, Québec, QC G1C 3P7",
-    "phone": "418-666-1414",
+    "address": "455 Rue Clémenceau, Québec, QC G1C 7B6",
+    "phone": "418-647-1822",
     "website": "https://www.beauportnissan.com",
     "inventory_url": "https://www.beauportnissan.com/inventaire/neuf/",
     "spider": "nissan_qc_spider",
@@ -184,7 +208,7 @@
     "name": "Boulevard Toyota",
     "brand": "Toyota",
     "city": "Québec",
-    "address": "120 Rue Marais, Québec, QC G1M 3G2",
+    "address": "120 Rue du Marais, Québec, QC G1M 3G2",
     "phone": "418-683-6565",
     "website": "https://boulevardtoyota.com",
     "inventory_url": "https://boulevardtoyota.com/vehicules-neufs/",
@@ -229,13 +253,25 @@
   },
   {
     "slug": "beauport-hyundai",
-    "name": "Hyundai Beauport",
+    "name": "Beauport Hyundai",
     "brand": "Hyundai",
     "city": "Québec",
-    "address": "1185 Rue Clemenceau, Québec, QC G1C 7Y9",
-    "phone": "418-667-8353",
+    "address": "545 Rue Clémenceau, Québec, QC G1C 7Y9",
+    "phone": "581-703-8150",
     "website": "https://www.beauporthyundai.com",
     "inventory_url": "https://www.beauporthyundai.com/inventaire/neuf/",
+    "spider": "hyundai_qc_spider",
+    "active": true
+  },
+  {
+    "slug": "lessard-hyundai",
+    "name": "Lessard Hyundai",
+    "brand": "Hyundai",
+    "city": "Québec",
+    "address": "300 Boul. Louis-XIV, Québec, QC G2K 1W7",
+    "phone": "418-623-5471",
+    "website": "https://lessardhyundai.net",
+    "inventory_url": "https://lessardhyundai.net/inventaire/neuf/",
     "spider": "hyundai_qc_spider",
     "active": true
   },
@@ -249,6 +285,18 @@
     "website": "https://www.leviko.ca",
     "inventory_url": "https://www.leviko.ca/inventaire/neuf/",
     "spider": "hyundai_qc_spider",
+    "active": true
+  },
+  {
+    "slug": "kia-quebec",
+    "name": "Kia Québec",
+    "brand": "Kia",
+    "city": "Québec",
+    "address": "855 Rue du Marais, Québec, QC G1M 3R7",
+    "phone": "418-626-8600",
+    "website": "https://www.kiaquebec.com",
+    "inventory_url": "https://www.kiaquebec.com/inventaire/neuf/",
+    "spider": "kia_qc_spider",
     "active": true
   },
   {
@@ -268,8 +316,8 @@
     "name": "Kia Beauport",
     "brand": "Kia",
     "city": "Québec",
-    "address": "244 Rue Seigneuriale, Québec, QC G1C 3P9",
-    "phone": "418-667-3535",
+    "address": "304 Rue Seigneuriale, Québec, QC G1C 3P9",
+    "phone": "581-703-8320",
     "website": "https://www.kiabeauport.com",
     "inventory_url": "https://www.kiabeauport.com/inventaire/neuf/",
     "spider": "kia_qc_spider",
@@ -324,6 +372,18 @@
     "active": false
   },
   {
+    "slug": "honda-charlesbourg",
+    "name": "Honda Charlesbourg",
+    "brand": "Honda",
+    "city": "Québec",
+    "address": "4650 3e Avenue Ouest, Québec, QC G1H 6E7",
+    "phone": "418-627-1010",
+    "website": "https://www.hondacharlesbourg.com",
+    "inventory_url": "https://www.hondacharlesbourg.com/inventaire/neuf/",
+    "spider": "honda_qc_spider",
+    "active": false
+  },
+  {
     "slug": "levis-honda",
     "name": "Lévis Honda",
     "brand": "Honda",
@@ -364,8 +424,8 @@
     "name": "Option Subaru",
     "brand": "Subaru",
     "city": "Québec",
-    "address": "1900 Avenue Jules-Verne, Québec, QC G2G 2R2",
-    "phone": "418-988-3967",
+    "address": "2505 Boul. Henri-Bourassa, Québec, QC G1H 6P4",
+    "phone": "418-648-9518",
     "website": "https://optionsubaru.com",
     "inventory_url": "https://optionsubaru.com/inventaire/neuf/",
     "spider": "subaru_qc_spider",
@@ -480,6 +540,18 @@
     "active": true
   },
   {
+    "slug": "theetge-cadillac",
+    "name": "Theetge Cadillac",
+    "brand": "Cadillac",
+    "city": "Québec",
+    "address": "1650 Avenue Jules-Verne, Québec, QC G2G 2R9",
+    "phone": "418-658-1340",
+    "website": "https://www.theetgecadillac.com",
+    "inventory_url": "https://www.theetgecadillac.com/inventaire/neuf/",
+    "spider": "chevrolet_qc_spider",
+    "active": false
+  },
+  {
     "slug": "capitale-chrysler",
     "name": "Capitale Chrysler",
     "brand": "Stellantis",
@@ -496,7 +568,7 @@
     "name": "Audi de Québec",
     "brand": "Audi",
     "city": "Québec",
-    "address": "535 Rue Marais, Québec, QC G1M 3R8",
+    "address": "535 Rue du Marais, Québec, QC G1M 3R8",
     "phone": "581-700-2051",
     "website": "https://www.audidequebec.com",
     "inventory_url": "https://www.audidequebec.com/inventaire/neuf/",
@@ -508,11 +580,23 @@
     "name": "BMW Ville de Québec",
     "brand": "BMW",
     "city": "Québec",
-    "address": "255 Rue Étienne-Dubreuil, Québec, QC G1M 4A6",
+    "address": "215 Rue Étienne-Dubreuil, Québec, QC G1M 4A6",
     "phone": "418-681-5000",
     "website": "https://www.bmwvilledequebec.com",
     "inventory_url": "https://www.bmwvilledequebec.com/inventaire/neuf/",
     "spider": "bmw_qc_spider",
+    "active": false
+  },
+  {
+    "slug": "mini-ville-de-quebec",
+    "name": "MINI Ville de Québec",
+    "brand": "MINI",
+    "city": "Québec",
+    "address": "215 Rue Étienne-Dubreuil, Québec, QC G1M 4A6",
+    "phone": "418-681-5000",
+    "website": "https://www.minivilledequebec.ca",
+    "inventory_url": "https://www.minivilledequebec.ca/inventaire/neuf/",
+    "spider": "mini_qc_spider",
     "active": false
   },
   {
@@ -528,12 +612,24 @@
     "active": false
   },
   {
+    "slug": "centre-porsche-quebec",
+    "name": "Centre Porsche Québec",
+    "brand": "Porsche",
+    "city": "Québec",
+    "address": "2240 Rue Cyrille-Duquet, Québec, QC G1N 2G3",
+    "phone": "418-767-7243",
+    "website": "https://dealer.porsche.com/ca/quebec",
+    "inventory_url": "https://dealer.porsche.com/ca/quebec/fr-CA/vehicules-neufs/",
+    "spider": "porsche_qc_spider",
+    "active": false
+  },
+  {
     "slug": "theetge-acura",
     "name": "Theetge Acura",
     "brand": "Acura",
     "city": "Québec",
-    "address": "2300 Rue Cyrille-Duquet, Québec, QC G1N 2G3",
-    "phone": "418-687-4451",
+    "address": "4901 Boul. des Galeries, Québec, QC G2K 1X1",
+    "phone": "418-622-8180",
     "website": "https://www.theetgeacura.com",
     "inventory_url": "https://www.theetgeacura.com/inventaire/neuf/",
     "spider": "acura_qc_spider",
@@ -561,6 +657,30 @@
     "website": "https://www.infinitiquebec.com",
     "inventory_url": "https://www.infinitiquebec.com/inventaire/neuf/",
     "spider": "infiniti_qc_spider",
+    "active": false
+  },
+  {
+    "slug": "boulevard-lexus",
+    "name": "Boulevard Lexus",
+    "brand": "Lexus",
+    "city": "Québec",
+    "address": "2335 Boul. du Versant-Nord, Québec, QC G1N 4B1",
+    "phone": "418-687-4451",
+    "website": "https://boulevardlexus.com",
+    "inventory_url": "https://boulevardlexus.com/inventaire/neuf/",
+    "spider": "lexus_qc_spider",
+    "active": false
+  },
+  {
+    "slug": "tesla-quebec",
+    "name": "Tesla Québec",
+    "brand": "Tesla",
+    "city": "Québec",
+    "address": "2180 Rue Cyrille-Duquet, Québec, QC G1N 2E5",
+    "phone": "581-318-8862",
+    "website": "https://www.tesla.com/fr_CA/findus/location/store/quebeccityruecyrilleduquet",
+    "inventory_url": "https://www.tesla.com/fr_CA/inventory/new/m3",
+    "spider": "tesla_qc_spider",
     "active": false
   }
 ]
