@@ -270,7 +270,11 @@ def scrape_magnetis_page(url, dealer, condition):
                     if condition == "used":
                         mil = item.get("mileageFromOdometer", {})
                         if isinstance(mil, dict):
-                            mileage = int(float(mil.get("value", 0) or 0))
+                            try:
+                                raw = float(mil.get("value", 0) or 0)
+                                mileage = int(raw) if 0 <= raw <= 999_999 else 0
+                            except (ValueError, TypeError):
+                                pass
 
                     vehicles.append({
                         "ingest_source": "copilot",
@@ -430,15 +434,21 @@ def scrape_d2c_page(url, dealer, condition):
             if sku in ld_by_sku:
                 mil = ld_by_sku[sku].get("mileageFromOdometer", {})
                 if isinstance(mil, dict):
-                    mileage = int(float(mil.get("value", 0) or 0))
+                    try:
+                        raw = float(mil.get("value", 0) or 0)
+                        mileage = int(raw) if 0 <= raw <= 999_999 else 0
+                    except (ValueError, TypeError):
+                        pass
             # Also try to parse from card description
             if not mileage:
                 desc_el = card.select_one(".carDescriptionContent")
                 if desc_el:
-                    km_m = re.search(r"([\d\s,]+)\s*KM", desc_el.get_text())
+                    # Match first well-formatted km number: "28 999 KM" or "28,999 KM"
+                    km_m = re.search(r"(\d{1,3}(?:[ ,]\d{3})*)\s*KM", desc_el.get_text())
                     if km_m:
                         try:
-                            mileage = int(re.sub(r"[^\d]", "", km_m.group(1)))
+                            val = int(re.sub(r"[^\d]", "", km_m.group(1)))
+                            mileage = val if 0 <= val <= 999_999 else 0
                         except ValueError:
                             pass
 

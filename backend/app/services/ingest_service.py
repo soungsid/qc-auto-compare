@@ -98,7 +98,8 @@ def _detect_changes(existing: Vehicle, payload: VehicleIngestPayload) -> dict:
         "condition": validated_condition,
         "drivetrain": normalize_drivetrain(payload.drivetrain),
         "transmission": normalize_transmission(payload.transmission),
-        "mileage_km": payload.mileage_km,
+        # Guard-rail: mileage must fit in int32 and be plausible (max 999,999 km)
+        "mileage_km": payload.mileage_km if (payload.mileage_km is not None and 0 <= payload.mileage_km <= 999_999) else None,
     }
 
     for field, new_value in field_map.items():
@@ -296,7 +297,7 @@ async def ingest_vehicle(
                 msrp=normalize_price(payload.msrp),
                 sale_price=normalize_price(payload.sale_price),
                 freight_pdi=normalize_price(payload.freight_pdi),
-                mileage_km=payload.mileage_km,
+                mileage_km=payload.mileage_km if (payload.mileage_km is not None and 0 <= payload.mileage_km <= 999_999) else None,
                 listing_url=payload.listing_url,
                 image_url=payload.image_url,
                 ingest_source=payload.ingest_source,
