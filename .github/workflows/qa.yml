@@ -1,0 +1,108 @@
+name: 🤖 QA Automatisée — auto.canadaquebec.ca
+
+on:
+  push:
+    branches: [main, feat/qa-e2e]
+  schedule:
+    # Toutes les 6 heures (minuit, 6h, midi, 18h — heure de Montréal = UTC-4/5)
+    - cron: '0 4,10,16,22 * * *'
+  workflow_dispatch:
+    inputs:
+      tags:
+        description: 'Tags Cucumber à exécuter (ex: @smoke, @slider). Vide = tous les tests.'
+        required: false
+        default: ''
+
+jobs:
+  qa-e2e:
+    name: Tests E2E Playwright + Cucumber
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      # 1. Récupérer le code
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      # 2. Node.js
+      - name: ⚙️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: e2e/package-lock.json
+
+      # 3. Installer les dépendances e2e
+      - name: 📦 Installer les dépendances e2e
+        working-directory: e2e
+        run: npm install
+
+      # 4. Installer le navigateur Playwright (Chromium seulement)
+      - name: 🌐 Installer Chromium
+        working-directory: e2e
+        run: npx playwright install chromium --with-deps
+
+      # 5. Installer Allure CLI
+      - name: 📊 Installer Allure CLI
+        run: npm install -g allure-commandline
+
+      # 6. Lancer les tests
+      - name: 🧪 Lancer les tests QA
+        run: |
+          TAGS="${{ github.event.inputs.tags }}"
+          if [ -n "$TAGS" ]; then
+            npx cucumber-js --tags "$TAGS"
+          else
+            npx cucumber-js
+          fi
+        env:
+          QA_BASE_URL: https://auto.canadaquebec.ca
+          HEADLESS: 'true'
+        continue-on-error: true  # Générer le rapport même si des tests échouent
+
+      # 7. Générer le rapport Allure
+      - name: 📈 Générer le rapport Allure
+        if: always()
+        run: allure generate e2e/allure-results -o e2e/allure-report --clean
+
+      # 8. Publier le rapport sur GitHub Pages
+      - name: 🚀 Publier rapport sur GitHub Pages
+        if: always()
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: e2e/allure-report
+          destination_dir: qa-report
+
+      # 9. Uploader les artefacts (screenshots d'échecs, rapport JSON)
+      - name: 📎 Uploader les artefacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qa-rapport-${{ github.run_number }}
+          path: |
+            e2e/reports/
+            e2e/allure-results/
+          retention-days: 30
+
+      # 10. Notification Slack si des tests échouent
+      - name: 🔔 Notifier Slack (échec)
+        if: failure()
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          payload: |
+            {
+              "text": "❌ *QA auto.canadaquebec.ca — Échec détecté*",
+              "attachments": [{
+                "color": "danger",
+                "fields": [
+                  { "title": "Branche", "value": "${{ github.ref_name }}", "short": true },
+                  { "title": "Run", "value": "#${{ github.run_number }}", "short": true },
+                  { "title": "Rapport", "value": "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/qa-report" }
+                ]
+              }]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+        continue-on-error: true  # Ne pas bloquer si le webhook n'est pas configuré

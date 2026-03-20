@@ -41,3 +41,12 @@ crawler/output*.csv
 # OS
 .DS_Store
 Thumbs.db
+
+# E2E QA
+e2e/node_modules/
+e2e/dist/
+e2e/allure-results/
+e2e/allure-report/
+e2e/reports/screenshots/
+e2e/reports/*.html
+e2e/reports/*.json
