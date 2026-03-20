@@ -13,8 +13,7 @@ build/
 *.db-shm
 *.db-wal
 
-# Alembic
-backend/app/db/migrations/versions/
+# Alembic — migration versions MUST be tracked in git
 
 # Environment
 .env
