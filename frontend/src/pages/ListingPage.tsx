@@ -84,6 +84,30 @@ export function ListingPage() {
             </p>
           </div>
           <div className="flex items-center gap-4">
+            {/* Navigation links */}
+            <nav className="hidden md:flex items-center gap-4">
+              <a 
+                href="/dealers" 
+                className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                data-testid="nav-dealers-link"
+              >
+                Concessionnaires
+              </a>
+              <a 
+                href="/about" 
+                className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                data-testid="nav-about-link"
+              >
+                À propos
+              </a>
+              <a 
+                href="/contact" 
+                className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                data-testid="nav-contact-link"
+              >
+                Contact
+              </a>
+            </nav>
             <div className="text-right text-xs text-gray-400 dark:text-gray-500 hidden sm:block">
               {stats && (
                 <>

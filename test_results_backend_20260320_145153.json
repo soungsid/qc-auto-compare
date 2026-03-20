@@ -1,0 +1,101 @@
+{
+  "timestamp": "20260320_145153",
+  "base_url": "https://vehicle-search-fix.preview.emergentagent.com",
+  "summary": {
+    "tests_run": 10,
+    "tests_passed": 10,
+    "success_rate": 100.0
+  },
+  "test_results": [
+    {
+      "name": "Health Check",
+      "method": "GET",
+      "endpoint": "/health",
+      "expected_status": 200,
+      "actual_status": 200,
+      "success": true,
+      "url": "https://vehicle-search-fix.preview.emergentagent.com/health"
+    },
+    {
+      "name": "Vehicle List",
+      "method": "GET",
+      "endpoint": "/api/vehicles",
+      "expected_status": 200,
+      "actual_status": 200,
+      "success": true,
+      "url": "https://vehicle-search-fix.preview.emergentagent.com/api/vehicles"
+    },
+    {
+      "name": "Vehicle List with Filters",
+      "method": "GET",
+      "endpoint": "/api/vehicles",
+      "expected_status": 200,
+      "actual_status": 200,
+      "success": true,
+      "url": "https://vehicle-search-fix.preview.emergentagent.com/api/vehicles"
+    },
+    {
+      "name": "Crawl Stats",
+      "method": "GET",
+      "endpoint": "/api/crawl/stats",
+      "expected_status": 200,
+      "actual_status": 200,
+      "success": true,
+      "url": "https://vehicle-search-fix.preview.emergentagent.com/api/crawl/stats"
+    },
+    {
+      "name": "Dealers List",
+      "method": "GET",
+      "endpoint": "/api/dealers",
+      "expected_status": 200,
+      "actual_status": 200,
+      "success": true,
+      "url": "https://vehicle-search-fix.preview.emergentagent.com/api/dealers"
+    },
+    {
+      "name": "Filter Options",
+      "method": "GET",
+      "endpoint": "/api/filters/options",
+      "expected_status": 200,
+      "actual_status": 200,
+      "success": true,
+      "url": "https://vehicle-search-fix.preview.emergentagent.com/api/filters/options"
+    },
+    {
+      "name": "Active Vehicles Only",
+      "method": "GET",
+      "endpoint": "/api/vehicles",
+      "expected_status": 200,
+      "actual_status": 200,
+      "success": true,
+      "url": "https://vehicle-search-fix.preview.emergentagent.com/api/vehicles"
+    },
+    {
+      "name": "Crawl Reconcile (Test)",
+      "method": "POST",
+      "endpoint": "/api/crawl/reconcile",
+      "expected_status": 404,
+      "actual_status": 404,
+      "success": true,
+      "url": "https://vehicle-search-fix.preview.emergentagent.com/api/crawl/reconcile"
+    },
+    {
+      "name": "Crawl Status",
+      "method": "GET",
+      "endpoint": "/api/crawl/status",
+      "expected_status": 200,
+      "actual_status": 200,
+      "success": true,
+      "url": "https://vehicle-search-fix.preview.emergentagent.com/api/crawl/status"
+    },
+    {
+      "name": "Ingest Batch",
+      "method": "POST",
+      "endpoint": "/api/ingest/batch",
+      "expected_status": 200,
+      "actual_status": 200,
+      "success": true,
+      "url": "https://vehicle-search-fix.preview.emergentagent.com/api/ingest/batch"
+    }
+  ]
+}

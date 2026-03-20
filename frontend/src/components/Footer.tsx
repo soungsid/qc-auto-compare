@@ -38,7 +38,7 @@ export function Footer() {
                 </a>
               </li>
               <li>
-                <a href="/dealers" className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                <a href="/dealers" className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors" data-testid="footer-dealers-link">
                   Concessionnaires
                 </a>
               </li>

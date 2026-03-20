@@ -25,7 +25,7 @@ export const config = {
   gtmId: import.meta.env.VITE_GTM_ID || '',
   
   // Backend URL
-  backendUrl: import.meta.env.VITE_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL || 'http://localhost:8000',
+  backendUrl: import.meta.env.VITE_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL || 'https://vehicle-search-fix.preview.emergentagent.com',
 }
 
 // Export des valeurs individuelles pour faciliter l'import

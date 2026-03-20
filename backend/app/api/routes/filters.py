@@ -13,17 +13,25 @@ from app.db.models import Dealer, Vehicle
 router = APIRouter(prefix="/filters", tags=["Filters"])
 
 
+class BrandModel(BaseModel):
+    model: str
+    count: int
+
+class BrandWithModels(BaseModel):
+    brand: str
+    total_count: int
+    models: list[BrandModel]
+
 class FilterOptionsResponse(BaseModel):
     """Available filter options based on actual data in the database."""
-    makes: list[str]
-    models: dict[str, list[str]]  # {"Nissan": ["Kicks", "Rogue"], ...}
+    brands: list[BrandWithModels]  # [{brand: "Nissan", total_count: 100, models: [{model: "Kicks", count: 20}]}]
     body_types: list[dict[str, int | str]]  # [{"body_type": "VUS", "count": 1416}, ...]
     fuel_types: list[dict[str, int | str]]  # [{"fuel_type": "Essence", "count": 2269}, ...]
     conditions: list[str]
-    drivetrains: list[str]
-    transmissions: list[str]
+    drivetrains: list[dict[str, int | str]]  # [{"drivetrain": "AWD", "count": 500}]
+    transmissions: list[dict[str, int | str]]  # [{"transmission": "Automatique", "count": 800}]
     cities: list[str]
-    years: list[int]
+    years: dict[str, Optional[int]]  # {"min": 2018, "max": 2026}
     ingest_sources: list[str]
     price_range: dict[str, Optional[float]]
     mileage_range: dict[str, Optional[int]]
@@ -40,27 +48,28 @@ async def get_filter_options(
     BUG #3 FIX: Instead of hardcoded values, this endpoint queries the database
     to return only values that exist in the current dataset.
     """
-    # Get distinct makes
-    makes_result = await db.execute(
-        select(distinct(Vehicle.make))
+    # Get brands with models and counts
+    brands_models_result = await db.execute(
+        select(
+            Vehicle.make,
+            Vehicle.model,
+            func.count(Vehicle.id).label('count')
+        )
         .where(Vehicle.is_active == True)
-        .order_by(Vehicle.make)
+        .group_by(Vehicle.make, Vehicle.model)
+        .order_by(Vehicle.make, func.count(Vehicle.id).desc())
     )
-    makes = [row[0] for row in makes_result if row[0]]
-
-    # Get models grouped by make
-    models_result = await db.execute(
-        select(Vehicle.make, Vehicle.model)
-        .where(Vehicle.is_active == True)
-        .distinct()
-        .order_by(Vehicle.make, Vehicle.model)
-    )
-    models_dict: dict[str, list[str]] = {}
-    for make, model in models_result:
-        if make not in models_dict:
-            models_dict[make] = []
-        if model not in models_dict[make]:
-            models_dict[make].append(model)
+    
+    # Build brands with models structure
+    brands_dict: dict[str, dict] = {}
+    for make, model, count in brands_models_result.all():
+        if make not in brands_dict:
+            brands_dict[make] = {"brand": make, "total_count": 0, "models": []}
+        brands_dict[make]["total_count"] += count
+        brands_dict[make]["models"].append({"model": model, "count": count})
+    
+    # Sort brands by total_count descending
+    brands = sorted(brands_dict.values(), key=lambda x: x["total_count"], reverse=True)
     
     # Get body types with counts
     body_types_result = await db.execute(
@@ -102,23 +111,37 @@ async def get_filter_options(
     )
     conditions = [row[0] for row in conditions_result if row[0]]
 
-    # Get distinct drivetrains
+    # Get drivetrains with counts
     drivetrains_result = await db.execute(
-        select(distinct(Vehicle.drivetrain))
+        select(
+            Vehicle.drivetrain,
+            func.count(Vehicle.id).label('count')
+        )
         .where(Vehicle.is_active == True)
         .where(Vehicle.drivetrain.isnot(None))
-        .order_by(Vehicle.drivetrain)
+        .group_by(Vehicle.drivetrain)
+        .order_by(func.count(Vehicle.id).desc())
     )
-    drivetrains = [row[0] for row in drivetrains_result if row[0]]
+    drivetrains = [
+        {"drivetrain": dt, "count": count}
+        for dt, count in drivetrains_result.all()
+    ]
 
-    # Get distinct transmissions
+    # Get transmissions with counts
     transmissions_result = await db.execute(
-        select(distinct(Vehicle.transmission))
+        select(
+            Vehicle.transmission,
+            func.count(Vehicle.id).label('count')
+        )
         .where(Vehicle.is_active == True)
         .where(Vehicle.transmission.isnot(None))
-        .order_by(Vehicle.transmission)
+        .group_by(Vehicle.transmission)
+        .order_by(func.count(Vehicle.id).desc())
     )
-    transmissions = [row[0] for row in transmissions_result if row[0]]
+    transmissions = [
+        {"transmission": trans, "count": count}
+        for trans, count in transmissions_result.all()
+    ]
 
     # Get distinct cities from dealers
     cities_result = await db.execute(
@@ -130,13 +153,18 @@ async def get_filter_options(
     )
     cities = [row[0] for row in cities_result if row[0]]
 
-    # Get distinct years
+    # Get year range (min and max)
     years_result = await db.execute(
-        select(distinct(Vehicle.year))
-        .where(Vehicle.is_active == True)
-        .order_by(Vehicle.year.desc())
+        select(
+            func.min(Vehicle.year),
+            func.max(Vehicle.year)
+        ).where(Vehicle.is_active == True)
     )
-    years = [row[0] for row in years_result if row[0]]
+    years_row = years_result.first()
+    years = {
+        "min": years_row[0] if years_row and years_row[0] else None,
+        "max": years_row[1] if years_row and years_row[1] else None,
+    }
 
     # Get distinct ingest sources
     sources_result = await db.execute(
@@ -183,8 +211,7 @@ async def get_filter_options(
     colors = [row[0] for row in colors_result if row[0]]
 
     return FilterOptionsResponse(
-        makes=makes,
-        models=models_dict,
+        brands=brands,
         body_types=body_types,
         fuel_types=fuel_types,
         conditions=conditions,

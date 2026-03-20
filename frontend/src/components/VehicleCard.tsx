@@ -91,7 +91,7 @@ export function VehicleCard({ vehicle }: Props) {
               {fmt(msrp)}
             </span>
           )}
-          {savings && savings > 0 && (
+          {savings != null && savings > 0 && (
             <span className="text-sm font-semibold text-green-600 dark:text-green-400">
               -{fmt(savings)}
             </span>

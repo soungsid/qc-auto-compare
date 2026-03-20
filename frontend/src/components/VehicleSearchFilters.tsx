@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import type { VehicleFilters } from '../types'
 
 interface FilterOptions {
@@ -15,6 +15,7 @@ interface FilterOptions {
   years: { min: number; max: number }
   price_range: { min: number; max: number }
   mileage_range: { min: number; max: number }
+  conditions: string[]
 }
 
 interface Props {
@@ -31,8 +32,8 @@ interface Props {
  * - Overlay mobile avec bouton d'ouverture
  * - Sections accordéon
  * - Marque & Modèle hiérarchiques
- * - Sliders de plage
- * - Sélecteur de couleurs visuelles
+ * - Sliders bidirectionnels (min/max)
+ * - Filtre neuf/occasion avec option "Tous"
  */
 export function VehicleSearchFilters({ onChange, onReset, totalResults = 0, collapsed = false, onToggleCollapse }: Props) {
   const [mobileOpen, setMobileOpen] = useState(false)
@@ -58,28 +59,41 @@ export function VehicleSearchFilters({ onChange, onReset, totalResults = 0, coll
   const [selectedTransmissions, setSelectedTransmissions] = useState<string[]>([])
   const [selectedDrivetrains, setSelectedDrivetrains] = useState<string[]>([])
   const [selectedColors, setSelectedColors] = useState<string[]>([])
-  const [priceRange, setPriceRange] = useState({ min: 0, max: 70000 })
-  const [mileageRange, setMileageRange] = useState({ min: 0, max: 150000 })
+  const [vehicleCondition, setVehicleCondition] = useState<'all' | 'new' | 'used'>('all')
+  const [priceRange, setPriceRange] = useState({ min: 0, max: 100000 })
+  const [mileageRange, setMileageRange] = useState({ min: 0, max: 300000 })
   const [yearRange, setYearRange] = useState({ min: 2000, max: 2026 })
+  const [priceSliderValues, setPriceSliderValues] = useState({ min: 0, max: 100000 })
+  const [mileageSliderValues, setMileageSliderValues] = useState({ min: 0, max: 300000 })
+  const [yearSliderValues, setYearSliderValues] = useState({ min: 2000, max: 2026 })
 
   // Fetch filter options from API
   useEffect(() => {
     const fetchOptions = async () => {
       try {
-        const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8001'
+        const backendUrl = import.meta.env.VITE_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL || 'https://vehicle-search-fix.preview.emergentagent.com'
         const response = await fetch(`${backendUrl}/api/filters/options`)
         const data = await response.json()
         setFilterOptions(data)
         
         // Set initial ranges from API
         if (data.price_range) {
-          setPriceRange({ min: data.price_range.min, max: data.price_range.max })
+          const min = Math.floor(data.price_range.min || 0)
+          const max = Math.ceil(data.price_range.max || 100000)
+          setPriceRange({ min, max })
+          setPriceSliderValues({ min, max })
         }
         if (data.years) {
-          setYearRange({ min: data.years.min, max: data.years.max })
+          const min = data.years.min || 2000
+          const max = data.years.max || 2026
+          setYearRange({ min, max })
+          setYearSliderValues({ min, max })
         }
         if (data.mileage_range) {
-          setMileageRange({ min: data.mileage_range.min, max: data.mileage_range.max })
+          const min = data.mileage_range.min || 0
+          const max = data.mileage_range.max || 300000
+          setMileageRange({ min, max })
+          setMileageSliderValues({ min, max })
         }
       } catch (error) {
         console.error('Error fetching filter options:', error)
@@ -122,10 +136,15 @@ export function VehicleSearchFilters({ onChange, onReset, totalResults = 0, coll
     })
   }
 
-  const handleApplyFilters = () => {
+  const handleApplyFilters = useCallback(() => {
     // Build filter query
     const newFilters: Partial<VehicleFilters> = {
       page: 1,
+    }
+
+    // Vehicle condition (neuf/occasion/tous)
+    if (vehicleCondition !== 'all') {
+      newFilters.condition = vehicleCondition
     }
 
     // Brands & Models
@@ -135,51 +154,72 @@ export function VehicleSearchFilters({ onChange, onReset, totalResults = 0, coll
 
     // Body types
     if (selectedBodyTypes.length > 0) {
-      // @ts-ignore - body_type will be added to VehicleFilters
       newFilters.body_type = selectedBodyTypes[0]
     }
 
-    // Price
-    if (priceRange.min > (filterOptions?.price_range.min || 0)) {
-      newFilters.min_price = priceRange.min
-    }
-    if (priceRange.max < (filterOptions?.price_range.max || 100000)) {
-      newFilters.max_price = priceRange.max
+    // Fuel types
+    if (selectedFuelTypes.length > 0) {
+      newFilters.fuel_type = selectedFuelTypes[0]
     }
 
-    // Year
-    if (yearRange.min > (filterOptions?.years.min || 2000)) {
-      newFilters.year_min = yearRange.min
-    }
-    if (yearRange.max < (filterOptions?.years.max || 2026)) {
-      newFilters.year_max = yearRange.max
+    // Transmissions (handled via backend if supported)
+    // Drivetrains
+    if (selectedDrivetrains.length > 0) {
+      newFilters.drivetrain = selectedDrivetrains[0]
     }
 
-    // Mileage
-    if (mileageRange.max < (filterOptions?.mileage_range.max || 150000)) {
-      newFilters.mileage_max = mileageRange.max
+    // Price range (bidirectional)
+    if (priceSliderValues.min > (filterOptions?.price_range.min || 0)) {
+      newFilters.min_price = priceSliderValues.min
+    }
+    if (priceSliderValues.max < (filterOptions?.price_range.max || 100000)) {
+      newFilters.max_price = priceSliderValues.max
+    }
+
+    // Year range (bidirectional)
+    if (yearSliderValues.min > (filterOptions?.years.min || 2000)) {
+      newFilters.year_min = yearSliderValues.min
+    }
+    if (yearSliderValues.max < (filterOptions?.years.max || 2026)) {
+      newFilters.year_max = yearSliderValues.max
+    }
+
+    // Mileage range (bidirectional)
+    if (mileageSliderValues.min > 0) {
+      // Backend would need min_mileage support - for now we only have mileage_max
+    }
+    if (mileageSliderValues.max < (filterOptions?.mileage_range.max || 300000)) {
+      newFilters.mileage_max = mileageSliderValues.max
     }
 
     onChange(newFilters)
     setMobileOpen(false)
-  }
+  }, [
+    vehicleCondition, selectedBrands, selectedBodyTypes, selectedFuelTypes,
+    selectedDrivetrains, priceSliderValues, yearSliderValues, mileageSliderValues,
+    filterOptions, onChange
+  ])
 
   const handleReset = () => {
+    setVehicleCondition('all')
     setSelectedBrands([])
     setSelectedModels({})
     setSelectedBodyTypes([])
+    setSelectedFuelTypes([])
     setSelectedTransmissions([])
     setSelectedDrivetrains([])
     setSelectedColors([])
-    setPriceRange({ min: filterOptions?.price_range.min || 0, max: filterOptions?.price_range.max || 70000 })
-    setMileageRange({ min: 0, max: filterOptions?.mileage_range.max || 150000 })
-    setYearRange({ min: filterOptions?.years.min || 2000, max: filterOptions?.years.max || 2026 })
+    setPriceSliderValues({ min: filterOptions?.price_range.min || 0, max: filterOptions?.price_range.max || 100000 })
+    setMileageSliderValues({ min: 0, max: filterOptions?.mileage_range.max || 300000 })
+    setYearSliderValues({ min: filterOptions?.years.min || 2000, max: filterOptions?.years.max || 2026 })
     onReset()
   }
 
   const activeFiltersCount = 
+    (vehicleCondition !== 'all' ? 1 : 0) +
     selectedBrands.length + 
     selectedBodyTypes.length + 
+    selectedFuelTypes.length +
     selectedTransmissions.length + 
     selectedDrivetrains.length + 
     selectedColors.length
@@ -302,7 +342,7 @@ export function VehicleSearchFilters({ onChange, onReset, totalResults = 0, coll
           </div>
         ) : (
           <div className="p-4 space-y-4">
-          {/* Type de véhicule */}
+          {/* Type de véhicule - avec option "Tous" */}
           <Section
             title="Type de véhicule"
             isOpen={openSections.type}
@@ -313,9 +353,23 @@ export function VehicleSearchFilters({ onChange, onReset, totalResults = 0, coll
                 <input
                   type="radio"
                   name="vehicle-type"
-                  value="used"
-                  defaultChecked
+                  value="all"
+                  checked={vehicleCondition === 'all'}
+                  onChange={() => setVehicleCondition('all')}
                   className="w-4 h-4 text-blue-600"
+                  data-testid="filter-condition-all"
+                />
+                <span className="text-sm text-gray-700 dark:text-gray-300">Tous les véhicules</span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name="vehicle-type"
+                  value="used"
+                  checked={vehicleCondition === 'used'}
+                  onChange={() => setVehicleCondition('used')}
+                  className="w-4 h-4 text-blue-600"
+                  data-testid="filter-condition-used"
                 />
                 <span className="text-sm text-gray-700 dark:text-gray-300">Véhicules d'occasion</span>
               </label>
@@ -324,9 +378,12 @@ export function VehicleSearchFilters({ onChange, onReset, totalResults = 0, coll
                   type="radio"
                   name="vehicle-type"
                   value="new"
+                  checked={vehicleCondition === 'new'}
+                  onChange={() => setVehicleCondition('new')}
                   className="w-4 h-4 text-blue-600"
+                  data-testid="filter-condition-new"
                 />
-                <span className="text-sm text-gray-700 dark:text-gray-300">Véhicules neufs (spéciaux)</span>
+                <span className="text-sm text-gray-700 dark:text-gray-300">Véhicules neufs</span>
               </label>
             </div>
           </Section>
@@ -338,6 +395,9 @@ export function VehicleSearchFilters({ onChange, onReset, totalResults = 0, coll
             onToggle={() => toggleSection('brand')}
           >
             <div className="space-y-2">
+              {visibleBrands.length === 0 && (
+                <p className="text-sm text-gray-400 italic">Aucune marque disponible</p>
+              )}
               {visibleBrands.map((brandData) => (
                 <div key={brandData.brand}>
                   <div className="flex items-center justify-between">
@@ -347,6 +407,7 @@ export function VehicleSearchFilters({ onChange, onReset, totalResults = 0, coll
                         checked={selectedBrands.includes(brandData.brand)}
                         onChange={() => handleBrandSelect(brandData.brand)}
                         className="w-4 h-4 text-blue-600 rounded"
+                        data-testid={`filter-brand-${brandData.brand}`}
                       />
                       <span className="text-sm font-medium text-gray-900 dark:text-white">
                         {brandData.brand} <span className="text-gray-400">({brandData.total_count})</span>
@@ -408,6 +469,9 @@ export function VehicleSearchFilters({ onChange, onReset, totalResults = 0, coll
             onToggle={() => toggleSection('bodyType')}
           >
             <div className="grid grid-cols-2 gap-2">
+              {filterOptions?.body_types.length === 0 && (
+                <p className="col-span-2 text-sm text-gray-400 italic">Aucun type disponible</p>
+              )}
               {filterOptions?.body_types.map((bt) => (
                 <button
                   key={bt.body_type}
@@ -425,6 +489,7 @@ export function VehicleSearchFilters({ onChange, onReset, totalResults = 0, coll
                       : 'border-gray-200 dark:border-slate-600 hover:border-gray-300'
                     }
                   `}
+                  data-testid={`filter-body-${bt.body_type}`}
                 >
                   <span className="text-2xl mb-1">{bodyTypeIcons[bt.body_type] || '🚗'}</span>
                   <span className="text-xs font-medium text-gray-700 dark:text-gray-300">{bt.body_type}</span>
@@ -434,7 +499,7 @@ export function VehicleSearchFilters({ onChange, onReset, totalResults = 0, coll
             </div>
           </Section>
 
-          {/* Prix */}
+          {/* Prix - Slider bidirectionnel */}
           <Section
             title="Prix"
             isOpen={openSections.price}
@@ -442,22 +507,21 @@ export function VehicleSearchFilters({ onChange, onReset, totalResults = 0, coll
           >
             <div className="space-y-3">
               <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400">
-                <span>{priceRange.min.toLocaleString('fr-CA')} $</span>
-                <span>{priceRange.max.toLocaleString('fr-CA')} $</span>
+                <span>{priceSliderValues.min.toLocaleString('fr-CA')} $</span>
+                <span>{priceSliderValues.max.toLocaleString('fr-CA')} $</span>
               </div>
-              <input
-                type="range"
-                min={filterOptions?.price_range.min || 0}
-                max={filterOptions?.price_range.max || 70000}
+              <DualRangeSlider
+                min={priceRange.min}
+                max={priceRange.max}
                 step={500}
-                value={priceRange.max}
-                onChange={(e) => setPriceRange({ ...priceRange, max: parseInt(e.target.value) })}
-                className="w-full"
+                values={priceSliderValues}
+                onChange={setPriceSliderValues}
+                testIdPrefix="price"
               />
             </div>
           </Section>
 
-          {/* Kilométrage */}
+          {/* Kilométrage - Slider bidirectionnel */}
           <Section
             title="Kilométrage"
             isOpen={openSections.mileage}
@@ -465,22 +529,21 @@ export function VehicleSearchFilters({ onChange, onReset, totalResults = 0, coll
           >
             <div className="space-y-3">
               <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400">
-                <span>{mileageRange.min.toLocaleString('fr-CA')} km</span>
-                <span>{mileageRange.max.toLocaleString('fr-CA')} km</span>
+                <span>{mileageSliderValues.min.toLocaleString('fr-CA')} km</span>
+                <span>{mileageSliderValues.max.toLocaleString('fr-CA')} km</span>
               </div>
-              <input
-                type="range"
-                min={0}
-                max={filterOptions?.mileage_range.max || 150000}
+              <DualRangeSlider
+                min={mileageRange.min}
+                max={mileageRange.max}
                 step={5000}
-                value={mileageRange.max}
-                onChange={(e) => setMileageRange({ ...mileageRange, max: parseInt(e.target.value) })}
-                className="w-full"
+                values={mileageSliderValues}
+                onChange={setMileageSliderValues}
+                testIdPrefix="mileage"
               />
             </div>
           </Section>
 
-          {/* Année */}
+          {/* Année - Slider bidirectionnel */}
           <Section
             title="Année"
             isOpen={openSections.year}
@@ -488,15 +551,16 @@ export function VehicleSearchFilters({ onChange, onReset, totalResults = 0, coll
           >
             <div className="space-y-3">
               <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400">
-                <span>Année min: {yearRange.min}</span>
+                <span>De {yearSliderValues.min}</span>
+                <span>À {yearSliderValues.max}</span>
               </div>
-              <input
-                type="range"
-                min={filterOptions?.years.min || 2000}
-                max={filterOptions?.years.max || 2026}
-                value={yearRange.min}
-                onChange={(e) => setYearRange({ ...yearRange, min: parseInt(e.target.value) })}
-                className="w-full"
+              <DualRangeSlider
+                min={yearRange.min}
+                max={yearRange.max}
+                step={1}
+                values={yearSliderValues}
+                onChange={setYearSliderValues}
+                testIdPrefix="year"
               />
             </div>
           </Section>
@@ -508,6 +572,9 @@ export function VehicleSearchFilters({ onChange, onReset, totalResults = 0, coll
             onToggle={() => toggleSection('transmission')}
           >
             <div className="space-y-2">
+              {filterOptions?.transmissions.length === 0 && (
+                <p className="text-sm text-gray-400 italic">Aucune transmission disponible</p>
+              )}
               {filterOptions?.transmissions.map((trans) => (
                 <label key={trans.transmission} className="flex items-center gap-2 cursor-pointer">
                   <input
@@ -521,6 +588,7 @@ export function VehicleSearchFilters({ onChange, onReset, totalResults = 0, coll
                       )
                     }}
                     className="w-4 h-4 text-blue-600 rounded"
+                    data-testid={`filter-transmission-${trans.transmission}`}
                   />
                   <span className="text-sm text-gray-700 dark:text-gray-300">
                     {trans.transmission} <span className="text-gray-400">({trans.count})</span>
@@ -537,6 +605,9 @@ export function VehicleSearchFilters({ onChange, onReset, totalResults = 0, coll
             onToggle={() => toggleSection('fuel')}
           >
             <div className="space-y-2">
+              {filterOptions?.fuel_types.length === 0 && (
+                <p className="text-sm text-gray-400 italic">Aucun carburant disponible</p>
+              )}
               {filterOptions?.fuel_types.map((ft) => (
                 <label key={ft.fuel_type} className="flex items-center gap-2 cursor-pointer">
                   <input
@@ -550,6 +621,7 @@ export function VehicleSearchFilters({ onChange, onReset, totalResults = 0, coll
                       )
                     }}
                     className="w-4 h-4 text-blue-600 rounded"
+                    data-testid={`filter-fuel-${ft.fuel_type}`}
                   />
                   <span className="text-sm text-gray-700 dark:text-gray-300">
                     {ft.fuel_type} <span className="text-gray-400">({ft.count})</span>
@@ -566,6 +638,9 @@ export function VehicleSearchFilters({ onChange, onReset, totalResults = 0, coll
             onToggle={() => toggleSection('drivetrain')}
           >
             <div className="space-y-2">
+              {filterOptions?.drivetrains.length === 0 && (
+                <p className="text-sm text-gray-400 italic">Aucune traction disponible</p>
+              )}
               {filterOptions?.drivetrains.map((dt) => (
                 <label key={dt.drivetrain} className="flex items-center gap-2 cursor-pointer">
                   <input
@@ -579,6 +654,7 @@ export function VehicleSearchFilters({ onChange, onReset, totalResults = 0, coll
                       )
                     }}
                     className="w-4 h-4 text-blue-600 rounded"
+                    data-testid={`filter-drivetrain-${dt.drivetrain}`}
                   />
                   <span className="text-sm text-gray-700 dark:text-gray-300">
                     {dt.drivetrain} <span className="text-gray-400">({dt.count})</span>
@@ -611,6 +687,7 @@ export function VehicleSearchFilters({ onChange, onReset, totalResults = 0, coll
                   `}
                   style={{ backgroundColor: hex }}
                   title={name}
+                  data-testid={`filter-color-${name}`}
                 />
               ))}
             </div>
@@ -689,6 +766,72 @@ function Section({ title, isOpen, onToggle, children }: SectionProps) {
         </svg>
       </button>
       {isOpen && <div>{children}</div>}
+    </div>
+  )
+}
+
+// Dual Range Slider component for bidirectional min/max selection
+interface DualRangeSliderProps {
+  min: number
+  max: number
+  step: number
+  values: { min: number; max: number }
+  onChange: (values: { min: number; max: number }) => void
+  testIdPrefix: string
+}
+
+function DualRangeSlider({ min, max, step, values, onChange, testIdPrefix }: DualRangeSliderProps) {
+  const handleMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newMin = Math.min(parseInt(e.target.value), values.max - step)
+    onChange({ ...values, min: newMin })
+  }
+
+  const handleMaxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newMax = Math.max(parseInt(e.target.value), values.min + step)
+    onChange({ ...values, max: newMax })
+  }
+
+  // Calculate percentages for track fill
+  const minPercent = ((values.min - min) / (max - min)) * 100
+  const maxPercent = ((values.max - min) / (max - min)) * 100
+
+  return (
+    <div className="relative h-6">
+      {/* Background track */}
+      <div className="absolute w-full h-2 bg-gray-200 dark:bg-slate-600 rounded top-1/2 -translate-y-1/2" />
+      
+      {/* Active track (filled portion) */}
+      <div
+        className="absolute h-2 bg-blue-500 rounded top-1/2 -translate-y-1/2"
+        style={{
+          left: `${minPercent}%`,
+          width: `${maxPercent - minPercent}%`
+        }}
+      />
+      
+      {/* Min slider */}
+      <input
+        type="range"
+        min={min}
+        max={max}
+        step={step}
+        value={values.min}
+        onChange={handleMinChange}
+        className="absolute w-full h-2 appearance-none bg-transparent pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:bg-blue-600 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-md [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:bg-blue-600 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:border-0 top-1/2 -translate-y-1/2"
+        data-testid={`${testIdPrefix}-slider-min`}
+      />
+      
+      {/* Max slider */}
+      <input
+        type="range"
+        min={min}
+        max={max}
+        step={step}
+        value={values.max}
+        onChange={handleMaxChange}
+        className="absolute w-full h-2 appearance-none bg-transparent pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:bg-blue-600 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-md [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:bg-blue-600 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:border-0 top-1/2 -translate-y-1/2"
+        data-testid={`${testIdPrefix}-slider-max`}
+      />
     </div>
   )
 }
