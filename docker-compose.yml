@@ -68,6 +68,11 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        VITE_SITE_NAME: ${VITE_SITE_NAME:-Auto Québec}
+        VITE_DOMAIN: ${DOMAIN:-auto.canadaquebec.ca}
+        VITE_GTM_ID: ${VITE_GTM_ID:-}
+        VITE_BACKEND_URL: ""   # Laissé vide = le frontend appelle /api/ via nginx (relatif)
     restart: unless-stopped
     expose:
       - "${FRONTEND_PORT:-3000}"
