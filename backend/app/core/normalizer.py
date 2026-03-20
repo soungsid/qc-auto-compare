@@ -90,6 +90,11 @@ def normalize_transmission(value: Optional[str]) -> Optional[str]:
 
 _PRICE_RE = re.compile(r"[\$,\s]")
 
+# Plausible price range for consumer vehicles (CAD).
+# Rejects data-entry errors and concatenated numbers from scraping bugs.
+_PRICE_MIN = 1_000.0
+_PRICE_MAX = 500_000.0
+
 
 def normalize_price(value: Optional[str | float | int]) -> Optional[float]:
     """
@@ -99,18 +104,23 @@ def normalize_price(value: Optional[str | float | int]) -> Optional[float]:
       - Already numeric: 29_995  →  29995.0
       - String with currency symbols: "$29,995"  →  29995.0
       - String with spaces: "29 995 $"  →  29995.0
-    Returns None for empty or unparseable values.
+    Returns None for empty, unparseable, or implausible values
+    (outside [{_PRICE_MIN:,.0f}, {_PRICE_MAX:,.0f}] CAD).
     """
     if value is None:
         return None
     if isinstance(value, (int, float)):
-        return float(value) if value > 0 else None
-    cleaned = _PRICE_RE.sub("", str(value)).strip()
-    try:
-        result = float(cleaned)
-        return result if result > 0 else None
-    except ValueError:
+        result = float(value)
+    else:
+        cleaned = _PRICE_RE.sub("", str(value)).strip()
+        try:
+            result = float(cleaned)
+        except ValueError:
+            return None
+    if result <= 0:
         return None
+    # Guard-rail: reject implausible prices
+    return result if _PRICE_MIN <= result <= _PRICE_MAX else None
 
 
 # ---------------------------------------------------------------------------

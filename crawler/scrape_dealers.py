@@ -133,12 +133,33 @@ def extract_trim_from_ld_name(ld_name):
     return extract_base_model(name)
 
 
+_PRICE_MIN = 1_000
+_PRICE_MAX = 500_000
+
+
 def clean_price(text):
+    """
+    Extract the first plausible car price from a text string.
+
+    Handles French formatting ("37 399 $", "37\xa0399") and JSON-LD plain integers.
+    Returns None for composite strings (e.g. "37 849 · PDSF: 41 349") — takes only
+    the first number — and rejects implausible values outside [1000, 500000].
+    """
     if not text:
         return None
-    cleaned = re.sub(r"[^\d]", "", str(text))
+    # Normalize: remove currency symbols, replace non-breaking spaces with regular ones
+    normalized = str(text).replace("\xa0", " ").replace("\u202f", " ")
+    normalized = re.sub(r"[\$€,]", "", normalized).strip()
+    # Extract the first contiguous numeric token.
+    # First alternative: French thousands-separated format like "37 399" (space + 3-digit groups).
+    # Second alternative: plain integer like "37849".
+    m = re.search(r"\d{1,3}(?:\s\d{3})+(?:[.]\d{1,2})?|\d+(?:[.]\d{1,2})?", normalized)
+    if not m:
+        return None
+    num_str = re.sub(r"\s", "", m.group())
     try:
-        return float(cleaned) if cleaned else None
+        val = float(num_str)
+        return val if _PRICE_MIN <= val <= _PRICE_MAX else None
     except ValueError:
         return None
 
@@ -385,7 +406,12 @@ def scrape_d2c_page(url, dealer, condition):
         listing_url = build_listing_url(base_url, sku, make, model_raw, year_str, condition)
 
         price_el = card.select_one(".carPrice")
-        price = clean_price(price_el.get_text(strip=True)) if price_el else None
+        if price_el:
+            # Prefer the specific price span to avoid composite text like "37 849 · PDSF: 41 349"
+            span = price_el.select_one(".dollarsigned, .p-base, .price-value")
+            price = clean_price((span or price_el).get_text(strip=True))
+        else:
+            price = None
 
         vin = None
         image_url = None
