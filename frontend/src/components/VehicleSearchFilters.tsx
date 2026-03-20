@@ -8,6 +8,7 @@ interface FilterOptions {
     models: Array<{ model: string; count: number }>
   }>
   body_types: Array<{ body_type: string; count: number }>
+  fuel_types: Array<{ fuel_type: string; count: number }>
   transmissions: Array<{ transmission: string; count: number }>
   drivetrains: Array<{ drivetrain: string; count: number }>
   colors: string[]
@@ -43,6 +44,7 @@ export function VehicleSearchFilters({ onChange, onReset, totalResults = 0, coll
     mileage: false,
     year: false,
     transmission: false,
+    fuel: false,
     drivetrain: false,
     color: false,
   })
@@ -52,6 +54,7 @@ export function VehicleSearchFilters({ onChange, onReset, totalResults = 0, coll
   const [selectedBrands, setSelectedBrands] = useState<string[]>([])
   const [selectedModels, setSelectedModels] = useState<Record<string, string[]>>({})
   const [selectedBodyTypes, setSelectedBodyTypes] = useState<string[]>([])
+  const [selectedFuelTypes, setSelectedFuelTypes] = useState<string[]>([])
   const [selectedTransmissions, setSelectedTransmissions] = useState<string[]>([])
   const [selectedDrivetrains, setSelectedDrivetrains] = useState<string[]>([])
   const [selectedColors, setSelectedColors] = useState<string[]>([])
@@ -293,6 +296,7 @@ export function VehicleSearchFilters({ onChange, onReset, totalResults = 0, coll
             <IconButton icon="📏" label="Kilométrage" onClick={() => { if (onToggleCollapse) onToggleCollapse() }} />
             <IconButton icon="📅" label="Année" onClick={() => { if (onToggleCollapse) onToggleCollapse() }} />
             <IconButton icon="⚙️" label="Transmission" onClick={() => { if (onToggleCollapse) onToggleCollapse() }} />
+            <IconButton icon="⛽" label="Carburant" onClick={() => { if (onToggleCollapse) onToggleCollapse() }} />
             <IconButton icon="🔧" label="Traction" onClick={() => { if (onToggleCollapse) onToggleCollapse() }} />
             <IconButton icon="🎨" label="Couleur" onClick={() => { if (onToggleCollapse) onToggleCollapse() }} />
           </div>
@@ -520,6 +524,35 @@ export function VehicleSearchFilters({ onChange, onReset, totalResults = 0, coll
                   />
                   <span className="text-sm text-gray-700 dark:text-gray-300">
                     {trans.transmission} <span className="text-gray-400">({trans.count})</span>
+                  </span>
+                </label>
+              ))}
+            </div>
+          </Section>
+
+          {/* Carburant */}
+          <Section
+            title="Carburant"
+            isOpen={openSections.fuel}
+            onToggle={() => toggleSection('fuel')}
+          >
+            <div className="space-y-2">
+              {filterOptions?.fuel_types.map((ft) => (
+                <label key={ft.fuel_type} className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={selectedFuelTypes.includes(ft.fuel_type)}
+                    onChange={() => {
+                      setSelectedFuelTypes(prev =>
+                        prev.includes(ft.fuel_type)
+                          ? prev.filter(f => f !== ft.fuel_type)
+                          : [...prev, ft.fuel_type]
+                      )
+                    }}
+                    className="w-4 h-4 text-blue-600 rounded"
+                  />
+                  <span className="text-sm text-gray-700 dark:text-gray-300">
+                    {ft.fuel_type} <span className="text-gray-400">({ft.count})</span>
                   </span>
                 </label>
               ))}

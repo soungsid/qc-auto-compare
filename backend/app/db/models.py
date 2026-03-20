@@ -94,6 +94,7 @@ class Vehicle(Base):
     color_ext: Mapped[Optional[str]] = mapped_column(String(100))
     color_int: Mapped[Optional[str]] = mapped_column(String(100))
     body_type: Mapped[Optional[str]] = mapped_column(String(50))  # Berline, VUS, Coupé, etc.
+    fuel_type: Mapped[Optional[str]] = mapped_column(String(50))  # Essence, Diesel, Électrique, Hybride
     drivetrain: Mapped[Optional[str]] = mapped_column(String(10))
     transmission: Mapped[Optional[str]] = mapped_column(String(20))
     mileage_km: Mapped[int] = mapped_column(Integer, default=0)

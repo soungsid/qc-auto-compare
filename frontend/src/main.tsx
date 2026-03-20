@@ -4,6 +4,9 @@ import ReactDOM from 'react-dom/client'
 import { ListingPage } from './pages/ListingPage'
 import { DealersPage } from './pages/DealersListPage'
 import { LegalPage } from './pages/LegalPage'
+import { AboutPage } from './pages/AboutPage'
+import { ContactPage } from './pages/ContactPage'
+import { BlogPage } from './pages/BlogPage'
 import './styles.css'
 
 const queryClient = new QueryClient({
@@ -31,6 +34,15 @@ function App() {
   }
   if (currentPath === '/legal') {
     return <LegalPage />
+  }
+  if (currentPath === '/about') {
+    return <AboutPage />
+  }
+  if (currentPath === '/contact') {
+    return <ContactPage />
+  }
+  if (currentPath === '/blog') {
+    return <BlogPage />
   }
   return <ListingPage />
 }

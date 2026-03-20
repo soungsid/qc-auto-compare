@@ -59,6 +59,7 @@ class VehicleIngestPayload(BaseModel):
     vin: Optional[str] = None           # Priority #1 for fingerprint
     stock_number: Optional[str] = None  # Priority #2 for fingerprint
     body_type: Optional[str] = None     # Berline, VUS, Coupé, Hayon, Camion, etc.
+    fuel_type: Optional[str] = None     # Essence, Diesel, Électrique, Hybride
     drivetrain: Optional[str] = None    # Will be normalized → FWD/AWD/RWD/4WD
     transmission: Optional[str] = None
     color_ext: Optional[str] = None

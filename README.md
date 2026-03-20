@@ -272,3 +272,211 @@ alembic upgrade head
 | Chevrolet | Montréal, Laval |
 
 Pour ajouter un concessionnaire : éditer `crawler/dealers_registry.json`.
+
+
+
+---
+
+## 📊 Analytics & Tracking
+
+### Google Tag Manager (GTM) Integration
+
+**Pourquoi GTM plutôt que Google Analytics directement ?**
+
+Google Tag Manager est recommandé car il offre :
+- ✅ **Flexibilité** - Gérer plusieurs outils analytics sans toucher au code
+- ✅ **Performance** - Chargement asynchrone optimisé
+- ✅ **Évolutivité** - Ajouter Facebook Pixel, hotjar, etc. sans redéploiement
+- ✅ **Tests A/B** - Facile d'implémenter des tests et conversions
+- ✅ **Débogage** - Mode preview pour tester avant publication
+
+### Configuration GTM (Étape par étape)
+
+#### 1. Créer un compte Google Tag Manager
+
+1. Allez sur [tagmanager.google.com](https://tagmanager.google.com)
+2. Cliquez sur "Créer un compte"
+3. Nom du compte: `QC Auto Compare`
+4. Pays: Canada
+5. Nom du conteneur: `qcautocompare.ca`
+6. Plateforme cible: **Web**
+7. Cliquez sur "Créer"
+
+Vous obtiendrez un **ID de conteneur** comme `GTM-XXXXXXX`
+
+#### 2. Installation du code GTM
+
+Le code GTM est **déjà intégré** dans `/app/frontend/public/index.html` :
+
+**Section `<head>` :**
+```html
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-XXXXXXX');</script>
+<!-- End Google Tag Manager -->
+```
+
+**Section `<body>` (juste après ouverture) :**
+```html
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-XXXXXXX"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+```
+
+**⚠️ Important :** Remplacez `GTM-XXXXXXX` par votre vrai ID de conteneur
+
+#### 3. Configurer Google Analytics 4 (GA4) dans GTM
+
+Dans votre conteneur GTM :
+
+**A. Créer une variable GA4**
+1. Variables → Nouvelle variable
+2. Type : Paramètres Google Analytics : GA4
+3. ID de mesure : `G-XXXXXXXXXX` (obtenu depuis [analytics.google.com](https://analytics.google.com))
+4. Nom : `GA4 - Config`
+
+**B. Créer une balise GA4**
+1. Balises → Nouvelle balise
+2. Configuration de balise : Google Analytics : Événement GA4
+3. Paramètres de configuration : Sélectionnez votre variable `GA4 - Config`
+4. Nom de l'événement : `page_view`
+5. Déclencheur : All Pages (Toutes les pages)
+6. Nom : `GA4 - Page View`
+7. Enregistrer et **Publier**
+
+#### 4. Événements personnalisés recommandés
+
+**Événements à configurer dans GTM :**
+
+| Événement | Description | Déclencheur |
+|-----------|-------------|-------------|
+| `vehicle_view` | Utilisateur clique sur une carte véhicule | Click sur `.vehicle-card` |
+| `filter_apply` | Utilisateur applique des filtres | Click sur `[data-testid="apply-filters-btn"]` |
+| `dealer_contact` | Click sur téléphone/site concessionnaire | Click sur liens dealer |
+| `compare_vehicles` | Utilisateur compare des véhicules | Click sur bouton compare |
+| `search` | Recherche effectuée | Form submit |
+
+**Exemple de configuration d'événement "vehicle_view" :**
+1. Balises → Nouvelle
+2. Type : Événement GA4
+3. Nom de l'événement : `vehicle_view`
+4. Paramètres d'événement :
+   - `vehicle_make` = `{{Click Text}}`
+   - `vehicle_model` = `{{Click Text}}`
+   - `price` = Custom JS variable
+5. Déclencheur : Click - Classes CSS contient `vehicle-card`
+
+#### 5. Tester l'installation
+
+1. Dans GTM, cliquez sur **"Aperçu"** (Preview)
+2. Entrez l'URL de votre site : `http://localhost:3000` ou votre domaine
+3. Naviguez sur le site et vérifiez que les événements se déclenchent
+4. **Publier** quand tout fonctionne
+
+#### 6. Vérifier dans Google Analytics
+
+1. Allez sur [analytics.google.com](https://analytics.google.com)
+2. Temps réel → Vue d'ensemble
+3. Vous devriez voir les visiteurs actifs et événements en temps réel
+
+### Variables d'environnement (Optionnel)
+
+Pour gérer différents environnements (dev/staging/prod), créez plusieurs conteneurs GTM :
+- `GTM-DEV123` pour développement
+- `GTM-PROD456` pour production
+
+Et ajoutez dans `.env` :
+```bash
+REACT_APP_GTM_ID=GTM-PROD456
+```
+
+Puis dans `index.html` :
+```html
+<script>
+  const gtmId = '%REACT_APP_GTM_ID%' || 'GTM-XXXXXXX'
+  // ... code GTM avec gtmId dynamique
+</script>
+```
+
+---
+
+## 📧 Newsletter Integration
+
+### Options recommandées
+
+**1. SendGrid (Recommandé pour Email transactionnel)**
+- ✅ 100 emails/jour gratuits
+- ✅ API RESTful simple
+- ✅ Templates visuels
+- ✅ Analytics détaillés
+
+**Configuration :**
+```bash
+# Backend .env
+SENDGRID_API_KEY=SG.xxxxx
+SENDGRID_FROM_EMAIL=newsletter@qcautocompare.ca
+```
+
+**Endpoint backend `/api/newsletter/subscribe` :**
+```python
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
+
+@router.post("/newsletter/subscribe")
+async def subscribe_newsletter(email: str):
+    sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
+    # Ajouter à la liste de contacts
+    # Envoyer email de confirmation
+```
+
+**2. Mailchimp (Recommandé pour Marketing)**
+- ✅ 500 contacts gratuits
+- ✅ Templates professionnels
+- ✅ Segmentation avancée
+- ✅ A/B testing intégré
+
+**Configuration :**
+```bash
+# Backend .env
+MAILCHIMP_API_KEY=xxxxx
+MAILCHIMP_SERVER_PREFIX=us21
+MAILCHIMP_AUDIENCE_ID=xxxxx
+```
+
+**Intégration frontend :**
+```typescript
+// pages/Footer.tsx - Newsletter form
+const handleNewsletterSubmit = async (email: string) => {
+  const response = await fetch(`${backendUrl}/api/newsletter/subscribe`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email })
+  })
+  // Handle success/error
+}
+```
+
+### RGPD / Conformité
+
+⚠️ **Important pour la collecte d'emails :**
+- Checkbox explicite de consentement
+- Double opt-in (email de confirmation)
+- Lien de désabonnement dans chaque email
+- Politique de confidentialité claire
+
+---
+
+## 🔄 Prochaines améliorations
+
+- [ ] Alerts email pour nouvelles offres
+- [ ] Comparaison côte-à-côte de véhicules
+- [ ] Historique des prix
+- [ ] Favoris / Watchlist pour utilisateurs
+- [ ] API publique pour développeurs
+- [ ] Application mobile (React Native)
+
+---

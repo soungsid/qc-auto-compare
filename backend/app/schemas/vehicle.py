@@ -23,6 +23,7 @@ class VehicleResponse(BaseModel):
     color_ext: Optional[str] = None
     color_int: Optional[str] = None
     body_type: Optional[str] = None
+    fuel_type: Optional[str] = None
     drivetrain: Optional[str] = None
     transmission: Optional[str] = None
     mileage_km: int = 0

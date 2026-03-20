@@ -18,6 +18,7 @@ class FilterOptionsResponse(BaseModel):
     makes: list[str]
     models: dict[str, list[str]]  # {"Nissan": ["Kicks", "Rogue"], ...}
     body_types: list[dict[str, int | str]]  # [{"body_type": "VUS", "count": 1416}, ...]
+    fuel_types: list[dict[str, int | str]]  # [{"fuel_type": "Essence", "count": 2269}, ...]
     conditions: list[str]
     drivetrains: list[str]
     transmissions: list[str]
@@ -75,6 +76,22 @@ async def get_filter_options(
     body_types = [
         {"body_type": bt, "count": count}
         for bt, count in body_types_result.all()
+    ]
+
+    # Get fuel types with counts
+    fuel_types_result = await db.execute(
+        select(
+            Vehicle.fuel_type,
+            func.count(Vehicle.id).label('count')
+        )
+        .where(Vehicle.is_active == True)
+        .where(Vehicle.fuel_type.isnot(None))
+        .group_by(Vehicle.fuel_type)
+        .order_by(func.count(Vehicle.id).desc())
+    )
+    fuel_types = [
+        {"fuel_type": ft, "count": count}
+        for ft, count in fuel_types_result.all()
     ]
 
     # Get distinct conditions
@@ -169,6 +186,7 @@ async def get_filter_options(
         makes=makes,
         models=models_dict,
         body_types=body_types,
+        fuel_types=fuel_types,
         conditions=conditions,
         drivetrains=drivetrains,
         transmissions=transmissions,

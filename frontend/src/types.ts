@@ -73,6 +73,7 @@ export interface VehicleFilters {
   trim?: string
   condition?: string
   body_type?: string
+  fuel_type?: string
   drivetrain?: string
   city?: string
   min_price?: number
