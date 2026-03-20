@@ -3,6 +3,7 @@ import {
   flexRender,
   getCoreRowModel,
   useReactTable,
+  type ColumnDef,
   type SortingState,
 } from '@tanstack/react-table'
 import { useMemo } from 'react'
@@ -59,7 +60,8 @@ const SORTABLE_COLUMNS: Record<string, string> = {
 const columnHelper = createColumnHelper<Vehicle>()
 
 const createColumns = (showAdvanced: boolean) => {
-  const baseColumns = [
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const baseColumns: ColumnDef<Vehicle, any>[] = [
     columnHelper.accessor('year', {
       id: 'year',
       header: 'Année',

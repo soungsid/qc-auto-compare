@@ -64,8 +64,6 @@ export function useFiltersFromUrl() {
   // Update URL when filters change
   const setFilters = useCallback(
     (updated: Partial<VehicleFilters>) => {
-      const currentParams = new URLSearchParams(window.location.search)
-      
       // Get current filters from URL
       const current = { ...filters }
       const merged = { ...current, ...updated }

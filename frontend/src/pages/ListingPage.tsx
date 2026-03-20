@@ -5,7 +5,7 @@ import { VehicleTable } from '../components/VehicleTable'
 import { VehicleGrid } from '../components/VehicleGrid'
 import { useStats, useVehicles } from '../hooks/useVehicles'
 import { useFiltersFromUrl } from '../hooks/useFiltersFromUrl'
-import { DEFAULT_FILTERS, type VehicleFilters } from '../types'
+import type { VehicleFilters } from '../types'
 
 type ViewMode = 'table' | 'cards'
 
