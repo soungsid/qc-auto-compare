@@ -2,19 +2,24 @@
 Scrapy downloader middlewares.
 
 - RotatingUserAgentMiddleware : cycles through 20 realistic browser UAs
-- RateLimitRetryMiddleware    : retries on 429 / 503 with exponential backoff
+- RateLimitRetryMiddleware    : retries on 429 / 503 with non-blocking async backoff
+
+CORRECTIF : time.sleep() bloquait l'intégralité du reactor Twisted, gelant tous
+les spiders concurrents pendant le délai. Remplacé par twisted.internet.task.deferLater
+qui rend le contrôle au reactor le temps du délai — les autres requêtes continuent
+de s'exécuter normalement.
 """
 
 import logging
 import random
-import time
 from typing import Any
 
-from scrapy import signals
 from scrapy.downloadermiddlewares.retry import RetryMiddleware
 from scrapy.http import Request, Response
 from scrapy.spiders import Spider
 from scrapy.utils.response import response_status_message
+from twisted.internet import defer, reactor
+from twisted.internet.task import deferLater
 
 logger = logging.getLogger(__name__)
 
@@ -63,43 +68,64 @@ BACKOFF_DELAYS = [5, 15, 30]
 # HTTP status codes that warrant a retry
 RETRY_HTTP_CODES = {429, 503, 502, 504, 520, 521, 522, 523, 524}
 
+# Signals indicating a soft-block or CAPTCHA page
+CAPTCHA_SIGNALS = ["captcha", "cloudflare", "robot", "access denied", "please verify"]
+
 
 class RateLimitRetryMiddleware(RetryMiddleware):
     """
     Extends the built-in RetryMiddleware with:
-      - Exponential backoff based on retry count (5s → 15s → 30s)
-      - Specific handling of 429 Too Many Requests
+      - Non-blocking async backoff via deferLater (5s → 15s → 30s)
+      - Specific handling of 429 / 5xx rate-limit responses
       - Detection of soft-block / CAPTCHA pages
+
+    Pourquoi deferLater et non time.sleep() ?
+    -----------------------------------------
+    Scrapy tourne sur le reactor Twisted (event loop mono-thread).
+    time.sleep() bloque ce thread unique : TOUS les spiders et téléchargements
+    actifs sont gelés pendant le délai, même ceux qui n'ont rien à voir avec
+    le dealer limité. deferLater rend le contrôle au reactor immédiatement —
+    le délai s'écoule en arrière-plan pendant que les autres requêtes continuent.
     """
 
+    @defer.inlineCallbacks
     def process_response(
         self, request: Request, response: Response, spider: Spider
     ) -> Any:
+        # ── Réponse de rate-limit ou d'erreur serveur transitoire ──────────
         if response.status in RETRY_HTTP_CODES:
             retry_count = request.meta.get("retry_times", 0)
             delay = BACKOFF_DELAYS[min(retry_count, len(BACKOFF_DELAYS) - 1)]
+
             logger.warning(
-                "[%s] HTTP %d on %s — waiting %ds before retry %d",
+                "[%s] HTTP %d sur %s — pause async de %ds avant retry %d",
                 spider.name,
                 response.status,
                 request.url,
                 delay,
                 retry_count + 1,
             )
-            time.sleep(delay)
-            return self._retry(request, response_status_message(response.status), spider) or response
 
-        # Soft-block / CAPTCHA detection
+            # deferLater rend le contrôle au reactor pendant `delay` secondes.
+            # Les autres requêtes Scrapy continuent à s'exécuter normalement.
+            yield deferLater(reactor, delay, lambda: None)
+
+            retried = self._retry(
+                request, response_status_message(response.status), spider
+            )
+            defer.returnValue(retried if retried is not None else response)
+
+        # ── Détection soft-block / CAPTCHA ──────────────────────────────────
         body_lower = response.text.lower()
-        captcha_signals = ["captcha", "cloudflare", "robot", "access denied", "please verify"]
-        if any(signal in body_lower for signal in captcha_signals):
+        if any(signal in body_lower for signal in CAPTCHA_SIGNALS):
             logger.error(
-                "[%s] CAPTCHA/block detected on %s — skipping",
+                "[%s] CAPTCHA/blocage détecté sur %s — concessionnaire ignoré",
                 spider.name,
                 request.url,
             )
-            # Mark request as failed so the spider can skip this dealer
             request.meta["captcha_detected"] = True
-            return response
+            defer.returnValue(response)
 
-        return super().process_response(request, response, spider)
+        # ── Réponse normale — déléguer au middleware parent ──────────────────
+        result = super().process_response(request, response, spider)
+        defer.returnValue(result)
