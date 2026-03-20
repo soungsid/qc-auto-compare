@@ -1,6 +1,6 @@
 {
   "timestamp": "20260319_034726",
-  "base_url": "https://dealer-aggregator.preview.emergentagent.com",
+  "base_url": "https://quebec-auto-seo.preview.emergentagent.com",
   "summary": {
     "tests_run": 6,
     "tests_passed": 6,
@@ -14,7 +14,7 @@
       "expected_status": 200,
       "actual_status": 200,
       "success": true,
-      "url": "https://dealer-aggregator.preview.emergentagent.com/health"
+      "url": "https://quebec-auto-seo.preview.emergentagent.com/health"
     },
     {
       "name": "Vehicle List",
@@ -23,7 +23,7 @@
       "expected_status": 200,
       "actual_status": 200,
       "success": true,
-      "url": "https://dealer-aggregator.preview.emergentagent.com/api/vehicles"
+      "url": "https://quebec-auto-seo.preview.emergentagent.com/api/vehicles"
     },
     {
       "name": "Vehicle List with Filters",
@@ -32,7 +32,7 @@
       "expected_status": 200,
       "actual_status": 200,
       "success": true,
-      "url": "https://dealer-aggregator.preview.emergentagent.com/api/vehicles"
+      "url": "https://quebec-auto-seo.preview.emergentagent.com/api/vehicles"
     },
     {
       "name": "Crawl Stats",
@@ -41,7 +41,7 @@
       "expected_status": 200,
       "actual_status": 200,
       "success": true,
-      "url": "https://dealer-aggregator.preview.emergentagent.com/api/crawl/stats"
+      "url": "https://quebec-auto-seo.preview.emergentagent.com/api/crawl/stats"
     },
     {
       "name": "Dealers List",
@@ -50,7 +50,7 @@
       "expected_status": 200,
       "actual_status": 200,
       "success": true,
-      "url": "https://dealer-aggregator.preview.emergentagent.com/api/dealers"
+      "url": "https://quebec-auto-seo.preview.emergentagent.com/api/dealers"
     },
     {
       "name": "Ingest Batch",
@@ -59,7 +59,7 @@
       "expected_status": 200,
       "actual_status": 200,
       "success": true,
-      "url": "https://dealer-aggregator.preview.emergentagent.com/api/ingest/batch"
+      "url": "https://quebec-auto-seo.preview.emergentagent.com/api/ingest/batch"
     }
   ]
 }
