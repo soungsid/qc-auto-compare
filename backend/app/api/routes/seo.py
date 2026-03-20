@@ -4,7 +4,7 @@ Generate dynamic sitemap.xml for SEO
 from datetime import datetime
 from typing import List
 
-from fastapi import APIRouter, Response
+from fastapi import APIRouter, Depends, Response
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 

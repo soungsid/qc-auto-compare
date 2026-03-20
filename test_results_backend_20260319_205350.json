@@ -1,6 +1,6 @@
 {
   "timestamp": "20260319_205350",
-  "base_url": "https://quebec-auto-seo.preview.emergentagent.com",
+  "base_url": "https://vehicle-search-fix.preview.emergentagent.com",
   "summary": {
     "tests_run": 10,
     "tests_passed": 10,
@@ -14,7 +14,7 @@
       "expected_status": 200,
       "actual_status": 200,
       "success": true,
-      "url": "https://quebec-auto-seo.preview.emergentagent.com/health"
+      "url": "https://vehicle-search-fix.preview.emergentagent.com/health"
     },
     {
       "name": "Vehicle List",
@@ -23,7 +23,7 @@
       "expected_status": 200,
       "actual_status": 200,
       "success": true,
-      "url": "https://quebec-auto-seo.preview.emergentagent.com/api/vehicles"
+      "url": "https://vehicle-search-fix.preview.emergentagent.com/api/vehicles"
     },
     {
       "name": "Vehicle List with Filters",
@@ -32,7 +32,7 @@
       "expected_status": 200,
       "actual_status": 200,
       "success": true,
-      "url": "https://quebec-auto-seo.preview.emergentagent.com/api/vehicles"
+      "url": "https://vehicle-search-fix.preview.emergentagent.com/api/vehicles"
     },
     {
       "name": "Crawl Stats",
@@ -41,7 +41,7 @@
       "expected_status": 200,
       "actual_status": 200,
       "success": true,
-      "url": "https://quebec-auto-seo.preview.emergentagent.com/api/crawl/stats"
+      "url": "https://vehicle-search-fix.preview.emergentagent.com/api/crawl/stats"
     },
     {
       "name": "Dealers List",
@@ -50,7 +50,7 @@
       "expected_status": 200,
       "actual_status": 200,
       "success": true,
-      "url": "https://quebec-auto-seo.preview.emergentagent.com/api/dealers"
+      "url": "https://vehicle-search-fix.preview.emergentagent.com/api/dealers"
     },
     {
       "name": "Filter Options",
@@ -59,7 +59,7 @@
       "expected_status": 200,
       "actual_status": 200,
       "success": true,
-      "url": "https://quebec-auto-seo.preview.emergentagent.com/api/filters/options"
+      "url": "https://vehicle-search-fix.preview.emergentagent.com/api/filters/options"
     },
     {
       "name": "Active Vehicles Only",
@@ -68,7 +68,7 @@
       "expected_status": 200,
       "actual_status": 200,
       "success": true,
-      "url": "https://quebec-auto-seo.preview.emergentagent.com/api/vehicles"
+      "url": "https://vehicle-search-fix.preview.emergentagent.com/api/vehicles"
     },
     {
       "name": "Crawl Reconcile (Test)",
@@ -77,7 +77,7 @@
       "expected_status": 404,
       "actual_status": 404,
       "success": true,
-      "url": "https://quebec-auto-seo.preview.emergentagent.com/api/crawl/reconcile"
+      "url": "https://vehicle-search-fix.preview.emergentagent.com/api/crawl/reconcile"
     },
     {
       "name": "Crawl Status",
@@ -86,7 +86,7 @@
       "expected_status": 200,
       "actual_status": 200,
       "success": true,
-      "url": "https://quebec-auto-seo.preview.emergentagent.com/api/crawl/status"
+      "url": "https://vehicle-search-fix.preview.emergentagent.com/api/crawl/status"
     },
     {
       "name": "Ingest Batch",
@@ -95,7 +95,7 @@
       "expected_status": 200,
       "actual_status": 200,
       "success": true,
-      "url": "https://quebec-auto-seo.preview.emergentagent.com/api/ingest/batch"
+      "url": "https://vehicle-search-fix.preview.emergentagent.com/api/ingest/batch"
     }
   ]
 }
