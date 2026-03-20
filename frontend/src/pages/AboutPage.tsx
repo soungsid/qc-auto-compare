@@ -1,17 +1,18 @@
 import { ThemeToggle } from '../components/ThemeToggle'
 import { Footer } from '../components/Footer'
 import { SEO, getOrganizationSchema } from '../components/SEO'
+import { siteName } from '../config'
 
 /**
- * Page À propos - Présentation de QC Auto Compare
+ * Page À propos - Présentation du site
  */
 export function AboutPage() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-slate-900 transition-colors flex flex-col">
       <SEO
-        title="À propos de QC Auto Compare"
-        description="QC Auto Compare vous aide à trouver les meilleures offres de véhicules neufs et d'occasion chez les concessionnaires directs au Québec. Service gratuit et transparent."
-        keywords={['à propos', 'mission', 'QC Auto Compare', 'comparateur auto', 'Québec']}
+        title={`À propos de ${siteName}`}
+        description={`${siteName} vous aide à trouver les meilleures offres de véhicules neufs et d'occasion chez les concessionnaires directs au Québec. Service gratuit et transparent.`}
+        keywords={['à propos', 'mission', siteName, 'comparateur auto', 'Québec']}
         structuredData={getOrganizationSchema()}
       />
       {/* Header */}
@@ -23,7 +24,7 @@ export function AboutPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
               </svg>
               <h1 className="text-xl font-bold text-gray-900 dark:text-white">
-                QC Auto Compare
+                {siteName}
               </h1>
             </a>
           </div>
@@ -35,7 +36,7 @@ export function AboutPage() {
       <main className="mx-auto w-full max-w-4xl px-6 py-12 flex-1">
         <article className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 p-8 md:p-12 shadow-sm">
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-6">
-            À propos de QC Auto Compare
+            À propos de {siteName}
           </h1>
 
           <div className="prose dark:prose-invert max-w-none space-y-6 text-gray-700 dark:text-gray-300">
@@ -44,7 +45,7 @@ export function AboutPage() {
                 Notre Mission
               </h2>
               <p>
-                QC Auto Compare a été créé avec une mission simple mais ambitieuse : <strong>faciliter la recherche et la comparaison de véhicules</strong> pour les consommateurs québécois. Nous croyons que chaque acheteur mérite d'avoir accès à des informations complètes et transparentes pour prendre la meilleure décision d'achat.
+                {siteName} a été créé avec une mission simple mais ambitieuse : <strong>faciliter la recherche et la comparaison de véhicules</strong> pour les consommateurs québécois. Nous croyons que chaque acheteur mérite d'avoir accès à des informations complètes et transparentes pour prendre la meilleure décision d'achat.
               </p>
             </section>
 

@@ -1,6 +1,7 @@
 import { ThemeToggle } from '../components/ThemeToggle'
 import { Footer } from '../components/Footer'
 import { SEO, getOrganizationSchema } from '../components/SEO'
+import { siteName, baseUrl, contactEmail } from '../config'
 
 /**
  * Page Mentions Légales - Explique la collecte et l'agrégation de données publiques
@@ -10,7 +11,7 @@ export function LegalPage() {
     <div className="min-h-screen bg-gray-50 dark:bg-slate-900 transition-colors flex flex-col">
       <SEO
         title="Mentions Légales"
-        description="Informations légales sur QC Auto Compare : collecte de données publiques, droits d'auteur, et politique de confidentialité."
+        description={`Informations légales sur ${siteName} : collecte de données publiques, droits d'auteur, et politique de confidentialité.`}
         keywords={['mentions légales', 'confidentialité', 'données publiques', 'RGPD', 'légal']}
         structuredData={getOrganizationSchema()}
         noindex={true}
@@ -24,7 +25,7 @@ export function LegalPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
               </svg>
               <h1 className="text-xl font-bold text-gray-900 dark:text-white">
-                QC Auto Compare
+                {siteName}
               </h1>
             </a>
           </div>
@@ -49,7 +50,7 @@ export function LegalPage() {
                 1. Nature du service
               </h2>
               <p>
-                QC Auto Compare est une plateforme de comparaison de prix de véhicules neufs et d'occasion
+                {siteName} est une plateforme de comparaison de prix de véhicules neufs et d'occasion
                 au Québec. Notre service permet aux utilisateurs de comparer les offres de différents
                 concessionnaires directs dans la région de Montréal et Québec.
               </p>
@@ -61,7 +62,7 @@ export function LegalPage() {
                 2. Collecte et agrégation de données publiques
               </h2>
               <p className="mb-3">
-                <strong>QC Auto Compare collecte uniquement des informations publiquement disponibles</strong> sur
+                <strong>{siteName} collecte uniquement des informations publiquement disponibles</strong> sur
                 les sites web des concessionnaires automobiles. Ces informations incluent :
               </p>
               <ul className="list-disc pl-6 space-y-2">
@@ -110,7 +111,7 @@ export function LegalPage() {
                 5. Droit d'auteur et propriété intellectuelle
               </h2>
               <p>
-                Les données affichées sur QC Auto Compare proviennent de sources publiques et
+                Les données affichées sur {siteName} proviennent de sources publiques et
                 appartiennent à leurs propriétaires respectifs (concessionnaires, constructeurs automobiles).
                 Le design, la structure et les fonctionnalités de notre plateforme sont protégés par le
                 droit d'auteur.
@@ -138,8 +139,8 @@ export function LegalPage() {
                 Si vous êtes un concessionnaire ou un propriétaire de données et souhaitez que vos
                 informations soient retirées ou modifiées sur notre plateforme, veuillez nous contacter à
                 l'adresse email suivante :{' '}
-                <a href="mailto:contact@qcautocompare.ca" className="text-blue-600 dark:text-blue-400 hover:underline">
-                  contact@qcautocompare.ca
+                <a href={`mailto:${contactEmail}`} className="text-blue-600 dark:text-blue-400 hover:underline">
+                  {contactEmail}
                 </a>
               </p>
             </section>
@@ -150,7 +151,7 @@ export function LegalPage() {
                 8. Limitation de responsabilité
               </h2>
               <p>
-                QC Auto Compare ne peut être tenu responsable des inexactitudes, erreurs ou omissions
+                {siteName} ne peut être tenu responsable des inexactitudes, erreurs ou omissions
                 dans les informations affichées. Les utilisateurs sont invités à vérifier directement
                 auprès des concessionnaires avant de prendre toute décision d'achat.
               </p>
@@ -166,9 +167,9 @@ export function LegalPage() {
                 contacter :
               </p>
               <div className="mt-3 bg-gray-50 dark:bg-slate-700 p-4 rounded-lg">
-                <p className="font-medium">QC Auto Compare</p>
-                <p>Email : <a href="mailto:contact@qcautocompare.ca" className="text-blue-600 dark:text-blue-400 hover:underline">contact@qcautocompare.ca</a></p>
-                <p>Site web : <a href="https://qcautocompare.ca" className="text-blue-600 dark:text-blue-400 hover:underline">qcautocompare.ca</a></p>
+                <p className="font-medium">{siteName}</p>
+                <p>Email : <a href={`mailto:${contactEmail}`} className="text-blue-600 dark:text-blue-400 hover:underline">{contactEmail}</a></p>
+                <p>Site web : <a href={baseUrl} className="text-blue-600 dark:text-blue-400 hover:underline">{baseUrl.replace('https://', '')}</a></p>
               </div>
             </section>
           </div>

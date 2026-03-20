@@ -66,7 +66,7 @@ export function VehicleSearchFilters({ onChange, onReset, totalResults = 0, coll
   useEffect(() => {
     const fetchOptions = async () => {
       try {
-        const backendUrl = import.meta.env.REACT_APP_BACKEND_URL || 'http://localhost:8000'
+        const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8001'
         const response = await fetch(`${backendUrl}/api/filters/options`)
         const data = await response.json()
         setFilterOptions(data)

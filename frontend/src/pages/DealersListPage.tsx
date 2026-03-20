@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { ThemeToggle } from '../components/ThemeToggle'
 import { Footer } from '../components/Footer'
 import { SEO, getDealerSchema, getBreadcrumbSchema } from '../components/SEO'
+import { siteName, baseUrl, backendUrl } from '../config'
 import type { Dealer } from '../types'
 
 /**
@@ -21,7 +22,6 @@ export function DealersPage() {
         if (filterBrand) params.append('brand', filterBrand)
         if (filterCity) params.append('city', filterCity)
         
-        const backendUrl = import.meta.env.REACT_APP_BACKEND_URL || 'http://localhost:8000'
         const response = await fetch(`${backendUrl}/api/dealers?${params}`)
         const data = await response.json()
         setDealers(data)
@@ -40,8 +40,8 @@ export function DealersPage() {
   const cities = Array.from(new Set(dealers.map(d => d.city).filter(Boolean))).sort()
 
   const breadcrumbs = getBreadcrumbSchema([
-    { name: 'Accueil', url: 'https://qcautocompare.ca' },
-    { name: 'Concessionnaires', url: 'https://qcautocompare.ca/dealers' }
+    { name: 'Accueil', url: baseUrl },
+    { name: 'Concessionnaires', url: `${baseUrl}/dealers` }
   ])
 
   const dealersSchema = dealers.length > 0 ? {
@@ -69,7 +69,7 @@ export function DealersPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
               </svg>
               <h1 className="text-xl font-bold text-gray-900 dark:text-white">
-                QC Auto Compare
+                {siteName}
               </h1>
             </a>
             <p className="text-xs text-gray-500 dark:text-gray-400">

@@ -7,6 +7,7 @@ import { LegalPage } from './pages/LegalPage'
 import { AboutPage } from './pages/AboutPage'
 import { ContactPage } from './pages/ContactPage'
 import { BlogPage } from './pages/BlogPage'
+import { GTM } from './components/GTM'
 import './styles.css'
 
 const queryClient = new QueryClient({
@@ -50,6 +51,7 @@ function App() {
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
+      <GTM />
       <App />
     </QueryClientProvider>
   </React.StrictMode>,

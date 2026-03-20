@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { ThemeToggle } from '../components/ThemeToggle'
 import { Footer } from '../components/Footer'
 import { SEO, getOrganizationSchema } from '../components/SEO'
+import { siteName, contactEmail } from '../config'
 
 /**
  * Page Contact - Formulaire de contact
@@ -34,8 +35,8 @@ export function ContactPage() {
     <div className="min-h-screen bg-gray-50 dark:bg-slate-900 transition-colors flex flex-col">
       <SEO
         title="Contactez-nous"
-        description="Une question sur QC Auto Compare ? Contactez notre équipe pour toute demande d'information, ajout de concessionnaire ou suggestion d'amélioration."
-        keywords={['contact', 'support', 'aide', 'question', 'QC Auto Compare']}
+        description={`Une question sur ${siteName} ? Contactez notre équipe pour toute demande d'information, ajout de concessionnaire ou suggestion d'amélioration.`}
+        keywords={['contact', 'support', 'aide', 'question', siteName]}
         structuredData={getOrganizationSchema()}
       />
       {/* Header */}
@@ -47,7 +48,7 @@ export function ContactPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
               </svg>
               <h1 className="text-xl font-bold text-gray-900 dark:text-white">
-                QC Auto Compare
+                {siteName}
               </h1>
             </a>
           </div>
@@ -80,8 +81,8 @@ export function ContactPage() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900 dark:text-white mb-1">Email</h3>
-                    <a href="mailto:contact@qcautocompare.ca" className="text-blue-600 dark:text-blue-400 hover:underline">
-                      contact@qcautocompare.ca
+                    <a href={`mailto:${contactEmail}`} className="text-blue-600 dark:text-blue-400 hover:underline">
+                      {contactEmail}
                     </a>
                   </div>
                 </div>

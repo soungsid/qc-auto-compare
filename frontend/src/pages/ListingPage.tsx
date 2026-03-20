@@ -7,6 +7,7 @@ import { Footer } from '../components/Footer'
 import { SEO, getOrganizationSchema, getItemListSchema } from '../components/SEO'
 import { useStats, useVehicles } from '../hooks/useVehicles'
 import { useFiltersFromUrl } from '../hooks/useFiltersFromUrl'
+import { siteName } from '../config'
 import type { VehicleFilters } from '../types'
 
 type ViewMode = 'table' | 'cards'
@@ -66,7 +67,7 @@ export function ListingPage() {
         title={pageTitle}
         description={pageDescription}
         keywords={['voiture', 'véhicule', 'auto', 'concessionnaire', 'Québec', 'Montréal', 'prix', 'neuf', 'occasion', filters.make, filters.model].filter(Boolean) as string[]}
-        structuredData={data?.vehicles ? getItemListSchema(data.vehicles, filters.page) : getOrganizationSchema()}
+        structuredData={data?.items ? getItemListSchema(data.items, filters.page) : getOrganizationSchema()}
       />
       {/* Header */}
       <header className="border-b border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm transition-colors">
@@ -76,7 +77,7 @@ export function ListingPage() {
               <svg className="w-7 h-7 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
               </svg>
-              QC Auto Compare
+              {siteName}
             </h1>
             <p className="text-xs text-gray-500 dark:text-gray-400">
               Voitures neuves chez les concessionnaires directs — Montréal &amp; Québec

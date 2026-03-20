@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { siteName, baseUrl, contactEmail, domain } from '../config'
 
 interface SEOProps {
   title: string
@@ -20,13 +21,12 @@ export function SEO({
   description,
   canonical,
   ogType = 'website',
-  ogImage = 'https://qcautocompare.ca/og-image.jpg',
+  ogImage = `${baseUrl}/og-image.jpg`,
   keywords = [],
   structuredData,
   noindex = false
 }: SEOProps) {
-  const baseUrl = 'https://qcautocompare.ca'
-  const fullTitle = title.includes('QC Auto Compare') ? title : `${title} | QC Auto Compare`
+  const fullTitle = title.includes(siteName) ? title : `${title} | ${siteName}`
   const canonicalUrl = canonical || (typeof window !== 'undefined' ? window.location.href : baseUrl)
 
   useEffect(() => {
@@ -43,7 +43,7 @@ export function SEO({
     updateMetaTag('og:type', ogType, 'property')
     updateMetaTag('og:url', canonicalUrl, 'property')
     updateMetaTag('og:image', ogImage, 'property')
-    updateMetaTag('og:site_name', 'QC Auto Compare', 'property')
+    updateMetaTag('og:site_name', siteName, 'property')
     updateMetaTag('og:locale', 'fr_CA', 'property')
     
     // Twitter Cards
@@ -122,9 +122,9 @@ export function getOrganizationSchema() {
   return {
     "@context": "https://schema.org",
     "@type": "Organization",
-    "name": "QC Auto Compare",
-    "url": "https://qcautocompare.ca",
-    "logo": "https://qcautocompare.ca/logo.png",
+    "name": siteName,
+    "url": baseUrl,
+    "logo": `${baseUrl}/logo.png`,
     "description": "Comparateur de véhicules neufs et d'occasion au Québec",
     "address": {
       "@type": "PostalAddress",
@@ -134,12 +134,12 @@ export function getOrganizationSchema() {
     },
     "contactPoint": {
       "@type": "ContactPoint",
-      "email": "contact@qcautocompare.ca",
+      "email": contactEmail,
       "contactType": "Customer Service"
     },
     "sameAs": [
-      "https://facebook.com/qcautocompare",
-      "https://twitter.com/qcautocompare"
+      `https://facebook.com/${domain.replace(/\./g, '')}`,
+      `https://twitter.com/${domain.replace(/\./g, '')}`
     ]
   }
 }
