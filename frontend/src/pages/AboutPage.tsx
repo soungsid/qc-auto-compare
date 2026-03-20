@@ -1,5 +1,6 @@
 import { ThemeToggle } from '../components/ThemeToggle'
 import { Footer } from '../components/Footer'
+import { SEO, getOrganizationSchema } from '../components/SEO'
 
 /**
  * Page À propos - Présentation de QC Auto Compare
@@ -7,6 +8,12 @@ import { Footer } from '../components/Footer'
 export function AboutPage() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-slate-900 transition-colors flex flex-col">
+      <SEO
+        title="À propos de QC Auto Compare"
+        description="QC Auto Compare vous aide à trouver les meilleures offres de véhicules neufs et d'occasion chez les concessionnaires directs au Québec. Service gratuit et transparent."
+        keywords={['à propos', 'mission', 'QC Auto Compare', 'comparateur auto', 'Québec']}
+        structuredData={getOrganizationSchema()}
+      />
       {/* Header */}
       <header className="border-b border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm transition-colors">
         <div className="mx-auto flex max-w-screen-2xl items-center justify-between px-6 py-4">

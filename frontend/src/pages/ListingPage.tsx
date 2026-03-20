@@ -4,6 +4,7 @@ import { ThemeToggle } from '../components/ThemeToggle'
 import { VehicleTable } from '../components/VehicleTable'
 import { VehicleGrid } from '../components/VehicleGrid'
 import { Footer } from '../components/Footer'
+import { SEO, getOrganizationSchema, getItemListSchema } from '../components/SEO'
 import { useStats, useVehicles } from '../hooks/useVehicles'
 import { useFiltersFromUrl } from '../hooks/useFiltersFromUrl'
 import type { VehicleFilters } from '../types'
@@ -50,8 +51,23 @@ export function ListingPage() {
     ? formatRelative(new Date(stats.last_updated_at))
     : null
 
+  // SEO meta tags
+  const pageTitle = filters.make 
+    ? `${filters.make}${filters.model ? ` ${filters.model}` : ''} - Véhicules au Québec`
+    : 'Comparer les véhicules neufs et d\'occasion au Québec'
+  
+  const pageDescription = filters.make
+    ? `Trouvez les meilleures offres ${filters.make}${filters.model ? ` ${filters.model}` : ''} chez les concessionnaires au Québec. Prix, financement et location.`
+    : 'Comparez les prix de véhicules neufs et d\'occasion chez les concessionnaires directs à Montréal et Québec. Trouvez votre prochaine voiture au meilleur prix.'
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-slate-900 transition-colors" data-testid="listing-page">
+      <SEO
+        title={pageTitle}
+        description={pageDescription}
+        keywords={['voiture', 'véhicule', 'auto', 'concessionnaire', 'Québec', 'Montréal', 'prix', 'neuf', 'occasion', filters.make, filters.model].filter(Boolean) as string[]}
+        structuredData={data?.vehicles ? getItemListSchema(data.vehicles, filters.page) : getOrganizationSchema()}
+      />
       {/* Header */}
       <header className="border-b border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm transition-colors">
         <div className="mx-auto flex max-w-screen-2xl items-center justify-between px-6 py-4">

@@ -418,6 +418,233 @@ Puis dans `index.html` :
 ```bash
 # Backend .env
 SENDGRID_API_KEY=SG.xxxxx
+
+
+---
+
+## 🔍 SEO Optimization
+
+### Implémentations SEO
+
+QC Auto Compare est optimisé pour les moteurs de recherche avec les fonctionnalités suivantes :
+
+#### 1. Meta Tags Dynamiques
+
+Chaque page inclut des meta tags optimisés :
+- **Title** - Unique et descriptif par page
+- **Description** - 150-160 caractères avec mots-clés
+- **Keywords** - Mots-clés pertinents
+- **Open Graph** - Pour Facebook, LinkedIn
+- **Twitter Cards** - Pour Twitter
+- **Canonical URLs** - Évite le duplicate content
+
+**Implémentation :**
+```typescript
+import { SEO } from '../components/SEO'
+
+<SEO
+  title="Nissan Kicks 2024 - Véhicules au Québec"
+  description="Trouvez les meilleures offres Nissan Kicks 2024..."
+  keywords={['Nissan', 'Kicks', 'VUS', 'Québec', 'prix']}
+/>
+```
+
+#### 2. Structured Data (Schema.org)
+
+Tous les contenus incluent des données structurées JSON-LD :
+
+**Organization Schema :**
+```json
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "QC Auto Compare",
+  "url": "https://qcautocompare.ca",
+  "logo": "https://qcautocompare.ca/logo.png"
+}
+```
+
+**Car Schema (pour chaque véhicule) :**
+```json
+{
+  "@context": "https://schema.org",
+  "@type": "Car",
+  "name": "2024 Nissan Kicks SV",
+  "brand": { "@type": "Brand", "name": "Nissan" },
+  "offers": {
+    "@type": "Offer",
+    "price": "25900",
+    "priceCurrency": "CAD"
+  }
+}
+```
+
+**AutoDealer Schema (pour chaque concessionnaire) :**
+```json
+{
+  "@context": "https://schema.org",
+  "@type": "AutoDealer",
+  "name": "Nissan Anjou",
+  "telephone": "+1-514-xxx-xxxx"
+}
+```
+
+**ItemList Schema (pour listings) :**
+- Facilite l'affichage dans Google Rich Results
+- Améliore le CTR (Click-Through Rate)
+
+**BreadcrumbList Schema :**
+- Améliore la navigation dans les SERPs
+- Aide Google à comprendre la hiérarchie
+
+#### 3. Sitemap.xml Dynamique
+
+**Endpoint :** `https://qcautocompare.ca/sitemap.xml`
+
+Génération automatique incluant :
+- ✅ Pages statiques (/, /dealers, /about, /contact, /blog, /legal)
+- ✅ Pages de concessionnaires dynamiques (/dealers/{slug})
+- ✅ Pages de recherche populaires (/?make=nissan&model=kicks)
+- ✅ Limite de 500 URLs pour performance
+- ✅ Priorités et fréquences de mise à jour
+
+**Implémentation :** `/app/backend/app/api/routes/seo.py`
+
+**Soumettre à Google :**
+1. Google Search Console → Sitemaps
+2. Ajouter : `https://qcautocompare.ca/sitemap.xml`
+
+#### 4. robots.txt
+
+**Endpoint :** `https://qcautocompare.ca/robots.txt`
+
+Configuration optimale :
+```txt
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+
+Sitemap: https://qcautocompare.ca/sitemap.xml
+Crawl-delay: 1
+```
+
+#### 5. Optimisations Techniques
+
+**Performance :**
+- ✅ Lazy loading des images
+- ✅ Code splitting (Vite)
+- ✅ CSS minifié (TailwindCSS)
+- ✅ Bundle size optimisé (~105 kB gzipped)
+- ✅ Cache headers pour ressources statiques
+
+**URLs SEO-Friendly :**
+- ❌ Mauvais : `/search?q=123&f=456`
+- ✅ Bon : `/?make=nissan&model=kicks&year_min=2020`
+
+**Internal Linking :**
+- Footer avec liens vers villes et marques
+- Breadcrumbs sur toutes les pages
+- Liens contextuels dans le contenu
+
+**Mobile-First :**
+- ✅ Responsive design complet
+- ✅ Touch-friendly (boutons 44x44px minimum)
+- ✅ Viewport meta tag configuré
+
+**Accessibility (SEO indirect) :**
+- ✅ Semantic HTML (header, nav, main, footer, article)
+- ✅ ARIA labels sur éléments interactifs
+- ✅ Alt texts sur toutes les images
+- ✅ Color contrast WCAG AA+
+- ✅ Keyboard navigation
+
+#### 6. Contenu SEO-Optimisé
+
+**Pages créées pour SEO :**
+- `/about` - Content riche sur la mission
+- `/blog` - Articles avec mots-clés ciblés
+- `/dealers` - Listings locaux (SEO local)
+- `/contact` - Page de contact complète
+
+**Mots-clés ciblés :**
+- Primaires : "véhicules Québec", "auto Montréal", "concessionnaire direct"
+- Secondaires : "prix voiture neuve", "comparateur auto", "financement auto"
+- Long-tail : "Nissan Kicks 2024 prix Montréal", "Toyota RAV4 occasion Québec"
+
+**Title Templates par type de page :**
+- Homepage : "Comparer les véhicules neufs et d'occasion au Québec"
+- Make : "{Make} - Véhicules au Québec | QC Auto Compare"
+- Make + Model : "{Make} {Model} {Year} - Prix et offres | QC Auto Compare"
+- Dealers : "Concessionnaires {Brand} au Québec | QC Auto Compare"
+
+#### 7. Monitoring SEO
+
+**Outils recommandés :**
+1. **Google Search Console** - Performance dans Google
+2. **Google Analytics** (via GTM) - Traffic et comportement
+3. **PageSpeed Insights** - Performance et Core Web Vitals
+4. **Screaming Frog** - Audit technique complet
+5. **Ahrefs / SEMrush** - Analyse concurrentielle
+
+**KPIs à suivre :**
+- Impressions dans Google (Search Console)
+- Positions moyennes par mot-clé
+- CTR (Click-Through Rate)
+- Core Web Vitals (LCP, FID, CLS)
+- Backlinks
+- Domain Authority
+
+#### 8. SEO Local (Québec)
+
+**Optimisations locales :**
+- ✅ Contenu en français québécois
+- ✅ Mentions de villes (Montréal, Québec, Laval, Brossard, Lévis)
+- ✅ Format prix en CAD avec fr-CA
+- ✅ Schema LocalBusiness pour concessionnaires
+- ✅ Google My Business (recommandé pour chaque concessionnaire)
+
+**Exemple recherche locale :**
+- "concessionnaire Nissan Laval"
+- "prix Toyota RAV4 Montréal"
+- "auto occasion Québec"
+
+#### 9. Checklist SEO Pre-Launch
+
+Avant de lancer en production :
+
+- [ ] Remplacer `GTM-XXXXXXX` par vrai ID Google Tag Manager
+- [ ] Configurer Google Search Console
+- [ ] Soumettre sitemap.xml
+- [ ] Vérifier robots.txt
+- [ ] Tester structured data (Google Rich Results Test)
+- [ ] Audit PageSpeed Insights (score >90)
+- [ ] Vérifier tous les meta tags
+- [ ] Tester Open Graph (Facebook Debugger)
+- [ ] Vérifier Twitter Cards (Card Validator)
+- [ ] Créer Google My Business pour organisation
+- [ ] Ajouter vraies images (og:image)
+- [ ] Configurer SSL/HTTPS
+- [ ] Ajouter favicon.ico
+- [ ] Créer logo.png pour structured data
+
+#### 10. Ressources
+
+**Documentation :**
+- [Google Search Central](https://developers.google.com/search)
+- [Schema.org Car](https://schema.org/Car)
+- [Open Graph Protocol](https://ogp.me/)
+- [Twitter Cards](https://developer.twitter.com/en/docs/twitter-for-websites/cards)
+
+**Outils de test :**
+- [Google Rich Results Test](https://search.google.com/test/rich-results)
+- [PageSpeed Insights](https://pagespeed.web.dev/)
+- [Mobile-Friendly Test](https://search.google.com/test/mobile-friendly)
+- [Facebook Sharing Debugger](https://developers.facebook.com/tools/debug/)
+- [Twitter Card Validator](https://cards-dev.twitter.com/validator)
+
+---
+
 SENDGRID_FROM_EMAIL=newsletter@qcautocompare.ca
 ```
 

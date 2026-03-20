@@ -1,5 +1,6 @@
 import { ThemeToggle } from '../components/ThemeToggle'
 import { Footer } from '../components/Footer'
+import { SEO, getOrganizationSchema } from '../components/SEO'
 
 /**
  * Page Mentions Légales - Explique la collecte et l'agrégation de données publiques
@@ -7,6 +8,13 @@ import { Footer } from '../components/Footer'
 export function LegalPage() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-slate-900 transition-colors flex flex-col">
+      <SEO
+        title="Mentions Légales"
+        description="Informations légales sur QC Auto Compare : collecte de données publiques, droits d'auteur, et politique de confidentialité."
+        keywords={['mentions légales', 'confidentialité', 'données publiques', 'RGPD', 'légal']}
+        structuredData={getOrganizationSchema()}
+        noindex={true}
+      />
       {/* Header */}
       <header className="border-b border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm transition-colors">
         <div className="mx-auto flex max-w-screen-2xl items-center justify-between px-6 py-4">

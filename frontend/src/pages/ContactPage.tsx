@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { ThemeToggle } from '../components/ThemeToggle'
 import { Footer } from '../components/Footer'
+import { SEO, getOrganizationSchema } from '../components/SEO'
 
 /**
  * Page Contact - Formulaire de contact
@@ -31,6 +32,12 @@ export function ContactPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-slate-900 transition-colors flex flex-col">
+      <SEO
+        title="Contactez-nous"
+        description="Une question sur QC Auto Compare ? Contactez notre équipe pour toute demande d'information, ajout de concessionnaire ou suggestion d'amélioration."
+        keywords={['contact', 'support', 'aide', 'question', 'QC Auto Compare']}
+        structuredData={getOrganizationSchema()}
+      />
       {/* Header */}
       <header className="border-b border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm transition-colors">
         <div className="mx-auto flex max-w-screen-2xl items-center justify-between px-6 py-4">

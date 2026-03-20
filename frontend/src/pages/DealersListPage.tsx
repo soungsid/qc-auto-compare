@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { ThemeToggle } from '../components/ThemeToggle'
 import { Footer } from '../components/Footer'
+import { SEO, getDealerSchema, getBreadcrumbSchema } from '../components/SEO'
 import type { Dealer } from '../types'
 
 /**
@@ -38,8 +39,27 @@ export function DealersPage() {
   const brands = Array.from(new Set(dealers.map(d => d.brand))).sort()
   const cities = Array.from(new Set(dealers.map(d => d.city).filter(Boolean))).sort()
 
+  const breadcrumbs = getBreadcrumbSchema([
+    { name: 'Accueil', url: 'https://qcautocompare.ca' },
+    { name: 'Concessionnaires', url: 'https://qcautocompare.ca/dealers' }
+  ])
+
+  const dealersSchema = dealers.length > 0 ? {
+    "@context": "https://schema.org",
+    "@graph": [
+      ...dealers.slice(0, 10).map(dealer => getDealerSchema(dealer)),
+      breadcrumbs
+    ]
+  } : breadcrumbs
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-slate-900 transition-colors flex flex-col">
+      <SEO
+        title="Concessionnaires automobiles au Québec"
+        description="Trouvez un concessionnaire automobile près de chez vous à Montréal, Québec, Laval et partout au Québec. Coordonnées, inventaire et site web."
+        keywords={['concessionnaires', 'dealers', 'Montréal', 'Québec', 'Laval', 'auto', 'véhicules', ...brands]}
+        structuredData={dealersSchema}
+      />
       {/* Header */}
       <header className="border-b border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm transition-colors">
         <div className="mx-auto flex max-w-screen-2xl items-center justify-between px-6 py-4">

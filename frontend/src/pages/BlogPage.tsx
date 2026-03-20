@@ -1,5 +1,6 @@
 import { ThemeToggle } from '../components/ThemeToggle'
 import { Footer } from '../components/Footer'
+import { SEO, getOrganizationSchema, getBreadcrumbSchema } from '../components/SEO'
 
 /**
  * Page Blog - Articles et actualités
@@ -57,8 +58,22 @@ export function BlogPage() {
     }
   ]
 
+  const breadcrumbs = getBreadcrumbSchema([
+    { name: 'Accueil', url: 'https://qcautocompare.ca' },
+    { name: 'Blog', url: 'https://qcautocompare.ca/blog' }
+  ])
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-slate-900 transition-colors flex flex-col">
+      <SEO
+        title="Blog - Guides et conseils auto"
+        description="Découvrez nos guides d'achat, comparatifs de véhicules, conseils de négociation et actualités du marché automobile québécois."
+        keywords={['blog', 'guide achat', 'conseils auto', 'comparatif véhicules', 'actualités auto', 'Québec']}
+        structuredData={{
+          "@context": "https://schema.org",
+          "@graph": [getOrganizationSchema(), breadcrumbs]
+        }}
+      />
       {/* Header */}
       <header className="border-b border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm transition-colors">
         <div className="mx-auto flex max-w-screen-2xl items-center justify-between px-6 py-4">

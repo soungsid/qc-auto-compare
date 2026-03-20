@@ -66,13 +66,14 @@ def create_app() -> FastAPI:
     )
 
     # ---- Routers -----------------------------------------------------------
-    from app.api.routes import crawl, dealers, filters, ingest, vehicles
+    from app.api.routes import crawl, dealers, filters, ingest, seo, vehicles
 
     app.include_router(vehicles.router, prefix="/api")
     app.include_router(dealers.router, prefix="/api")
     app.include_router(ingest.router, prefix="/api")
     app.include_router(crawl.router, prefix="/api")
     app.include_router(filters.router, prefix="/api")
+    app.include_router(seo.router)  # No prefix for sitemap.xml and robots.txt
 
     # ---- Health check ------------------------------------------------------
     @app.get("/health", tags=["Health"])
