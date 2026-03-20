@@ -27,6 +27,9 @@ export function ListingPage() {
     return 'cards'
   })
 
+  // Sidebar collapsed state
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+
   // Persist view mode preference
   useEffect(() => {
     localStorage.setItem('qc-auto-view-mode', viewMode)
@@ -86,35 +89,12 @@ export function ListingPage() {
           onChange={handleFiltersChange}
           onReset={handleReset}
           totalResults={data?.total ?? 0}
+          collapsed={sidebarCollapsed}
+          onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
         />
 
         {/* Main content area */}
         <div className="flex-1 flex flex-col gap-4">
-        {/* Source summary pills */}
-        {stats?.vehicles_by_source && (
-          <div className="flex flex-wrap gap-2" data-testid="source-pills">
-            {Object.entries(stats.vehicles_by_source).map(([source, count]) => (
-              <button
-                key={source}
-                onClick={() =>
-                  handleFiltersChange({
-                    ingest_source: filters.ingest_source === source ? undefined : source,
-                    page: 1,
-                  })
-                }
-                data-testid={`source-pill-${source}`}
-                className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
-                  filters.ingest_source === source
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-white dark:bg-slate-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700'
-                }`}
-              >
-                {source}: {count}
-              </button>
-            ))}
-          </div>
-        )}
-
         {/* View mode toggle + Sort controls */}
         <div className="flex items-center justify-between">
           {/* View mode toggle - FEATURE #2 */}

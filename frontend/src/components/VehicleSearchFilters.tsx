@@ -20,6 +20,8 @@ interface Props {
   onChange: (filters: Partial<VehicleFilters>) => void
   onReset: () => void
   totalResults?: number
+  collapsed?: boolean
+  onToggleCollapse?: () => void
 }
 
 /**
@@ -31,7 +33,7 @@ interface Props {
  * - Sliders de plage
  * - Sélecteur de couleurs visuelles
  */
-export function VehicleSearchFilters({ onChange, onReset, totalResults = 0 }: Props) {
+export function VehicleSearchFilters({ onChange, onReset, totalResults = 0, collapsed = false, onToggleCollapse }: Props) {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
     type: true,
@@ -234,37 +236,68 @@ export function VehicleSearchFilters({ onChange, onReset, totalResults = 0 }: Pr
       <div
         className={`
           fixed lg:sticky top-0 left-0 h-screen lg:h-auto
-          w-80 lg:w-72 bg-white dark:bg-slate-800 
+          ${collapsed ? 'w-16 lg:w-16' : 'w-80 lg:w-72'}
+          bg-white dark:bg-slate-800 
           border-r lg:border border-gray-200 dark:border-slate-700
           overflow-y-auto z-50 lg:z-auto
-          transition-transform duration-300
+          transition-all duration-300
           ${mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
         `}
         data-testid="filters-sidebar"
       >
         {/* Header */}
         <div className="sticky top-0 bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 p-4 flex items-center justify-between z-10">
-          <h3 className="text-lg font-bold text-gray-900 dark:text-white">Filtres</h3>
+          {!collapsed && <h3 className="text-lg font-bold text-gray-900 dark:text-white">Filtres</h3>}
           <div className="flex items-center gap-2">
-            <button
-              onClick={handleReset}
-              className="text-sm text-red-600 dark:text-red-400 hover:underline"
-              data-testid="reset-filters-btn"
-            >
-              Réinitialiser
-            </button>
-            <button
-              onClick={() => setMobileOpen(false)}
-              className="lg:hidden text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
-            >
-              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
+            {/* Desktop collapse toggle */}
+            {onToggleCollapse && (
+              <button
+                onClick={onToggleCollapse}
+                className="hidden lg:block text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                title={collapsed ? 'Développer' : 'Réduire'}
+              >
+                <svg className={`w-5 h-5 transition-transform ${collapsed ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+            )}
+            {!collapsed && (
+              <>
+                <button
+                  onClick={handleReset}
+                  className="text-sm text-red-600 dark:text-red-400 hover:underline"
+                  data-testid="reset-filters-btn"
+                >
+                  Réinitialiser
+                </button>
+                <button
+                  onClick={() => setMobileOpen(false)}
+                  className="lg:hidden text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                >
+                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </>
+            )}
           </div>
         </div>
 
-        <div className="p-4 space-y-4">
+        {/* Collapsed view - icons only */}
+        {collapsed ? (
+          <div className="p-2 space-y-2">
+            <IconButton icon="🚗" label="Type" onClick={() => { if (onToggleCollapse) onToggleCollapse() }} />
+            <IconButton icon="🏢" label="Marque" onClick={() => { if (onToggleCollapse) onToggleCollapse() }} />
+            <IconButton icon="🚙" label="Carrosserie" onClick={() => { if (onToggleCollapse) onToggleCollapse() }} />
+            <IconButton icon="💰" label="Prix" onClick={() => { if (onToggleCollapse) onToggleCollapse() }} />
+            <IconButton icon="📏" label="Kilométrage" onClick={() => { if (onToggleCollapse) onToggleCollapse() }} />
+            <IconButton icon="📅" label="Année" onClick={() => { if (onToggleCollapse) onToggleCollapse() }} />
+            <IconButton icon="⚙️" label="Transmission" onClick={() => { if (onToggleCollapse) onToggleCollapse() }} />
+            <IconButton icon="🔧" label="Traction" onClick={() => { if (onToggleCollapse) onToggleCollapse() }} />
+            <IconButton icon="🎨" label="Couleur" onClick={() => { if (onToggleCollapse) onToggleCollapse() }} />
+          </div>
+        ) : (
+          <div className="p-4 space-y-4">
           {/* Type de véhicule */}
           <Section
             title="Type de véhicule"
@@ -451,27 +484,16 @@ export function VehicleSearchFilters({ onChange, onReset, totalResults = 0 }: Pr
           >
             <div className="space-y-3">
               <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400">
-                <span>{yearRange.min}</span>
-                <span>{yearRange.max}</span>
+                <span>Année min: {yearRange.min}</span>
               </div>
-              <div className="flex gap-2">
-                <input
-                  type="range"
-                  min={filterOptions?.years.min || 2000}
-                  max={filterOptions?.years.max || 2026}
-                  value={yearRange.min}
-                  onChange={(e) => setYearRange({ ...yearRange, min: parseInt(e.target.value) })}
-                  className="w-full"
-                />
-                <input
-                  type="range"
-                  min={filterOptions?.years.min || 2000}
-                  max={filterOptions?.years.max || 2026}
-                  value={yearRange.max}
-                  onChange={(e) => setYearRange({ ...yearRange, max: parseInt(e.target.value) })}
-                  className="w-full"
-                />
-              </div>
+              <input
+                type="range"
+                min={filterOptions?.years.min || 2000}
+                max={filterOptions?.years.max || 2026}
+                value={yearRange.min}
+                onChange={(e) => setYearRange({ ...yearRange, min: parseInt(e.target.value) })}
+                className="w-full"
+              />
             </div>
           </Section>
 
@@ -561,8 +583,10 @@ export function VehicleSearchFilters({ onChange, onReset, totalResults = 0 }: Pr
             </div>
           </Section>
         </div>
+        )}
 
         {/* Submit button (sticky at bottom) */}
+        {!collapsed && (
         <div className="sticky bottom-0 bg-white dark:bg-slate-800 border-t border-gray-200 dark:border-slate-700 p-4">
           <button
             onClick={handleApplyFilters}
@@ -575,8 +599,32 @@ export function VehicleSearchFilters({ onChange, onReset, totalResults = 0 }: Pr
             </svg>
           </button>
         </div>
+        )}
       </div>
     </>
+  )
+}
+
+// Icon button component for collapsed view
+interface IconButtonProps {
+  icon: string
+  label: string
+  onClick: () => void
+}
+
+function IconButton({ icon, label, onClick }: IconButtonProps) {
+  return (
+    <button
+      onClick={onClick}
+      className="w-full p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors group relative"
+      title={label}
+    >
+      <span className="text-2xl">{icon}</span>
+      {/* Tooltip */}
+      <span className="invisible group-hover:visible absolute left-full ml-2 top-1/2 -translate-y-1/2 z-50 px-2 py-1 text-xs bg-gray-900 dark:bg-slate-700 text-white rounded whitespace-nowrap">
+        {label}
+      </span>
+    </button>
   )
 }
 

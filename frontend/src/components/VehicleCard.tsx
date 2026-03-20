@@ -77,12 +77,8 @@ export function VehicleCard({ vehicle }: Props) {
         <div>
           <h3 className="text-lg font-bold text-gray-900 dark:text-white leading-tight">
             {make} {model}
+            {trim && <span className="text-sm font-normal text-gray-600 dark:text-gray-400"> {trim}</span>}
           </h3>
-          {trim && (
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              Version: {trim}
-            </p>
-          )}
         </div>
 
         {/* Price */}
