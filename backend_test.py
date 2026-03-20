@@ -11,7 +11,7 @@ from datetime import datetime
 from typing import Dict, Any, List, Optional
 
 class QCAutoCompareAPITester:
-    def __init__(self, base_url: str = "https://7bc22109-d5aa-4f60-9e7b-2484a1ddf954.preview.emergentagent.com"):
+    def __init__(self, base_url: str = "https://dealer-aggregator.preview.emergentagent.com"):
         self.base_url = base_url.rstrip('/')
         self.tests_run = 0
         self.tests_passed = 0
