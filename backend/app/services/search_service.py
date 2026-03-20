@@ -38,6 +38,7 @@ async def search_vehicles(
     model: Optional[str] = None,
     trim: Optional[str] = None,
     condition: Optional[str] = None,
+    body_type: Optional[str] = None,
     drivetrain: Optional[str] = None,
     cities: Optional[list[str]] = None,
     min_price: Optional[float] = None,
@@ -63,6 +64,7 @@ async def search_vehicles(
         model:                Filter by model (case-insensitive).
         trim:                 Filter by trim level.
         condition:            Filter by condition (new/used/certified).
+        body_type:            Filter by body type (Berline/VUS/Coupé/etc.).
         drivetrain:           Filter by drivetrain (FWD/AWD/RWD/4WD).
         cities:               Filter by dealer cities (OR).
         min_price:            Minimum sale_price.
@@ -103,6 +105,8 @@ async def search_vehicles(
         stmt = stmt.where(Vehicle.trim.ilike(f"%{trim}%"))
     if condition:
         stmt = stmt.where(Vehicle.condition == condition.lower())
+    if body_type:
+        stmt = stmt.where(Vehicle.body_type.ilike(f"%{body_type}%"))
     if drivetrain:
         stmt = stmt.where(Vehicle.drivetrain == drivetrain.upper())
     if ingest_source:

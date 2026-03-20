@@ -38,7 +38,7 @@ function SourceBadge({ source }: { source: string }) {
 // ---------------------------------------------------------------------------
 const fmt = (n?: number | null) =>
   n != null
-    ? n.toLocaleString('fr-CA', { style: 'currency', currency: 'CAD', maximumFractionDigits: 0 })
+    ? n.toLocaleString('fr-CA', { style: 'currency', currency: 'CAD', minimumFractionDigits: 0, maximumFractionDigits: 0 })
     : '—'
 
 // ---------------------------------------------------------------------------

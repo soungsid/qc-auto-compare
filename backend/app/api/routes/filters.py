@@ -16,6 +16,8 @@ router = APIRouter(prefix="/filters", tags=["Filters"])
 class FilterOptionsResponse(BaseModel):
     """Available filter options based on actual data in the database."""
     makes: list[str]
+    models: dict[str, list[str]]  # {"Nissan": ["Kicks", "Rogue"], ...}
+    body_types: list[dict[str, int | str]]  # [{"body_type": "VUS", "count": 1416}, ...]
     conditions: list[str]
     drivetrains: list[str]
     transmissions: list[str]
@@ -24,6 +26,7 @@ class FilterOptionsResponse(BaseModel):
     ingest_sources: list[str]
     price_range: dict[str, Optional[float]]
     mileage_range: dict[str, Optional[int]]
+    colors: list[str]
 
 
 @router.get("/options", response_model=FilterOptionsResponse)
@@ -43,6 +46,36 @@ async def get_filter_options(
         .order_by(Vehicle.make)
     )
     makes = [row[0] for row in makes_result if row[0]]
+
+    # Get models grouped by make
+    models_result = await db.execute(
+        select(Vehicle.make, Vehicle.model)
+        .where(Vehicle.is_active == True)
+        .distinct()
+        .order_by(Vehicle.make, Vehicle.model)
+    )
+    models_dict: dict[str, list[str]] = {}
+    for make, model in models_result:
+        if make not in models_dict:
+            models_dict[make] = []
+        if model not in models_dict[make]:
+            models_dict[make].append(model)
+    
+    # Get body types with counts
+    body_types_result = await db.execute(
+        select(
+            Vehicle.body_type,
+            func.count(Vehicle.id).label('count')
+        )
+        .where(Vehicle.is_active == True)
+        .where(Vehicle.body_type.isnot(None))
+        .group_by(Vehicle.body_type)
+        .order_by(func.count(Vehicle.id).desc())
+    )
+    body_types = [
+        {"body_type": bt, "count": count}
+        for bt, count in body_types_result.all()
+    ]
 
     # Get distinct conditions
     conditions_result = await db.execute(
@@ -123,8 +156,19 @@ async def get_filter_options(
         "max": mileage_row[1] if mileage_row and mileage_row[1] else None,
     }
 
+    # Get unique exterior colors
+    colors_result = await db.execute(
+        select(distinct(Vehicle.color_ext))
+        .where(Vehicle.is_active == True)
+        .where(Vehicle.color_ext.isnot(None))
+        .order_by(Vehicle.color_ext)
+    )
+    colors = [row[0] for row in colors_result if row[0]]
+
     return FilterOptionsResponse(
         makes=makes,
+        models=models_dict,
+        body_types=body_types,
         conditions=conditions,
         drivetrains=drivetrains,
         transmissions=transmissions,
@@ -133,4 +177,5 @@ async def get_filter_options(
         ingest_sources=ingest_sources,
         price_range=price_range,
         mileage_range=mileage_range,
+        colors=colors,
     )

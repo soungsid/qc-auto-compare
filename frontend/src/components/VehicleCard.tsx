@@ -24,7 +24,7 @@ const SOURCE_STYLES: Record<string, string> = {
 
 const fmt = (n?: number | null) =>
   n != null
-    ? n.toLocaleString('fr-CA', { style: 'currency', currency: 'CAD', maximumFractionDigits: 0 })
+    ? n.toLocaleString('fr-CA', { style: 'currency', currency: 'CAD', minimumFractionDigits: 0, maximumFractionDigits: 0 })
     : '—'
 
 export function VehicleCard({ vehicle }: Props) {
@@ -56,13 +56,6 @@ export function VehicleCard({ vehicle }: Props) {
       className="relative flex flex-col rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm overflow-hidden transition-all hover:shadow-md hover:border-blue-300 dark:hover:border-blue-600"
       data-testid={`vehicle-card-${vehicle.id}`}
     >
-      {/* Source badge - top right corner */}
-      <div
-        className={`absolute top-2 right-2 px-2 py-0.5 rounded-full text-[10px] font-medium text-white ${sourceColor}`}
-      >
-        {ingest_source}
-      </div>
-
       {/* Image section */}
       <div className="relative aspect-[16/10] bg-gray-100 dark:bg-slate-700 overflow-hidden">
         {image_url ? (
@@ -133,12 +126,21 @@ export function VehicleCard({ vehicle }: Props) {
         {/* Details */}
         <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-gray-600 dark:text-gray-400">
           {dealer && (
-            <span className="flex items-center gap-1">
+            <span className="flex items-center gap-1 group relative">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
-              {dealer.name} — {dealer.city}
+              <span className="cursor-help">
+                {dealer.name} — {dealer.city}
+              </span>
+              {/* Tooltip with phone */}
+              {dealer.phone && (
+                <span className="invisible group-hover:visible absolute left-0 top-full mt-1 z-10 px-3 py-2 text-xs bg-gray-900 dark:bg-slate-700 text-white rounded-lg shadow-lg whitespace-nowrap">
+                  📞 {dealer.phone}
+                  <span className="absolute left-4 -top-1 w-2 h-2 bg-gray-900 dark:bg-slate-700 transform rotate-45"></span>
+                </span>
+              )}
             </span>
           )}
           {color_ext && (

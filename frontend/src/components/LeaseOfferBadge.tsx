@@ -24,6 +24,7 @@ export function LeaseOfferBadge({ offers }: Props) {
   const amount = best.payment_amount?.toLocaleString('fr-CA', {
     style: 'currency',
     currency: 'CAD',
+    minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   })
 

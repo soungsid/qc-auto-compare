@@ -3,6 +3,7 @@ import { FilterBar } from '../components/FilterBar'
 import { ThemeToggle } from '../components/ThemeToggle'
 import { VehicleTable } from '../components/VehicleTable'
 import { VehicleGrid } from '../components/VehicleGrid'
+import { Footer } from '../components/Footer'
 import { useStats, useVehicles } from '../hooks/useVehicles'
 import { useFiltersFromUrl } from '../hooks/useFiltersFromUrl'
 import type { VehicleFilters } from '../types'
@@ -21,9 +22,9 @@ export function ListingPage() {
   // View mode state with localStorage persistence
   const [viewMode, setViewMode] = useState<ViewMode>(() => {
     if (typeof window !== 'undefined') {
-      return (localStorage.getItem('qc-auto-view-mode') as ViewMode) || 'table'
+      return (localStorage.getItem('qc-auto-view-mode') as ViewMode) || 'cards'
     }
-    return 'table'
+    return 'cards'
   })
 
   // Persist view mode preference
@@ -202,11 +203,7 @@ export function ListingPage() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 py-4 transition-colors">
-        <div className="mx-auto max-w-screen-2xl px-6 text-center text-xs text-gray-400 dark:text-gray-500">
-          QC Auto Compare — Comparateur de véhicules neufs au Québec
-        </div>
-      </footer>
+      <Footer />
     </div>
   )
 }
