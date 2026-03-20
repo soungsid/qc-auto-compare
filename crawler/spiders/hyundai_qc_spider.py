@@ -4,7 +4,6 @@ Hyundai Quebec Spider — scrapes new vehicle inventory from Hyundai dealers in 
 Priority models: Elantra, Venue, Accent (entry-level lineup).
 """
 
-import json
 import logging
 from typing import Any, Iterator, Optional
 
@@ -120,28 +119,5 @@ class HyundaiQCSpider(BaseDealerSpider):
         return None
 
     def _try_json_fallback(self, response: Response, dealer: dict) -> Iterator[dict]:
-        for script in response.css('script[type="application/ld+json"]::text').getall():
-            try:
-                data = json.loads(script)
-                items = data if isinstance(data, list) else [data]
-                for item_data in items:
-                    if item_data.get("@type") not in ("Car", "Vehicle"):
-                        continue
-                    name = item_data.get("name", "")
-                    year = self.extract_year(name) or item_data.get("modelDate")
-                    model = self._parse_model(name)
-                    if not year or not model:
-                        continue
-                    offers = item_data.get("offers", {})
-                    yield self.build_item(
-                        dealer=dealer,
-                        make="Hyundai",
-                        model=model,
-                        year=int(year),
-                        trim=item_data.get("vehicleConfiguration"),
-                        vin=item_data.get("vehicleIdentificationNumber"),
-                        msrp=self.clean_price(str(offers.get("price", ""))),
-                        listing_url=item_data.get("url", response.url),
-                    )
-            except (json.JSONDecodeError, TypeError):
-                continue
+        """Délègue au fallback JSON-LD centralisé dans BaseDealerSpider."""
+        yield from self.json_ld_fallback(response, dealer, "Hyundai", self._parse_model)

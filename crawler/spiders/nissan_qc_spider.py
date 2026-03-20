@@ -172,45 +172,5 @@ class NissanQCSpider(BaseDealerSpider):
         return None
 
     def _parse_script_data(self, response: Response, dealer: dict) -> Iterator[dict]:
-        """
-        Fallback: attempt to extract vehicle data from embedded JSON scripts.
-
-        Some dealer platforms embed inventory as JSON-LD or a JS variable.
-        """
-        import json
-        import re
-
-        # Try JSON-LD
-        for script in response.css('script[type="application/ld+json"]::text').getall():
-            try:
-                data = json.loads(script)
-                if isinstance(data, list):
-                    items = data
-                elif isinstance(data, dict):
-                    items = data.get("itemListElement", [data])
-                else:
-                    continue
-
-                for item_data in items:
-                    if item_data.get("@type") not in ("Car", "Vehicle"):
-                        continue
-                    name = item_data.get("name", "")
-                    year = self.extract_year(name) or item_data.get("modelDate")
-                    model = self._parse_model(name)
-                    if not year or not model:
-                        continue
-                    offers = item_data.get("offers", {})
-                    yield self.build_item(
-                        dealer=dealer,
-                        make="Nissan",
-                        model=model,
-                        year=int(year),
-                        trim=item_data.get("vehicleConfiguration"),
-                        vin=item_data.get("vehicleIdentificationNumber"),
-                        msrp=self.clean_price(str(offers.get("price", ""))),
-                        drivetrain=item_data.get("driveWheelConfiguration"),
-                        color_ext=item_data.get("color"),
-                        listing_url=item_data.get("url", response.url),
-                    )
-            except (json.JSONDecodeError, TypeError):
-                continue
+        """Délègue au fallback JSON-LD centralisé dans BaseDealerSpider."""
+        yield from self.json_ld_fallback(response, dealer, "Nissan", self._parse_model)
