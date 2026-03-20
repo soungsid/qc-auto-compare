@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { FilterBar } from '../components/FilterBar'
+import { VehicleSearchFilters } from '../components/VehicleSearchFilters'
 import { ThemeToggle } from '../components/ThemeToggle'
 import { VehicleTable } from '../components/VehicleTable'
 import { VehicleGrid } from '../components/VehicleGrid'
@@ -80,7 +80,16 @@ export function ListingPage() {
         </div>
       </header>
 
-      <main className="mx-auto flex max-w-screen-2xl flex-col gap-4 px-6 py-6">
+      <main className="mx-auto flex max-w-screen-2xl gap-6 px-6 py-6">
+        {/* Sidebar Filters - Desktop visible, Mobile overlay */}
+        <VehicleSearchFilters
+          onChange={handleFiltersChange}
+          onReset={handleReset}
+          totalResults={data?.total ?? 0}
+        />
+
+        {/* Main content area */}
+        <div className="flex-1 flex flex-col gap-4">
         {/* Source summary pills */}
         {stats?.vehicles_by_source && (
           <div className="flex flex-wrap gap-2" data-testid="source-pills">
@@ -105,13 +114,6 @@ export function ListingPage() {
             ))}
           </div>
         )}
-
-        {/* Filters */}
-        <FilterBar
-          filters={filters}
-          onChange={handleFiltersChange}
-          onReset={handleReset}
-        />
 
         {/* View mode toggle + Sort controls */}
         <div className="flex items-center justify-between">
@@ -200,6 +202,7 @@ export function ListingPage() {
             isLoading={isLoading}
           />
         )}
+        </div>
       </main>
 
       {/* Footer */}

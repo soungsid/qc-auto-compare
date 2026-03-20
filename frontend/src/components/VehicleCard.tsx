@@ -11,17 +11,6 @@ interface Props {
   vehicle: Vehicle
 }
 
-// Source badge colours
-const SOURCE_STYLES: Record<string, string> = {
-  crawler: 'bg-blue-500',
-  copilot: 'bg-purple-500',
-  cline: 'bg-indigo-500',
-  claude: 'bg-violet-500',
-  manual: 'bg-gray-500',
-  csv_import: 'bg-yellow-500',
-  test: 'bg-orange-500',
-}
-
 const fmt = (n?: number | null) =>
   n != null
     ? n.toLocaleString('fr-CA', { style: 'currency', currency: 'CAD', minimumFractionDigits: 0, maximumFractionDigits: 0 })
@@ -43,13 +32,11 @@ export function VehicleCard({ vehicle }: Props) {
     dealer,
     listing_url,
     image_url,
-    ingest_source,
     fingerprint,
     lease_offers,
   } = vehicle
 
   const savings = msrp && sale_price ? msrp - sale_price : null
-  const sourceColor = SOURCE_STYLES[ingest_source] ?? 'bg-gray-500'
 
   return (
     <div

@@ -20,7 +20,7 @@ export function DealersPage() {
         if (filterBrand) params.append('brand', filterBrand)
         if (filterCity) params.append('city', filterCity)
         
-        const backendUrl = import.meta.env.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL || 'http://localhost:8000'
+        const backendUrl = import.meta.env.REACT_APP_BACKEND_URL || 'http://localhost:8000'
         const response = await fetch(`${backendUrl}/api/dealers?${params}`)
         const data = await response.json()
         setDealers(data)

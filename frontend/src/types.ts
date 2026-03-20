@@ -9,7 +9,9 @@ export interface Dealer {
   brand: string
   city?: string
   phone?: string
+  address?: string
   website?: string
+  inventory_url?: string
   last_crawled_at?: string
 }
 
@@ -70,6 +72,7 @@ export interface VehicleFilters {
   model?: string
   trim?: string
   condition?: string
+  body_type?: string
   drivetrain?: string
   city?: string
   min_price?: number

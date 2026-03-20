@@ -2,7 +2,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import React, { useEffect, useState } from 'react'
 import ReactDOM from 'react-dom/client'
 import { ListingPage } from './pages/ListingPage'
-import { DealersListPage } from './pages/DealersListPage'
+import { DealersPage } from './pages/DealersListPage'
 import { LegalPage } from './pages/LegalPage'
 import './styles.css'
 
@@ -27,7 +27,7 @@ function App() {
 
   // Route rendering
   if (currentPath === '/dealers') {
-    return <DealersListPage />
+    return <DealersPage />
   }
   if (currentPath === '/legal') {
     return <LegalPage />
