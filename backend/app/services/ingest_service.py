@@ -17,6 +17,8 @@ from app.core.fingerprint import compute_fingerprint
 from app.core.normalizer import (
     normalize_condition,
     normalize_drivetrain,
+    infer_body_type,
+    infer_fuel_type,
     normalize_make,
     normalize_price,
     normalize_transmission,
@@ -290,6 +292,8 @@ async def ingest_vehicle(
                 condition=condition,
                 vin=vin,
                 stock_number=payload.stock_number,
+                body_type=payload.body_type or infer_body_type(make, payload.model),
+                fuel_type=payload.fuel_type or infer_fuel_type(make, payload.model, payload.trim),
                 drivetrain=normalize_drivetrain(payload.drivetrain),
                 transmission=normalize_transmission(payload.transmission),
                 color_ext=payload.color_ext,

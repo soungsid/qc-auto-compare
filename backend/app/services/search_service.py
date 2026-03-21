@@ -39,6 +39,7 @@ async def search_vehicles(
     trim: Optional[str] = None,
     condition: Optional[str] = None,
     body_type: Optional[str] = None,
+    fuel_type: Optional[str] = None,
     drivetrain: Optional[str] = None,
     cities: Optional[list[str]] = None,
     min_price: Optional[float] = None,
@@ -107,6 +108,8 @@ async def search_vehicles(
         stmt = stmt.where(Vehicle.condition == condition.lower())
     if body_type:
         stmt = stmt.where(Vehicle.body_type.ilike(f"%{body_type}%"))
+    if fuel_type:
+        stmt = stmt.where(Vehicle.fuel_type.ilike(f"%{fuel_type}%"))
     if drivetrain:
         stmt = stmt.where(Vehicle.drivetrain == drivetrain.upper())
     if ingest_source:

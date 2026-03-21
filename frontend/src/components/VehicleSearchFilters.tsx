@@ -111,16 +111,21 @@ export function VehicleSearchFilters({ onChange, onReset, totalResults = 0, coll
   }
 
   const handleBrandSelect = (brand: string) => {
-    const newSelected = selectedBrands.includes(brand)
-      ? selectedBrands.filter(b => b !== brand)
-      : [...selectedBrands, brand]
-    setSelectedBrands(newSelected)
-    
-    // If unselecting brand, remove its models too
-    if (!newSelected.includes(brand)) {
+    const isBrandSelected = selectedBrands.includes(brand)
+    if (isBrandSelected) {
+      // Uncheck brand and all its models
+      setSelectedBrands(selectedBrands.filter(b => b !== brand))
       const newModels = { ...selectedModels }
       delete newModels[brand]
       setSelectedModels(newModels)
+    } else {
+      // Check brand AND all its models
+      setSelectedBrands([...selectedBrands, brand])
+      const brandData = filterOptions?.brands.find(b => b.brand === brand)
+      setSelectedModels({
+        ...selectedModels,
+        [brand]: brandData?.models.map(m => m.model) || []
+      })
     }
   }
 
@@ -129,11 +134,23 @@ export function VehicleSearchFilters({ onChange, onReset, totalResults = 0, coll
     const newBrandModels = brandModels.includes(model)
       ? brandModels.filter(m => m !== model)
       : [...brandModels, model]
-    
-    setSelectedModels({
-      ...selectedModels,
-      [brand]: newBrandModels
-    })
+
+    setSelectedModels({ ...selectedModels, [brand]: newBrandModels })
+
+    // Sync brand checkbox: checked only when ALL models are selected
+    const brandData = filterOptions?.brands.find(b => b.brand === brand)
+    const totalModels = brandData?.models.length || 0
+
+    if (newBrandModels.length === 0) {
+      setSelectedBrands(selectedBrands.filter(b => b !== brand))
+    } else if (newBrandModels.length === totalModels) {
+      if (!selectedBrands.includes(brand)) {
+        setSelectedBrands([...selectedBrands, brand])
+      }
+    } else {
+      // Partial selection → uncheck brand
+      setSelectedBrands(selectedBrands.filter(b => b !== brand))
+    }
   }
 
   const handleApplyFilters = useCallback(() => {
@@ -148,8 +165,19 @@ export function VehicleSearchFilters({ onChange, onReset, totalResults = 0, coll
     }
 
     // Brands & Models
-    if (selectedBrands.length > 0) {
-      newFilters.make = selectedBrands[0] // For now, single brand
+    // Collect brands from both explicit brand selection and model-level selections
+    const brandsWithModels = Object.keys(selectedModels).filter(b => (selectedModels[b]?.length || 0) > 0)
+    const allSelectedBrands = [...new Set([...selectedBrands, ...brandsWithModels])]
+
+    if (allSelectedBrands.length > 0) {
+      newFilters.make = allSelectedBrands[0]
+      const brandModels = selectedModels[allSelectedBrands[0]] || []
+      const brandData = filterOptions?.brands.find(b => b.brand === allSelectedBrands[0])
+      const totalModels = brandData?.models.length || 0
+      // Only add model filter when a specific subset is selected (not all)
+      if (brandModels.length > 0 && brandModels.length < totalModels) {
+        newFilters.model = brandModels[0]
+      }
     }
 
     // Body types
@@ -195,7 +223,7 @@ export function VehicleSearchFilters({ onChange, onReset, totalResults = 0, coll
     onChange(newFilters)
     setMobileOpen(false)
   }, [
-    vehicleCondition, selectedBrands, selectedBodyTypes, selectedFuelTypes,
+    vehicleCondition, selectedBrands, selectedModels, selectedBodyTypes, selectedFuelTypes,
     selectedDrivetrains, priceSliderValues, yearSliderValues, mileageSliderValues,
     filterOptions, onChange
   ])
