@@ -242,6 +242,7 @@ export function FilterBar({ filters, onChange, onReset }: Props) {
 
         {/* Reset button */}
         <button
+          type="button"
           onClick={onReset}
           data-testid="filter-reset-btn"
           className="ml-auto rounded-lg border border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700 px-4 py-1.5 text-sm font-medium text-gray-600 dark:text-gray-300 shadow-sm hover:bg-gray-50 dark:hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-500 transition-colors"

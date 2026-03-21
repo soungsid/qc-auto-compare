@@ -71,7 +71,7 @@ export function VehicleSearchFilters({ onChange, onReset, totalResults = 0, coll
   useEffect(() => {
     const fetchOptions = async () => {
       try {
-        const backendUrl = import.meta.env.VITE_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL || 'https://vehicle-search-fix.preview.emergentagent.com'
+        const backendUrl = import.meta.env.VITE_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL || ''
         const response = await fetch(`${backendUrl}/api/filters/options`)
         const data = await response.json()
         setFilterOptions(data)
@@ -259,6 +259,7 @@ export function VehicleSearchFilters({ onChange, onReset, totalResults = 0, coll
       {/* Mobile: Floating filter button */}
       <div className="lg:hidden mb-4">
         <button
+          type="button"
           onClick={() => setMobileOpen(true)}
           className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 text-white font-medium rounded-lg shadow-md hover:bg-blue-700 transition-colors"
           data-testid="mobile-filters-btn"
@@ -295,6 +296,7 @@ export function VehicleSearchFilters({ onChange, onReset, totalResults = 0, coll
             {/* Desktop collapse toggle */}
             {onToggleCollapse && (
               <button
+                type="button"
                 onClick={onToggleCollapse}
                 className="hidden lg:block text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
                 title={collapsed ? 'Développer' : 'Réduire'}
@@ -307,6 +309,7 @@ export function VehicleSearchFilters({ onChange, onReset, totalResults = 0, coll
             {!collapsed && (
               <>
                 <button
+                  type="button"
                   onClick={handleReset}
                   className="text-sm text-red-600 dark:text-red-400 hover:underline"
                   data-testid="reset-filters-btn"
@@ -314,6 +317,7 @@ export function VehicleSearchFilters({ onChange, onReset, totalResults = 0, coll
                   Réinitialiser
                 </button>
                 <button
+                  type="button"
                   onClick={() => setMobileOpen(false)}
                   className="lg:hidden text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
                 >
@@ -415,6 +419,7 @@ export function VehicleSearchFilters({ onChange, onReset, totalResults = 0, coll
                     </label>
                     {brandData.models.length > 0 && (
                       <button
+                        type="button"
                         onClick={() => toggleBrand(brandData.brand)}
                         className="p-1 text-gray-400 hover:text-gray-600"
                       >
@@ -453,6 +458,7 @@ export function VehicleSearchFilters({ onChange, onReset, totalResults = 0, coll
               
               {filterOptions && filterOptions.brands.length > 8 && (
                 <button
+                  type="button"
                   onClick={() => setShowAllBrands(!showAllBrands)}
                   className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
                 >
@@ -474,6 +480,7 @@ export function VehicleSearchFilters({ onChange, onReset, totalResults = 0, coll
               )}
               {filterOptions?.body_types.map((bt) => (
                 <button
+                  type="button"
                   key={bt.body_type}
                   onClick={() => {
                     setSelectedBodyTypes(prev =>
@@ -673,6 +680,7 @@ export function VehicleSearchFilters({ onChange, onReset, totalResults = 0, coll
             <div className="flex flex-wrap gap-2">
               {Object.entries(colorMap).map(([name, hex]) => (
                 <button
+                  type="button"
                   key={name}
                   onClick={() => {
                     setSelectedColors(prev =>
@@ -699,6 +707,7 @@ export function VehicleSearchFilters({ onChange, onReset, totalResults = 0, coll
         {!collapsed && (
         <div className="sticky bottom-0 bg-white dark:bg-slate-800 border-t border-gray-200 dark:border-slate-700 p-4">
           <button
+            type="button"
             onClick={handleApplyFilters}
             className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
             data-testid="apply-filters-btn"
@@ -725,6 +734,7 @@ interface IconButtonProps {
 function IconButton({ icon, label, onClick }: IconButtonProps) {
   return (
     <button
+      type="button"
       onClick={onClick}
       className="w-full p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors group relative"
       title={label}
@@ -750,6 +760,7 @@ function Section({ title, isOpen, onToggle, children }: SectionProps) {
   return (
     <div className="border-b border-gray-200 dark:border-slate-700 pb-4">
       <button
+        type="button"
         onClick={onToggle}
         className="flex items-center justify-between w-full text-left mb-3"
       >

@@ -26,6 +26,7 @@ export function FingerprintBadge({ fingerprint }: Props) {
   
   return (
     <button
+      type="button"
       onClick={handleCopy}
       title={`ID complet: ${fingerprint}\nCliquez pour copier`}
       data-testid="fingerprint-badge"

@@ -47,6 +47,7 @@ export function VehicleGrid({ data, total, filters, onFiltersChange, isLoading }
           {isLoading ? 'Chargement…' : `${total.toLocaleString('fr-CA')} véhicules`}
         </p>
         <button
+          type="button"
           onClick={exportCSV}
           data-testid="export-csv-btn"
           className="rounded-lg border border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-200 shadow-sm hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
@@ -92,6 +93,7 @@ export function VehicleGrid({ data, total, filters, onFiltersChange, isLoading }
           </span>
           <div className="flex gap-2">
             <button
+              type="button"
               disabled={filters.page <= 1}
               onClick={() => onFiltersChange({ page: filters.page - 1 })}
               data-testid="pagination-prev"
@@ -100,6 +102,7 @@ export function VehicleGrid({ data, total, filters, onFiltersChange, isLoading }
               ← Précédente
             </button>
             <button
+              type="button"
               disabled={filters.page >= totalPages}
               onClick={() => onFiltersChange({ page: filters.page + 1 })}
               data-testid="pagination-next"

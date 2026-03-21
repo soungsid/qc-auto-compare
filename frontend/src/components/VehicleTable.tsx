@@ -339,6 +339,7 @@ export function VehicleTable({ data, total, filters, onFiltersChange, isLoading 
         <div className="flex items-center gap-2">
           {/* Advanced columns toggle */}
           <button
+            type="button"
             onClick={toggleAdvanced}
             data-testid="toggle-advanced-btn"
             className={`rounded-lg border px-3 py-1.5 text-sm font-medium shadow-sm transition-colors ${
@@ -351,6 +352,7 @@ export function VehicleTable({ data, total, filters, onFiltersChange, isLoading 
           </button>
           {/* Export CSV */}
           <button
+            type="button"
             onClick={exportCSV}
             data-testid="export-csv-btn"
             className="rounded-lg border border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-200 shadow-sm hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
@@ -446,6 +448,7 @@ export function VehicleTable({ data, total, filters, onFiltersChange, isLoading 
           </span>
           <div className="flex gap-2">
             <button
+              type="button"
               disabled={filters.page <= 1}
               onClick={() => onFiltersChange({ page: filters.page - 1 })}
               data-testid="pagination-prev"
@@ -454,6 +457,7 @@ export function VehicleTable({ data, total, filters, onFiltersChange, isLoading 
               ← Précédente
             </button>
             <button
+              type="button"
               disabled={filters.page >= totalPages}
               onClick={() => onFiltersChange({ page: filters.page + 1 })}
               data-testid="pagination-next"

@@ -3,10 +3,22 @@
  * Inclut: Liens de navigation, SEO (villes, marques), Newsletter/Contact
  */
 
+import { useState } from 'react'
 import { siteName } from '../config'
 
 export function Footer() {
   const currentYear = new Date().getFullYear()
+  const [email, setEmail] = useState('')
+  const [subscribeStatus, setSubscribeStatus] = useState<'idle' | 'success' | 'error'>('idle')
+
+  const handleSubscribe = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    if (!email) return
+    // TODO: brancher sur l'API newsletter
+    setSubscribeStatus('success')
+    setEmail('')
+    setTimeout(() => setSubscribeStatus('idle'), 4000)
+  }
 
   return (
     <footer className="border-t border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 transition-colors">
@@ -138,10 +150,13 @@ export function Footer() {
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
               Recevez les meilleures offres directement dans votre boîte mail.
             </p>
-            <form className="flex gap-2">
+            <form className="flex gap-2" onSubmit={handleSubscribe}>
               <input
                 type="email"
+                required
                 placeholder="Votre email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="flex-1 px-4 py-2 text-sm border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <button
@@ -151,6 +166,11 @@ export function Footer() {
                 S'abonner
               </button>
             </form>
+            {subscribeStatus === 'success' && (
+              <p className="mt-2 text-sm text-green-600 dark:text-green-400">
+                ✓ Merci ! Vous recevrez les meilleures offres.
+              </p>
+            )}
           </div>
         </div>
 
