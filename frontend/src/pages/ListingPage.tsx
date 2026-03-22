@@ -143,6 +143,7 @@ export function ListingPage() {
           collapsed={sidebarCollapsed}
           onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
           totalResults={data?.total}
+          currentFilters={filters}
         />
 
         {/* Main content area */}

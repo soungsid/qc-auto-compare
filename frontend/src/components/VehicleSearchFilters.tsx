@@ -24,6 +24,8 @@ interface Props {
   collapsed?: boolean
   onToggleCollapse?: () => void
   totalResults?: number
+  /** Current filters from URL — used to initialize sidebar state on mount and for contextual re-fetch */
+  currentFilters?: Partial<VehicleFilters>
 }
 
 // BUG-03: map raw DB transmission values to French display labels
@@ -43,7 +45,7 @@ const formatTransmission = (raw: string) =>
  * - Sliders bidirectionnels (min/max)
  * - Filtre neuf/occasion avec option "Tous"
  */
-export function VehicleSearchFilters({ onChange, onReset, collapsed = false, onToggleCollapse, totalResults }: Props) {
+export function VehicleSearchFilters({ onChange, onReset, collapsed = false, onToggleCollapse, totalResults, currentFilters }: Props) {
   // Stable ref so the auto-search effect never needs onChange in its dep array
   const onChangeRef = useRef(onChange)
   useEffect(() => { onChangeRef.current = onChange })
@@ -64,14 +66,26 @@ export function VehicleSearchFilters({ onChange, onReset, collapsed = false, onT
   const [showAllBrands, setShowAllBrands] = useState(false)
   const [expandedBrands, setExpandedBrands] = useState<Record<string, boolean>>({})
   const [filterOptions, setFilterOptions] = useState<FilterOptions | null>(null)
-  const [selectedBrands, setSelectedBrands] = useState<string[]>([])
+  const [selectedBrands, setSelectedBrands] = useState<string[]>(() =>
+    currentFilters?.make ? [currentFilters.make] : []
+  )
   const [selectedModels, setSelectedModels] = useState<Record<string, string[]>>({})
-  const [selectedBodyTypes, setSelectedBodyTypes] = useState<string[]>([])
-  const [selectedFuelTypes, setSelectedFuelTypes] = useState<string[]>([])
-  const [selectedTransmissions, setSelectedTransmissions] = useState<string[]>([])
-  const [selectedDrivetrains, setSelectedDrivetrains] = useState<string[]>([])
+  const [selectedBodyTypes, setSelectedBodyTypes] = useState<string[]>(() =>
+    currentFilters?.body_type ? [currentFilters.body_type] : []
+  )
+  const [selectedFuelTypes, setSelectedFuelTypes] = useState<string[]>(() =>
+    currentFilters?.fuel_type ? [currentFilters.fuel_type] : []
+  )
+  const [selectedTransmissions, setSelectedTransmissions] = useState<string[]>(() =>
+    currentFilters?.transmission ? [currentFilters.transmission] : []
+  )
+  const [selectedDrivetrains, setSelectedDrivetrains] = useState<string[]>(() =>
+    currentFilters?.drivetrain ? [currentFilters.drivetrain] : []
+  )
   const [selectedColors, setSelectedColors] = useState<string[]>([])
-  const [vehicleCondition, setVehicleCondition] = useState<'all' | 'new' | 'used'>('all')
+  const [vehicleCondition, setVehicleCondition] = useState<'all' | 'new' | 'used'>(() =>
+    (currentFilters?.condition as 'all' | 'new' | 'used') || 'all'
+  )
   const [priceRange, setPriceRange] = useState({ min: 0, max: 100000 })
   const [mileageRange, setMileageRange] = useState({ min: 0, max: 300000 })
   const [yearRange, setYearRange] = useState({ min: 2000, max: 2026 })
@@ -79,21 +93,28 @@ export function VehicleSearchFilters({ onChange, onReset, collapsed = false, onT
   const [mileageSliderValues, setMileageSliderValues] = useState({ min: 0, max: 300000 })
   const [yearSliderValues, setYearSliderValues] = useState({ min: 2000, max: 2026 })
 
+  // Track first fetch to properly initialize slider bounds
+  const isFirstFetch = useRef(true)
+
   // Fetch filter options from API — re-fetches with context when primary filters change
   useEffect(() => {
-    const fetchOptions = async (isInitial: boolean) => {
+    const fetchOptions = async () => {
       try {
         const backendUrl = import.meta.env.VITE_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL || ''
         const params = new URLSearchParams()
-        if (selectedBrands.length === 1) params.set('make', selectedBrands[0])
-        if (vehicleCondition && vehicleCondition !== 'all') params.set('condition', vehicleCondition)
+        // Use local sidebar state first, fall back to URL context for when page loads with URL filters
+        const contextMake = selectedBrands.length === 1 ? selectedBrands[0] : (selectedBrands.length === 0 ? currentFilters?.make : undefined)
+        const contextCondition = vehicleCondition !== 'all' ? vehicleCondition : (currentFilters?.condition !== 'all' ? currentFilters?.condition : undefined)
+        if (contextMake) params.set('make', contextMake)
+        if (contextCondition) params.set('condition', contextCondition)
         const url = `${backendUrl}/api/filters/options${params.toString() ? `?${params}` : ''}`
         const response = await fetch(url)
         const data = await response.json()
         setFilterOptions(data)
 
         // Only initialise slider bounds on first load (not on context re-fetches)
-        if (isInitial) {
+        if (isFirstFetch.current) {
+          isFirstFetch.current = false
           if (data.price_range) {
             const min = Math.floor(data.price_range.min || 0)
             const max = Math.ceil(data.price_range.max || 100000)
@@ -117,7 +138,7 @@ export function VehicleSearchFilters({ onChange, onReset, collapsed = false, onT
         console.error('Error fetching filter options:', error)
       }
     }
-    fetchOptions(selectedBrands.length === 0 && !vehicleCondition)
+    fetchOptions()
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedBrands.join(','), vehicleCondition])
 
@@ -220,23 +241,23 @@ export function VehicleSearchFilters({ onChange, onReset, collapsed = false, onT
     }
 
     // Price range (bidirectional)
-    if (priceSliderValues.min > (filterOptions?.price_range.min || 0)) {
+    if (priceSliderValues.min > priceRange.min) {
       newFilters.min_price = priceSliderValues.min
     }
-    if (priceSliderValues.max < (filterOptions?.price_range.max || 100000)) {
+    if (priceSliderValues.max < priceRange.max) {
       newFilters.max_price = priceSliderValues.max
     }
 
     // Year range (bidirectional)
-    if (yearSliderValues.min > (filterOptions?.years.min || 2000)) {
+    if (yearSliderValues.min > yearRange.min) {
       newFilters.year_min = yearSliderValues.min
     }
-    if (yearSliderValues.max < (filterOptions?.years.max || 2026)) {
+    if (yearSliderValues.max < yearRange.max) {
       newFilters.year_max = yearSliderValues.max
     }
 
     // Mileage range (bidirectional)
-    if (mileageSliderValues.max < (filterOptions?.mileage_range.max || 300000)) {
+    if (mileageSliderValues.max < mileageRange.max) {
       newFilters.mileage_max = mileageSliderValues.max
     }
 
@@ -244,7 +265,7 @@ export function VehicleSearchFilters({ onChange, onReset, collapsed = false, onT
   }, [
     vehicleCondition, selectedBrands, selectedModels, selectedBodyTypes, selectedFuelTypes,
     selectedTransmissions, selectedDrivetrains, priceSliderValues, yearSliderValues, mileageSliderValues,
-    filterOptions
+    priceRange, yearRange, mileageRange
   ])
 
   // Auto-trigger search with debounce whenever any filter state changes
