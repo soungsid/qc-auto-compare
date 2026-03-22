@@ -23,6 +23,7 @@ interface Props {
   onReset: () => void
   collapsed?: boolean
   onToggleCollapse?: () => void
+  totalResults?: number
 }
 
 // BUG-03: map raw DB transmission values to French display labels
@@ -42,7 +43,7 @@ const formatTransmission = (raw: string) =>
  * - Sliders bidirectionnels (min/max)
  * - Filtre neuf/occasion avec option "Tous"
  */
-export function VehicleSearchFilters({ onChange, onReset, collapsed = false, onToggleCollapse }: Props) {
+export function VehicleSearchFilters({ onChange, onReset, collapsed = false, onToggleCollapse, totalResults }: Props) {
   // Stable ref so the auto-search effect never needs onChange in its dep array
   const onChangeRef = useRef(onChange)
   useEffect(() => { onChangeRef.current = onChange })
@@ -345,7 +346,16 @@ export function VehicleSearchFilters({ onChange, onReset, collapsed = false, onT
       >
         {/* Header */}
         <div className="sticky top-0 bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 p-4 flex items-center justify-between z-10">
-          {!collapsed && <h3 className="text-lg font-bold text-gray-900 dark:text-white">Filtres</h3>}
+          {!collapsed && (
+            <h3 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+              Filtres
+              {totalResults !== undefined && (
+                <span className="text-sm font-normal text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-2 py-0.5 rounded-full">
+                  {totalResults.toLocaleString('fr-CA')} résultats
+                </span>
+              )}
+            </h3>
+          )}
           <div className="flex items-center gap-2">
             {/* Desktop collapse toggle */}
             {onToggleCollapse && (
@@ -755,6 +765,20 @@ export function VehicleSearchFilters({ onChange, onReset, collapsed = false, onT
             </div>
           </Section>
         </div>
+        )}
+
+        {/* UX-05: Sticky footer mobile — "Voir les N résultats" */}
+        {!collapsed && mobileOpen && (
+          <div className="sticky bottom-0 bg-white dark:bg-slate-800 border-t border-gray-200 dark:border-slate-700 p-4 lg:hidden">
+            <button
+              type="button"
+              onClick={() => setMobileOpen(false)}
+              className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors shadow-md"
+              data-testid="mobile-see-results-btn"
+            >
+              Voir{totalResults !== undefined ? ` les ${totalResults.toLocaleString('fr-CA')}` : ''} résultats →
+            </button>
+          </div>
         )}
       </div>
     </>

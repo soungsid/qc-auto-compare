@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { VehicleSearchFilters } from '../components/VehicleSearchFilters'
+import { ActiveFilterChips } from '../components/ActiveFilterChips'
 import { ThemeToggle } from '../components/ThemeToggle'
 import { VehicleTable } from '../components/VehicleTable'
 import { VehicleGrid } from '../components/VehicleGrid'
@@ -47,6 +48,16 @@ export function ListingPage() {
   const handleReset = useCallback(() => {
     resetFilters()
   }, [resetFilters])
+
+  // UX-02: remove individual filter chip — resets the given keys by setting them to undefined
+  const handleRemoveFilter = useCallback((keys: (keyof VehicleFilters)[]) => {
+    const patch: Partial<VehicleFilters> = { page: 1 }
+    for (const key of keys) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ;(patch as any)[key] = undefined
+    }
+    setFilters(patch)
+  }, [setFilters])
 
   const lastUpdated = stats?.last_updated_at
     ? formatRelative(new Date(stats.last_updated_at))
@@ -131,6 +142,7 @@ export function ListingPage() {
           onReset={handleReset}
           collapsed={sidebarCollapsed}
           onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
+          totalResults={data?.total}
         />
 
         {/* Main content area */}
@@ -204,8 +216,38 @@ export function ListingPage() {
           </div>
         )}
 
+        {/* UX-02: Active filter chips */}
+        <ActiveFilterChips
+          filters={filters}
+          onRemove={handleRemoveFilter}
+          onReset={handleReset}
+        />
+
+        {/* UX-03: Empty state with suggestions */}
+        {!isLoading && !isError && data?.total === 0 && (
+          <div className="flex flex-col items-center justify-center gap-4 py-16 text-center" data-testid="empty-state">
+            <div className="text-5xl">🔍</div>
+            <div>
+              <p className="text-xl font-semibold text-gray-700 dark:text-gray-200 mb-1">
+                Aucun véhicule ne correspond à vos critères
+              </p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                Essayez de retirer un filtre ci-dessus pour élargir votre recherche.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={handleReset}
+              className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
+              data-testid="empty-state-reset-btn"
+            >
+              Réinitialiser tous les filtres
+            </button>
+          </div>
+        )}
+
         {/* Table or Grid view based on viewMode */}
-        {viewMode === 'table' ? (
+        {(isLoading || (data?.total ?? 0) > 0) && (viewMode === 'table' ? (
           <VehicleTable
             data={data?.items ?? []}
             total={data?.total ?? 0}
@@ -221,7 +263,7 @@ export function ListingPage() {
             onFiltersChange={handleFiltersChange}
             isLoading={isLoading}
           />
-        )}
+        ))}
         </div>
       </main>
 
