@@ -369,7 +369,7 @@
     "website": "https://www.hondadelacapitale.com",
     "inventory_url": "https://www.hondadelacapitale.com/inventaire/neuf/",
     "spider": "honda_qc_spider",
-    "active": false
+    "active": true
   },
   {
     "slug": "honda-charlesbourg",
@@ -381,7 +381,7 @@
     "website": "https://www.hondacharlesbourg.com",
     "inventory_url": "https://www.hondacharlesbourg.com/inventaire/neuf/",
     "spider": "honda_qc_spider",
-    "active": false
+    "active": true
   },
   {
     "slug": "levis-honda",
@@ -393,7 +393,7 @@
     "website": "https://levishonda.com",
     "inventory_url": "https://levishonda.com/inventaire/neuf/",
     "spider": "honda_qc_spider",
-    "active": false
+    "active": true
   },
   {
     "slug": "laurier-mazda",
@@ -405,7 +405,7 @@
     "website": "https://lauriermazda.com",
     "inventory_url": "https://lauriermazda.com/vehicules-neufs/",
     "spider": "mazda_qc_spider",
-    "active": false
+    "active": true
   },
   {
     "slug": "levis-mazda",
@@ -417,7 +417,7 @@
     "website": "https://www.levismazda.com",
     "inventory_url": "https://www.levismazda.com/vehicules-neufs/",
     "spider": "mazda_qc_spider",
-    "active": false
+    "active": true
   },
   {
     "slug": "option-subaru",
@@ -429,7 +429,7 @@
     "website": "https://optionsubaru.com",
     "inventory_url": "https://optionsubaru.com/inventaire/neuf/",
     "spider": "subaru_qc_spider",
-    "active": false
+    "active": true
   },
   {
     "slug": "desjardins-subaru",
@@ -441,7 +441,7 @@
     "website": "https://www.desjardinssubaru.com",
     "inventory_url": "https://www.desjardinssubaru.com/inventaire/neuf/",
     "spider": "subaru_qc_spider",
-    "active": false
+    "active": true
   },
   {
     "slug": "laval-vw-quebec",
@@ -453,7 +453,7 @@
     "website": "https://www.lavalvw.com",
     "inventory_url": "https://www.lavalvw.com/inventaire/neuf/",
     "spider": "vw_qc_spider",
-    "active": false
+    "active": true
   },
   {
     "slug": "desjardins-volkswagen",
@@ -465,7 +465,7 @@
     "website": "https://www.desjardinsvolkswagen.ca",
     "inventory_url": "https://www.desjardinsvolkswagen.ca/inventaire/neuf/",
     "spider": "vw_qc_spider",
-    "active": false
+    "active": true
   },
   {
     "slug": "desjardins-ford-ste-foy",
@@ -477,7 +477,7 @@
     "website": "https://www.desjardinsfordstefoy.com",
     "inventory_url": "https://www.desjardinsfordstefoy.com/inventaire/neuf/",
     "spider": "ford_qc_spider",
-    "active": false
+    "active": true
   },
   {
     "slug": "desjardins-auto-collection-ford",
@@ -489,7 +489,7 @@
     "website": "https://www.autocollectiondequebec.com",
     "inventory_url": "https://www.autocollectiondequebec.com/inventaire/neuf/",
     "spider": "ford_qc_spider",
-    "active": false
+    "active": true
   },
   {
     "slug": "levis-ford",
@@ -501,7 +501,7 @@
     "website": "https://www.levisford.net",
     "inventory_url": "https://www.levisford.net/inventaire/neuf/",
     "spider": "ford_qc_spider",
-    "active": false
+    "active": true
   },
   {
     "slug": "theetge-chevrolet",
@@ -682,5 +682,53 @@
     "inventory_url": "https://www.tesla.com/fr_CA/inventory/new/m3",
     "spider": "tesla_qc_spider",
     "active": false
+  },
+  {
+    "website": "https://www.desjardinschevroletlevis.ca",
+    "phone": "418-837-8811",
+    "city": "Lévis",
+    "inventory_url": "https://www.desjardinschevroletlevis.ca/inventaire/neuf/",
+    "spider": "chevrolet_qc_spider",
+    "address": "1020 Route du Président-Kennedy, Lévis, QC G6V 6E1",
+    "slug": "desjardins-chevrolet-levis",
+    "brand": "Chevrolet",
+    "active": true,
+    "name": "J.L. Desjardins Chevrolet Buick GMC"
+  },
+  {
+    "website": "https://www.levisford.net",
+    "phone": "418-833-4443",
+    "city": "Lévis",
+    "inventory_url": "https://www.levisford.net/inventaire/neuf/",
+    "spider": "ford_qc_spider",
+    "address": "61 Route du Président-Kennedy, Lévis, QC G6V 6B7",
+    "slug": "ford-levis",
+    "brand": "Ford",
+    "active": true,
+    "name": "Lévis Ford (Groupe Auto Québec)"
+  },
+  {
+    "spider": "nissan_qc_spider",
+    "name": "St-Nicolas Nissan",
+    "active": true,
+    "inventory_url": "https://www.st-nicolas-nissan.com/inventaire/neuf/",
+    "website": "https://www.st-nicolas-nissan.com",
+    "address": "2430 Route Marie-Victorin, Saint-Nicolas, QC G7A 1C5",
+    "slug": "st-nicolas-nissan",
+    "city": "Lévis",
+    "phone": "418-831-3333",
+    "brand": "Nissan"
+  },
+  {
+    "spider": "honda_qc_spider",
+    "name": "Honda St-Nicolas",
+    "active": true,
+    "inventory_url": "https://www.hondastnicolas.com/fr/inventaire/neuf/",
+    "website": "https://www.hondastnicolas.com",
+    "address": "2435 Route Marie-Victorin, Saint-Nicolas, QC G7A 2L3",
+    "slug": "honda-st-nicolas",
+    "city": "Lévis",
+    "phone": "418-831-2424",
+    "brand": "Honda"
   }
 ]
