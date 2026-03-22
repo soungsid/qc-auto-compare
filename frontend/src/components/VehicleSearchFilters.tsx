@@ -25,6 +25,14 @@ interface Props {
   onToggleCollapse?: () => void
 }
 
+// BUG-03: map raw DB transmission values to French display labels
+const TRANSMISSION_LABELS: Record<string, string> = {
+  automatic: 'Automatique',
+  manual: 'Manuelle',
+}
+const formatTransmission = (raw: string) =>
+  TRANSMISSION_LABELS[raw.toLowerCase()] ?? raw
+
 /**
  * Composant de filtres avancés inspiré de HGrégoire
  * - Sidebar verticale sur desktop
@@ -70,40 +78,47 @@ export function VehicleSearchFilters({ onChange, onReset, collapsed = false, onT
   const [mileageSliderValues, setMileageSliderValues] = useState({ min: 0, max: 300000 })
   const [yearSliderValues, setYearSliderValues] = useState({ min: 2000, max: 2026 })
 
-  // Fetch filter options from API
+  // Fetch filter options from API — re-fetches with context when primary filters change
   useEffect(() => {
-    const fetchOptions = async () => {
+    const fetchOptions = async (isInitial: boolean) => {
       try {
         const backendUrl = import.meta.env.VITE_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL || ''
-        const response = await fetch(`${backendUrl}/api/filters/options`)
+        const params = new URLSearchParams()
+        if (selectedBrands.length === 1) params.set('make', selectedBrands[0])
+        if (vehicleCondition && vehicleCondition !== 'all') params.set('condition', vehicleCondition)
+        const url = `${backendUrl}/api/filters/options${params.toString() ? `?${params}` : ''}`
+        const response = await fetch(url)
         const data = await response.json()
         setFilterOptions(data)
-        
-        // Set initial ranges from API
-        if (data.price_range) {
-          const min = Math.floor(data.price_range.min || 0)
-          const max = Math.ceil(data.price_range.max || 100000)
-          setPriceRange({ min, max })
-          setPriceSliderValues({ min, max })
-        }
-        if (data.years) {
-          const min = data.years.min || 2000
-          const max = data.years.max || 2026
-          setYearRange({ min, max })
-          setYearSliderValues({ min, max })
-        }
-        if (data.mileage_range) {
-          const min = data.mileage_range.min || 0
-          const max = data.mileage_range.max || 300000
-          setMileageRange({ min, max })
-          setMileageSliderValues({ min, max })
+
+        // Only initialise slider bounds on first load (not on context re-fetches)
+        if (isInitial) {
+          if (data.price_range) {
+            const min = Math.floor(data.price_range.min || 0)
+            const max = Math.ceil(data.price_range.max || 100000)
+            setPriceRange({ min, max })
+            setPriceSliderValues({ min, max })
+          }
+          if (data.years) {
+            const min = data.years.min || 2000
+            const max = data.years.max || 2026
+            setYearRange({ min, max })
+            setYearSliderValues({ min, max })
+          }
+          if (data.mileage_range) {
+            const min = data.mileage_range.min || 0
+            const max = data.mileage_range.max || 300000
+            setMileageRange({ min, max })
+            setMileageSliderValues({ min, max })
+          }
         }
       } catch (error) {
         console.error('Error fetching filter options:', error)
       }
     }
-    fetchOptions()
-  }, [])
+    fetchOptions(selectedBrands.length === 0 && !vehicleCondition)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedBrands.join(','), vehicleCondition])
 
   const toggleSection = (section: string) => {
     setOpenSections(prev => ({ ...prev, [section]: !prev[section] }))
@@ -637,7 +652,7 @@ export function VehicleSearchFilters({ onChange, onReset, collapsed = false, onT
                     data-testid={`filter-transmission-${trans.transmission}`}
                   />
                   <span className="text-sm text-gray-700 dark:text-gray-300">
-                    {trans.transmission} <span className="text-gray-400">({trans.count})</span>
+                    {formatTransmission(trans.transmission)} <span className="text-gray-400">({trans.count})</span>
                   </span>
                 </label>
               ))}
