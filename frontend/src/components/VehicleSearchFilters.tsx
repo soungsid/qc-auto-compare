@@ -21,7 +21,6 @@ interface FilterOptions {
 interface Props {
   onChange: (filters: Partial<VehicleFilters>) => void
   onReset: () => void
-  totalResults?: number
   collapsed?: boolean
   onToggleCollapse?: () => void
 }
@@ -35,7 +34,7 @@ interface Props {
  * - Sliders bidirectionnels (min/max)
  * - Filtre neuf/occasion avec option "Tous"
  */
-export function VehicleSearchFilters({ onChange, onReset, totalResults = 0, collapsed = false, onToggleCollapse }: Props) {
+export function VehicleSearchFilters({ onChange, onReset, collapsed = false, onToggleCollapse }: Props) {
   // Stable ref so the auto-search effect never needs onChange in its dep array
   const onChangeRef = useRef(onChange)
   useEffect(() => { onChangeRef.current = onChange })

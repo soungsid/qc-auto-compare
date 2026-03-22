@@ -129,7 +129,6 @@ export function ListingPage() {
         <VehicleSearchFilters
           onChange={handleFiltersChange}
           onReset={handleReset}
-          totalResults={data?.total ?? 0}
           collapsed={sidebarCollapsed}
           onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
         />
