@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { VehicleSearchFilters } from '../components/VehicleSearchFilters'
 import { ThemeToggle } from '../components/ThemeToggle'
 import { VehicleTable } from '../components/VehicleTable'
@@ -40,13 +40,13 @@ export function ListingPage() {
   const { data, isLoading, isError } = useVehicles(filters)
   const { data: stats } = useStats()
 
-  const handleFiltersChange = (updated: Partial<VehicleFilters>) => {
+  const handleFiltersChange = useCallback((updated: Partial<VehicleFilters>) => {
     setFilters(updated)
-  }
+  }, [setFilters])
 
-  const handleReset = () => {
+  const handleReset = useCallback(() => {
     resetFilters()
-  }
+  }, [resetFilters])
 
   const lastUpdated = stats?.last_updated_at
     ? formatRelative(new Date(stats.last_updated_at))

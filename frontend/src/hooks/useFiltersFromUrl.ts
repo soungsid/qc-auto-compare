@@ -44,6 +44,9 @@ export function useFiltersFromUrl() {
       model: getString('model'),
       trim: getString('trim'),
       condition: getString('condition'),
+      body_type: getString('body_type'),
+      fuel_type: getString('fuel_type'),
+      transmission: getString('transmission'),
       drivetrain: getString('drivetrain'),
       city: getString('city'),
       min_price: getNumber('min_price'),
@@ -82,6 +85,9 @@ export function useFiltersFromUrl() {
       setOrDelete('model', merged.model)
       setOrDelete('trim', merged.trim)
       setOrDelete('condition', merged.condition)
+      setOrDelete('body_type', merged.body_type)
+      setOrDelete('fuel_type', merged.fuel_type)
+      setOrDelete('transmission', merged.transmission)
       setOrDelete('drivetrain', merged.drivetrain)
       setOrDelete('city', merged.city)
       setOrDelete('min_price', merged.min_price)

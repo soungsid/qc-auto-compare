@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import type { VehicleFilters } from '../types'
 
 interface FilterOptions {
@@ -36,6 +36,10 @@ interface Props {
  * - Filtre neuf/occasion avec option "Tous"
  */
 export function VehicleSearchFilters({ onChange, onReset, totalResults = 0, collapsed = false, onToggleCollapse }: Props) {
+  // Stable ref so the auto-search effect never needs onChange in its dep array
+  const onChangeRef = useRef(onChange)
+  useEffect(() => { onChangeRef.current = onChange })
+
   const [mobileOpen, setMobileOpen] = useState(false)
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
     type: true,
@@ -190,7 +194,11 @@ export function VehicleSearchFilters({ onChange, onReset, totalResults = 0, coll
       newFilters.fuel_type = selectedFuelTypes[0]
     }
 
-    // Transmissions (handled via backend if supported)
+    // Transmissions
+    if (selectedTransmissions.length > 0) {
+      newFilters.transmission = selectedTransmissions[0]
+    }
+
     // Drivetrains
     if (selectedDrivetrains.length > 0) {
       newFilters.drivetrain = selectedDrivetrains[0]
@@ -213,20 +221,24 @@ export function VehicleSearchFilters({ onChange, onReset, totalResults = 0, coll
     }
 
     // Mileage range (bidirectional)
-    if (mileageSliderValues.min > 0) {
-      // Backend would need min_mileage support - for now we only have mileage_max
-    }
     if (mileageSliderValues.max < (filterOptions?.mileage_range.max || 300000)) {
       newFilters.mileage_max = mileageSliderValues.max
     }
 
-    onChange(newFilters)
-    setMobileOpen(false)
+    return newFilters
   }, [
     vehicleCondition, selectedBrands, selectedModels, selectedBodyTypes, selectedFuelTypes,
-    selectedDrivetrains, priceSliderValues, yearSliderValues, mileageSliderValues,
-    filterOptions, onChange
+    selectedTransmissions, selectedDrivetrains, priceSliderValues, yearSliderValues, mileageSliderValues,
+    filterOptions
   ])
+
+  // Auto-trigger search with debounce whenever any filter state changes
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      onChangeRef.current(handleApplyFilters())
+    }, 400)
+    return () => clearTimeout(timer)
+  }, [handleApplyFilters])
 
   const handleReset = () => {
     setVehicleCondition('all')
@@ -728,23 +740,6 @@ export function VehicleSearchFilters({ onChange, onReset, totalResults = 0, coll
               ))}
             </div>
           </Section>
-        </div>
-        )}
-
-        {/* Submit button (sticky at bottom) */}
-        {!collapsed && (
-        <div className="sticky bottom-0 bg-white dark:bg-slate-800 border-t border-gray-200 dark:border-slate-700 p-4">
-          <button
-            type="button"
-            onClick={handleApplyFilters}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
-            data-testid="apply-filters-btn"
-          >
-            Voir les {totalResults.toLocaleString('fr-CA')} résultats
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-            </svg>
-          </button>
         </div>
         )}
       </div>

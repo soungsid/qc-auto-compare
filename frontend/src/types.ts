@@ -74,6 +74,7 @@ export interface VehicleFilters {
   condition?: string
   body_type?: string
   fuel_type?: string
+  transmission?: string
   drivetrain?: string
   city?: string
   min_price?: number
