@@ -31,7 +31,7 @@ class FilterOptionsResponse(BaseModel):
     drivetrains: list[dict[str, int | str]]  # [{"drivetrain": "AWD", "count": 500}]
     transmissions: list[dict[str, int | str]]  # [{"transmission": "Automatique", "count": 800}]
     cities: list[str]
-    years: dict[str, Optional[int]]  # {"min": 2018, "max": 2026}
+    years: dict  # {"min": 2018, "max": 2026, "list": [{"year": 2026, "count": 5}, ...]}
     ingest_sources: list[str]
     price_range: dict[str, Optional[float]]
     mileage_range: dict[str, Optional[int]]
