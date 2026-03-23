@@ -146,7 +146,8 @@ class D2CMediaMixin:
             return
 
         # Extract <loc> URLs from the sitemap XML
-        all_locs = response.css("url loc::text").getall()
+        # Use local-name() XPath to avoid namespace issues with xmlns="..."
+        all_locs = response.xpath("//*[local-name()='loc']/text()").getall()
         # Keep only individual vehicle pages: must match -idNNNNN.html
         vehicle_urls = [url for url in all_locs if _VIN_URL_RE.search(url)]
 
