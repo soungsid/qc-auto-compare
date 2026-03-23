@@ -68,8 +68,17 @@ BACKOFF_DELAYS = [5, 15, 30]
 # HTTP status codes that warrant a retry
 RETRY_HTTP_CODES = {429, 503, 502, 504, 520, 521, 522, 523, 524}
 
-# Signals indicating a soft-block or CAPTCHA page
-CAPTCHA_SIGNALS = ["captcha", "cloudflare", "robot", "access denied", "please verify"]
+# Signals indicating a soft-block or CAPTCHA page (must be specific enough
+# to avoid false positives — "robot" alone matches <meta name="robots"> on every page)
+CAPTCHA_SIGNALS = [
+    "captcha",
+    "cloudflare",
+    "i am not a robot",
+    "prove you are human",
+    "access denied",
+    "please verify",
+    "are you a robot",
+]
 
 
 class RateLimitRetryMiddleware(RetryMiddleware):

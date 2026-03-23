@@ -30,7 +30,7 @@ logger = logging.getLogger(__name__)
 REGISTRY_PATH = Path(__file__).parent.parent / "dealers_registry.json"
 
 # Signals that the page is blocked / behind a CAPTCHA
-BLOCK_SIGNALS = ["captcha", "cloudflare", "robot", "access denied", "please verify", "403 forbidden"]
+BLOCK_SIGNALS = ["captcha", "cloudflare", "i am not a robot", "are you a robot", "prove you are human", "access denied", "please verify", "403 forbidden"]
 
 # JS snippet that scrolls to the bottom and waits for new content to load.
 # Executed twice to handle lazy-loading that requires multiple scroll events.
