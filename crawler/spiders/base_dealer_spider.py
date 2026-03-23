@@ -20,7 +20,10 @@ from typing import Any, Callable, Iterator, Optional
 
 import scrapy
 from scrapy.http import Response
-from scrapy_playwright.page import PageCoroutine
+try:
+    from scrapy_playwright.page import PageCoroutine
+except ImportError:
+    PageCoroutine = None  # newer scrapy-playwright removed PageCoroutine
 
 logger = logging.getLogger(__name__)
 
