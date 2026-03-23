@@ -175,7 +175,7 @@ async def get_filter_options(
     )
     cities = [row[0] for row in cities_result if row[0]]
 
-    # Year range
+    # Year range + per-year counts
     years_result = await db.execute(
         _apply_context(
             select(func.min(Vehicle.year), func.max(Vehicle.year)).where(Vehicle.is_active == True),
@@ -183,9 +183,18 @@ async def get_filter_options(
         )
     )
     years_row = years_result.first()
+    years_list_result = await db.execute(
+        _apply_context(
+            select(Vehicle.year, func.count(Vehicle.id).label("count"))
+            .where(Vehicle.is_active == True)
+            .where(Vehicle.year.isnot(None)),
+            **ctx
+        ).group_by(Vehicle.year).order_by(Vehicle.year.desc())
+    )
     years = {
         "min": years_row[0] if years_row and years_row[0] else None,
         "max": years_row[1] if years_row and years_row[1] else None,
+        "list": [{"year": y, "count": c} for y, c in years_list_result.all()],
     }
 
     # Ingest sources

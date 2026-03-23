@@ -12,7 +12,7 @@ interface FilterOptions {
   transmissions: Array<{ transmission: string; count: number }>
   drivetrains: Array<{ drivetrain: string; count: number }>
   colors: string[]
-  years: { min: number; max: number }
+  years: { min: number; max: number; list: Array<{ year: number; count: number }> }
   price_range: { min: number; max: number }
   mileage_range: { min: number; max: number }
   conditions: string[]
@@ -91,7 +91,7 @@ export function VehicleSearchFilters({ onChange, onReset, collapsed = false, onT
   const [yearRange, setYearRange] = useState({ min: 2000, max: 2026 })
   const [priceSliderValues, setPriceSliderValues] = useState({ min: 0, max: 100000 })
   const [mileageSliderValues, setMileageSliderValues] = useState({ min: 0, max: 300000 })
-  const [yearSliderValues, setYearSliderValues] = useState({ min: 2000, max: 2026 })
+  const [selectedYears, setSelectedYears] = useState<number[]>([])
 
   // Track first fetch to properly initialize slider bounds
   const isFirstFetch = useRef(true)
@@ -125,7 +125,6 @@ export function VehicleSearchFilters({ onChange, onReset, collapsed = false, onT
             const min = data.years.min || 2000
             const max = data.years.max || 2026
             setYearRange({ min, max })
-            setYearSliderValues({ min, max })
           }
           if (data.mileage_range) {
             const min = data.mileage_range.min || 0
@@ -248,12 +247,10 @@ export function VehicleSearchFilters({ onChange, onReset, collapsed = false, onT
       newFilters.max_price = priceSliderValues.max
     }
 
-    // Year range (bidirectional)
-    if (yearSliderValues.min > yearRange.min) {
-      newFilters.year_min = yearSliderValues.min
-    }
-    if (yearSliderValues.max < yearRange.max) {
-      newFilters.year_max = yearSliderValues.max
+    // Year filter — convert selected checkboxes to min/max range
+    if (selectedYears.length > 0) {
+      newFilters.year_min = Math.min(...selectedYears)
+      newFilters.year_max = Math.max(...selectedYears)
     }
 
     // Mileage range (bidirectional)
@@ -264,7 +261,7 @@ export function VehicleSearchFilters({ onChange, onReset, collapsed = false, onT
     return newFilters
   }, [
     vehicleCondition, selectedBrands, selectedModels, selectedBodyTypes, selectedFuelTypes,
-    selectedTransmissions, selectedDrivetrains, priceSliderValues, yearSliderValues, mileageSliderValues,
+    selectedTransmissions, selectedDrivetrains, priceSliderValues, selectedYears, mileageSliderValues,
     priceRange, yearRange, mileageRange
   ])
 
@@ -287,7 +284,7 @@ export function VehicleSearchFilters({ onChange, onReset, collapsed = false, onT
     setSelectedColors([])
     setPriceSliderValues({ min: filterOptions?.price_range.min || 0, max: filterOptions?.price_range.max || 100000 })
     setMileageSliderValues({ min: 0, max: filterOptions?.mileage_range.max || 300000 })
-    setYearSliderValues({ min: filterOptions?.years.min || 2000, max: filterOptions?.years.max || 2026 })
+    setSelectedYears([])
     onReset()
   }
 
@@ -635,25 +632,33 @@ export function VehicleSearchFilters({ onChange, onReset, collapsed = false, onT
             </div>
           </Section>
 
-          {/* Année - Slider bidirectionnel */}
+          {/* Année - Checkboxes */}
           <Section
             title="Année"
             isOpen={openSections.year}
             onToggle={() => toggleSection('year')}
           >
-            <div className="space-y-3">
-              <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400">
-                <span>De {yearSliderValues.min}</span>
-                <span>À {yearSliderValues.max}</span>
-              </div>
-              <DualRangeSlider
-                min={yearRange.min}
-                max={yearRange.max}
-                step={1}
-                values={yearSliderValues}
-                onChange={setYearSliderValues}
-                testIdPrefix="year"
-              />
+            <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
+              {(filterOptions?.years.list ?? []).map(({ year, count }) => (
+                <label key={year} className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={selectedYears.includes(year)}
+                    onChange={() => {
+                      setSelectedYears(prev =>
+                        prev.includes(year)
+                          ? prev.filter(y => y !== year)
+                          : [...prev, year]
+                      )
+                    }}
+                    className="w-4 h-4 text-blue-600 rounded"
+                    data-testid={`filter-year-${year}`}
+                  />
+                  <span className="text-sm text-gray-700 dark:text-gray-300">
+                    {year} <span className="text-gray-400">({count})</span>
+                  </span>
+                </label>
+              ))}
             </div>
           </Section>
 
