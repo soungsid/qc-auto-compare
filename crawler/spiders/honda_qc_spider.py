@@ -1,44 +1,31 @@
 """
 Honda Quebec Spider — scrapes new vehicle inventory from Honda dealers in Quebec.
 
-Most Honda Quebec dealers use the CDK Global / Dealer.ca platform,
-with inventory at /fr/inventaire/neuf or /inventaire/neuf/.
+Honda dealers in Quebec use the D2C Media platform.
+Strategy: fetch /fr/sitemap_newinventory.xml, crawl individual vehicle pages.
 """
 
 import logging
+import re
 from typing import Any, Iterator, Optional
 
-import scrapy
 from scrapy.http import Response
 
 from spiders.base_dealer_spider import BaseDealerSpider
+from spiders.d2c_media_spider import D2CMediaMixin
 
 logger = logging.getLogger(__name__)
 
-SELECTORS = {
-    "cards": "div.vehicle-card, article.inventory-item, div.listing-new-tile, li.vehicle-item",
-    "title": "h2.title, h3.vehicle-title, .vehicle-name, h2 a, h3 a",
-    "trim": ".trim, .vehicle-trim, span.trim-level",
-    "msrp": ".price-msrp, .msrp, [data-msrp], .price-regular",
-    "sale_price": ".price-sale, .sale-price, .price-current, [data-sale-price]",
-    "drivetrain": ".drivetrain, [data-drivetrain], .traction",
-    "vin": "[data-vin], .vin, input[name='vin']",
-    "stock": "[data-stock], .stock-number, input[name='stock']",
-    "image": "img.vehicle-image, img.primary-photo, img.lazyload",
-    "link": "a.vehicle-link, a.details-button, h2 a, h3 a",
-    "color": ".ext-color, .exterior-color, [data-ext-color]",
-    "next_page": "a.pagination-next, a[rel='next'], .pager-next a, a:contains('Suivant')",
-}
-
 HONDA_MODELS = [
-    "Civic", "Accord", "Insight", "HR-V", "CR-V", "Passport", "Pilot",
-    "Ridgeline", "Odyssey", "Prologue", "e:Ny1", "Fit", "Jazz",
+    "Accord Sedan", "Accord", "Civic Sedan", "Civic Hatchback", "Civic Si",
+    "Civic Type R", "Civic", "CR-V Hybrid", "CR-V", "HR-V", "Passport",
+    "Pilot", "Ridgeline", "Odyssey", "Prologue", "e:Ny1", "Fit", "Jazz",
 ]
 
 
-class HondaQCSpider(BaseDealerSpider):
+class HondaQCSpider(D2CMediaMixin, BaseDealerSpider):
     """
-    Spider for Honda Quebec dealer websites.
+    Spider for Honda Quebec dealer websites (D2C Media platform).
 
     Usage:
         scrapy crawl honda_qc_spider
@@ -49,85 +36,18 @@ class HondaQCSpider(BaseDealerSpider):
     brand = "Honda"
 
     def parse_listing(self, response: Response) -> Iterator[Any]:
-        dealer = response.meta["dealer"]
+        """Unused — D2CMediaMixin.start_requests overrides the flow."""
+        return iter([])
 
-        if self.is_blocked(response):
-            logger.error("[%s] Bloqué sur %s — ignoré", self.name, dealer["name"])
-            return
-
-        cards = response.css(SELECTORS["cards"])
-        logger.info("[%s] %s — %d cartes sur %s", self.name, dealer["name"], len(cards), response.url)
-
-        if not cards:
-            yield from self._parse_script_data(response, dealer)
-            return
-
-        for card in cards:
-            item = self._extract_card(card, dealer, response)
-            if item:
-                yield item
-
-        next_url = response.css(SELECTORS["next_page"] + "::attr(href)").get()
-        if next_url:
-            yield scrapy.Request(
-                url=response.urljoin(next_url),
-                callback=self.parse_listing,
-                meta={"playwright": True, "dealer": dealer,
-                      "handle_httpstatus_list": [403, 404, 429, 503]},
-                errback=self.handle_error,
-            )
-
-    def _extract_card(self, card: Any, dealer: dict, response: Response) -> Optional[dict]:
-        title_raw = self.clean_text(card.css(SELECTORS["title"] + "::text").get())
-        if not title_raw:
-            return None
-
-        year = self.extract_year(title_raw)
-        if not year:
-            return None
-
-        model = self._parse_model(title_raw)
-        if not model:
-            return None
-
-        trim = self.clean_text(card.css(SELECTORS["trim"] + "::text").get())
-        msrp = self.clean_price(card.css(SELECTORS["msrp"] + "::text").get())
-        sale_price = self.clean_price(card.css(SELECTORS["sale_price"] + "::text").get())
-        drivetrain = self.clean_text(card.css(SELECTORS["drivetrain"] + "::text").get())
-        vin = self.clean_text(
-            card.css(SELECTORS["vin"] + "::attr(data-vin)").get()
-            or card.css(SELECTORS["vin"] + "::text").get()
-        )
-        stock = self.clean_text(
-            card.css(SELECTORS["stock"] + "::attr(data-stock)").get()
-            or card.css(SELECTORS["stock"] + "::text").get()
-        )
-        color_ext = self.clean_text(card.css(SELECTORS["color"] + "::text").get())
-        image_url = card.css(SELECTORS["image"] + "::attr(src)").get()
-        link = card.css(SELECTORS["link"] + "::attr(href)").get()
-
-        return self.build_item(
-            dealer=dealer,
-            make="Honda",
-            model=model,
-            year=year,
-            trim=trim,
-            vin=vin,
-            stock_number=stock,
-            msrp=msrp,
-            sale_price=sale_price,
-            drivetrain=drivetrain,
-            color_ext=color_ext,
-            image_url=image_url,
-            listing_url=response.urljoin(link) if link else response.url,
-        )
-
-    def _parse_model(self, title: str) -> Optional[str]:
-        title_lower = title.lower()
-        for model in HONDA_MODELS:
-            if model.lower() in title_lower:
+    def _normalize_model(self, raw: str) -> Optional[str]:
+        """Normalize a raw model string from D2C Media URL to a canonical Honda model name."""
+        # raw comes from URL segment: "Accord Sedan", "CR V", "HR V" etc.
+        # Normalize underscores already converted to spaces by _url_to_make_model_year
+        raw_lower = raw.lower()
+        # Check longer names first
+        for model in sorted(HONDA_MODELS, key=len, reverse=True):
+            if model.lower() in raw_lower or raw_lower in model.lower():
                 return model
-        return None
+        # Fallback: return raw if it looks valid
+        return raw if raw else None
 
-    def _parse_script_data(self, response: Response, dealer: dict) -> Iterator[dict]:
-        yield from self.json_ld_fallback(response, dealer, "Honda", self._parse_model)
