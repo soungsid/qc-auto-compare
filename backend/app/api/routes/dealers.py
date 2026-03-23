@@ -2,6 +2,7 @@
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import func, select
+from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -39,7 +40,6 @@ async def create_dealer(
     db: AsyncSession = Depends(get_db),
 ) -> DealerResponse:
     """Create a new dealer (used for manual seed or testing)."""
-    # Check slug uniqueness
     existing = await db.scalar(select(Dealer).where(Dealer.slug == payload.slug))
     if existing:
         raise HTTPException(status_code=409, detail=f"Dealer slug '{payload.slug}' already exists")
@@ -49,6 +49,46 @@ async def create_dealer(
     await db.commit()
     await db.refresh(dealer)
     return DealerResponse.model_validate(dealer)
+
+
+@router.post("/bulk-upsert", response_model=dict)
+async def bulk_upsert_dealers(
+    payload: list[DealerCreate],
+    db: AsyncSession = Depends(get_db),
+) -> dict:
+    """Bulk upsert dealers from registry (insert or update on slug conflict)."""
+    import uuid as _uuid
+    from datetime import datetime, timezone
+
+    if not payload:
+        return {"upserted": 0}
+
+    now = datetime.now(timezone.utc).replace(tzinfo=None)
+    values = [
+        {
+            "id": str(_uuid.uuid4()),
+            "created_at": now,
+            **d.model_dump(),
+        }
+        for d in payload
+    ]
+    stmt = pg_insert(Dealer).values(values)
+    stmt = stmt.on_conflict_do_update(
+        index_elements=["slug"],
+        set_={
+            "name": stmt.excluded.name,
+            "brand": stmt.excluded.brand,
+            "address": stmt.excluded.address,
+            "city": stmt.excluded.city,
+            "phone": stmt.excluded.phone,
+            "website": stmt.excluded.website,
+            "inventory_url": stmt.excluded.inventory_url,
+            "is_active": stmt.excluded.is_active,
+        },
+    )
+    await db.execute(stmt)
+    await db.commit()
+    return {"upserted": len(values)}
 
 
 @router.get("/{slug}", response_model=DealerResponse)
