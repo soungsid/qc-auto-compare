@@ -376,4 +376,6 @@ async def reconcile_dealer_inventory(
         dealer_slug=payload.dealer_slug,
         total_for_dealer=total_before,
         deactivated_count=deactivated_count,
-        kept_active_count=total_before - deactivated_count,
+        kept_active_count=total_before - deactivated_count,
+    )
+
