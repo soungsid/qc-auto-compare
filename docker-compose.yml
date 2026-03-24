@@ -32,6 +32,10 @@ services:
     environment:
       DATABASE_URL: postgresql+asyncpg://${DB_USER:-qc_auto_user}:${DB_PASSWORD:-supersecret}@postgres:5432/${DB_NAME:-qc_auto}
       BACKEND_INGEST_URL: http://backend:${BACKEND_PORT:-8000}/api/ingest/batch
+      COMPOSE_PROJECT_NAME: ${COMPOSE_PROJECT_NAME:-qc-auto-compare-org}
+      CRAWLER_NETWORK: ${COMPOSE_PROJECT_NAME:-qc-auto-compare-org}_qc-auto-network
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
     expose:
       - "${BACKEND_PORT:-8000}"
     depends_on:

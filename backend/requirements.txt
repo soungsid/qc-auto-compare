@@ -12,6 +12,7 @@ apscheduler==3.10.4
 greenlet==3.0.3
 pytz==2026.1.post1
 tzlocal==5.3.1
+docker>=7.0.0
 pytest==8.2.0
 pytest-asyncio==0.23.6
 pytest-httpx==0.30.0
