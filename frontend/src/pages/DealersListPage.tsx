@@ -53,7 +53,7 @@ export function DealersPage() {
   } : breadcrumbs
 
   return (
-    <div className="min-h-screen bg-brand-50 dark:bg-dark-primary text-brand-900 dark:text-brand-100 transition-colors flex flex-col">
+    <div className="min-h-screen bg-creme-200 dark:bg-dark-primary text-charbon-900 dark:text-creme-300 transition-colors flex flex-col">
       <SEO
         title="Concessionnaires automobiles au Québec"
         description="Trouvez un concessionnaire automobile près de chez vous à Montréal, Québec, Laval et partout au Québec. Coordonnées, inventaire et site web."
@@ -65,10 +65,10 @@ export function DealersPage() {
       {/* Main Content */}
       <main className="mx-auto w-full max-w-screen-2xl px-6 py-8 flex-1">
         <div className="mb-6">
-          <h2 className="text-3xl font-bold text-brand-900 dark:text-brand-100 mb-2">
+          <h2 className="text-3xl font-bold text-charbon-900 dark:text-creme-300 mb-2">
             Concessionnaires
           </h2>
-          <p className="text-brand-500 dark:text-brand-400">
+          <p className="text-acier-500 dark:text-acier-400">
             Trouvez un concessionnaire près de chez vous
           </p>
         </div>
@@ -78,7 +78,7 @@ export function DealersPage() {
           <select
             value={filterBrand}
             onChange={(e) => setFilterBrand(e.target.value)}
-            className="px-4 py-2 border border-brand-300 dark:border-brand-700 rounded-lg bg-white dark:bg-brand-900 text-brand-900 dark:text-brand-100 text-sm focus:outline-none focus:ring-2 focus:ring-accent-500"
+            className="px-4 py-2 border border-creme-500 dark:border-charbon-700 rounded-lg bg-white dark:bg-charbon-900 text-charbon-900 dark:text-creme-300 text-sm focus:outline-none focus:ring-2 focus:ring-ambre-500"
             data-testid="filter-brand"
           >
             <option value="">Toutes les marques</option>
@@ -90,7 +90,7 @@ export function DealersPage() {
           <select
             value={filterCity}
             onChange={(e) => setFilterCity(e.target.value)}
-            className="px-4 py-2 border border-brand-300 dark:border-brand-700 rounded-lg bg-white dark:bg-brand-900 text-brand-900 dark:text-brand-100 text-sm focus:outline-none focus:ring-2 focus:ring-accent-500"
+            className="px-4 py-2 border border-creme-500 dark:border-charbon-700 rounded-lg bg-white dark:bg-charbon-900 text-charbon-900 dark:text-creme-300 text-sm focus:outline-none focus:ring-2 focus:ring-ambre-500"
             data-testid="filter-city"
           >
             <option value="">Toutes les villes</option>
@@ -105,7 +105,7 @@ export function DealersPage() {
                 setFilterBrand('')
                 setFilterCity('')
               }}
-              className="px-4 py-2 text-sm text-brand-700 dark:text-brand-300 hover:underline"
+              className="px-4 py-2 text-sm text-charbon-700 dark:text-creme-500 hover:underline"
             >
               Réinitialiser
             </button>
@@ -115,7 +115,7 @@ export function DealersPage() {
         {/* Dealers Grid */}
         {loading ? (
           <div className="text-center py-12">
-            <div className="inline-flex items-center gap-2 text-brand-500 dark:text-brand-400">
+            <div className="inline-flex items-center gap-2 text-acier-500 dark:text-acier-400">
               <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
@@ -124,7 +124,7 @@ export function DealersPage() {
             </div>
           </div>
         ) : dealers.length === 0 ? (
-          <div className="text-center py-12 text-brand-500 dark:text-brand-400">
+          <div className="text-center py-12 text-acier-500 dark:text-acier-400">
             Aucun concessionnaire trouvé
           </div>
         ) : (
@@ -132,23 +132,23 @@ export function DealersPage() {
             {dealers.map(dealer => (
               <div
                 key={dealer.id}
-                className="bg-white dark:bg-brand-900 rounded-xl border border-surface-border dark:border-brand-800 p-6 shadow-sm hover:shadow-md transition-all"
+                className="bg-white dark:bg-charbon-900 rounded-xl border border-creme-400 dark:border-charbon-800 p-6 shadow-sm hover:shadow-md transition-all"
                 data-testid={`dealer-card-${dealer.slug}`}
               >
                 {/* Brand badge */}
                 <div className="flex items-start justify-between mb-4">
-                  <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-accent-100 dark:bg-brand-900/40 text-accent-600 dark:text-accent-300">
+                  <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-ambre-100 dark:bg-charbon-900/40 text-ambre-600 dark:text-ambre-300">
                     {dealer.brand}
                   </span>
                 </div>
 
                 {/* Dealer name */}
-                <h3 className="text-lg font-bold text-brand-900 dark:text-brand-100 mb-2">
+                <h3 className="text-lg font-bold text-charbon-900 dark:text-creme-300 mb-2">
                   {dealer.name}
                 </h3>
 
                 {/* Details */}
-                <div className="space-y-2 text-sm text-brand-500 dark:text-brand-400 mb-4">
+                <div className="space-y-2 text-sm text-acier-500 dark:text-acier-400 mb-4">
                   {dealer.city && (
                     <div className="flex items-center gap-2">
                       <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -163,7 +163,7 @@ export function DealersPage() {
                       <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                       </svg>
-                      <a href={`tel:${dealer.phone}`} className="hover:text-accent-500 dark:hover:text-accent-400">
+                      <a href={`tel:${dealer.phone}`} className="hover:text-ambre-500 dark:hover:text-ambre-400">
                         {dealer.phone}
                       </a>
                     </div>
@@ -185,7 +185,7 @@ export function DealersPage() {
                       href={dealer.inventory_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex-1 inline-flex items-center justify-center gap-1 px-4 py-2 text-sm font-medium text-accent-500 dark:text-accent-400 bg-accent-50 dark:bg-brand-900/20 rounded-lg hover:bg-accent-100 dark:hover:bg-brand-900/30 transition-colors"
+                      className="flex-1 inline-flex items-center justify-center gap-1 px-4 py-2 text-sm font-medium text-ambre-500 dark:text-ambre-400 bg-ambre-50 dark:bg-charbon-900/20 rounded-lg hover:bg-ambre-100 dark:hover:bg-charbon-900/30 transition-colors"
                     >
                       Voir l'inventaire
                       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -198,7 +198,7 @@ export function DealersPage() {
                       href={dealer.website}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-brand-700 dark:text-brand-300 border border-brand-300 dark:border-brand-700 rounded-lg hover:bg-brand-50 dark:hover:bg-brand-800 transition-colors"
+                      className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-charbon-700 dark:text-creme-500 border border-creme-500 dark:border-charbon-700 rounded-lg hover:bg-creme-200 dark:hover:bg-charbon-800 transition-colors"
                       title="Site web"
                     >
                       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

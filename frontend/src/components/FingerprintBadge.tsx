@@ -33,7 +33,7 @@ export function FingerprintBadge({ fingerprint }: Props) {
       className={`inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-xs font-mono transition-colors ${
         copied
           ? 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300'
-          : 'bg-surface-muted text-brand-500 dark:bg-dark-secondary dark:text-brand-300 hover:bg-brand-100 dark:hover:bg-brand-700'
+          : 'bg-creme-200 text-charbon-500 dark:bg-dark-elevated dark:text-creme-400 hover:bg-creme-300 dark:hover:bg-charbon-600'
       }`}
     >
       <span>{shortId}</span>

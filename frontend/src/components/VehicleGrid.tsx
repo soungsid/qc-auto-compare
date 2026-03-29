@@ -9,47 +9,97 @@ interface Props {
   isLoading?: boolean
 }
 
+function SkeletonCard({ featured = false }: { featured?: boolean }) {
+  if (featured) {
+    return (
+      <div className="rounded-xl overflow-hidden bg-white dark:bg-dark-card border border-creme-300 dark:border-charbon-600">
+        <div className="flex flex-col md:flex-row">
+          <div className="md:w-2/3 aspect-[3/1] md:aspect-auto md:min-h-[260px] skeleton" />
+          <div className="md:w-1/3 p-6 space-y-3">
+            <div className="h-8 w-32 skeleton rounded" />
+            <div className="h-4 w-24 skeleton rounded" />
+            <div className="h-4 w-full skeleton rounded" />
+            <div className="h-10 w-full skeleton rounded-lg mt-auto" />
+          </div>
+        </div>
+      </div>
+    )
+  }
+  return (
+    <div className="rounded-xl overflow-hidden bg-white dark:bg-dark-card border border-creme-300 dark:border-charbon-600">
+      <div className="aspect-[16/9] skeleton" />
+      <div className="p-3 space-y-2">
+        <div className="h-4 w-20 skeleton rounded" />
+        <div className="h-5 w-28 skeleton rounded" />
+        <div className="flex gap-1">
+          <div className="h-4 w-14 skeleton rounded" />
+          <div className="h-4 w-14 skeleton rounded" />
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export function VehicleGrid({ data, total, filters, onFiltersChange, isLoading }: Props) {
   const totalPages = Math.ceil(total / filters.limit)
 
   return (
-    <div className="flex flex-col gap-3" data-testid="vehicle-grid">
-      {/* Loading state */}
+    <div className="flex flex-col gap-6" data-testid="vehicle-grid">
+      {/* Loading state — skeleton grid */}
       {isLoading ? (
-        <div className="flex items-center justify-center py-16">
-          <div className="flex items-center gap-2 text-brand-400 dark:text-brand-500">
-            <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            Chargement des véhicules…
+        <div className="space-y-6">
+          <SkeletonCard featured />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <SkeletonCard /><SkeletonCard />
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <SkeletonCard /><SkeletonCard /><SkeletonCard />
           </div>
         </div>
       ) : data.length === 0 ? (
-        <div className="text-center py-16 text-brand-400 dark:text-brand-500">
+        <div className="text-center py-16 text-acier-400 dark:text-acier-500 font-serif italic">
           Aucun véhicule trouvé avec ces filtres.
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
-          {data.map((vehicle) => (
-            <VehicleCard key={vehicle.id} vehicle={vehicle} />
-          ))}
+        <div className="space-y-6">
+          {/* Featured card — first item, full width */}
+          {data.length > 0 && (
+            <VehicleCard key={data[0].id} vehicle={data[0]} featured />
+          )}
+
+          {/* 2-column section — items 2-3 */}
+          {data.length > 1 && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              {data.slice(1, 3).map((vehicle) => (
+                <VehicleCard key={vehicle.id} vehicle={vehicle} />
+              ))}
+            </div>
+          )}
+
+          {/* 3-column section — items 4+ */}
+          {data.length > 3 && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {data.slice(3).map((vehicle) => (
+                <VehicleCard key={vehicle.id} vehicle={vehicle} />
+              ))}
+            </div>
+          )}
         </div>
       )}
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-brand-400 dark:text-brand-400 pt-2" data-testid="pagination">
-          <span className="text-[11px]">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t border-creme-300 dark:border-charbon-600" data-testid="pagination">
+          <span className="text-xs text-acier-400 dark:text-acier-500 font-display">
             Page {filters.page} / {totalPages}
           </span>
-          <div className="flex gap-2">
+          <div className="flex gap-3">
             <button
               type="button"
               disabled={filters.page <= 1}
               onClick={() => onFiltersChange({ page: filters.page - 1 })}
               data-testid="pagination-prev"
-              className="rounded border border-surface-border dark:border-brand-700 bg-white dark:bg-dark-secondary px-4 py-2 text-[10px] disabled:opacity-40 hover:bg-surface-muted dark:hover:bg-dark-tertiary transition-colors"
+              className="rounded-lg border border-creme-400 dark:border-charbon-600 bg-white dark:bg-dark-card px-5 py-2 text-xs font-medium text-charbon-700 dark:text-creme-300 disabled:opacity-30 hover:bg-creme-200 dark:hover:bg-dark-elevated transition-colors"
             >
               ← Précédente
             </button>
@@ -58,7 +108,7 @@ export function VehicleGrid({ data, total, filters, onFiltersChange, isLoading }
               disabled={filters.page >= totalPages}
               onClick={() => onFiltersChange({ page: filters.page + 1 })}
               data-testid="pagination-next"
-              className="rounded border border-surface-border dark:border-brand-700 bg-white dark:bg-dark-secondary px-4 py-2 text-[10px] disabled:opacity-40 hover:bg-surface-muted dark:hover:bg-dark-tertiary transition-colors"
+              className="rounded-lg border border-creme-400 dark:border-charbon-600 bg-white dark:bg-dark-card px-5 py-2 text-xs font-medium text-charbon-700 dark:text-creme-300 disabled:opacity-30 hover:bg-creme-200 dark:hover:bg-dark-elevated transition-colors"
             >
               Suivante →
             </button>

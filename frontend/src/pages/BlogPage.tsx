@@ -65,7 +65,7 @@ export function BlogPage() {
   ])
 
   return (
-    <div className="min-h-screen bg-brand-50 dark:bg-dark-primary text-brand-900 dark:text-brand-100 transition-colors flex flex-col">
+    <div className="min-h-screen bg-creme-200 dark:bg-dark-primary text-charbon-900 dark:text-creme-300 transition-colors flex flex-col">
       <SEO
         title="Blog - Guides et conseils auto"
         description="Découvrez nos guides d'achat, comparatifs de véhicules, conseils de négociation et actualités du marché automobile québécois."
@@ -80,23 +80,23 @@ export function BlogPage() {
       {/* Main Content */}
       <main className="mx-auto w-full max-w-screen-xl px-6 py-12 flex-1">
         <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-brand-900 dark:text-brand-100 mb-2">
+          <h1 className="text-3xl md:text-4xl font-bold text-charbon-900 dark:text-creme-300 mb-2">
             Blog
           </h1>
-          <p className="text-brand-500 dark:text-brand-400">
+          <p className="text-acier-500 dark:text-acier-400">
             Conseils, guides d'achat, et actualités du monde automobile québécois
           </p>
         </div>
 
         {/* Coming Soon Notice */}
-        <div className="bg-accent-50 dark:bg-brand-900/20 border border-accent-200 dark:border-brand-800 rounded-lg p-6 mb-8">
+        <div className="bg-ambre-50 dark:bg-charbon-900/20 border border-ambre-200 dark:border-charbon-800 rounded-lg p-6 mb-8">
           <div className="flex items-start gap-3">
-            <svg className="w-6 h-6 text-accent-500 dark:text-accent-400 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-6 h-6 text-ambre-500 dark:text-ambre-400 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <div>
-              <h3 className="font-semibold text-brand-900 dark:text-accent-100 mb-1">Bientôt disponible</h3>
-              <p className="text-sm text-brand-800 dark:text-accent-200">
+              <h3 className="font-semibold text-charbon-900 dark:text-ambre-100 mb-1">Bientôt disponible</h3>
+              <p className="text-sm text-charbon-800 dark:text-ambre-200">
                 Notre section blog est en cours de développement. Les articles ci-dessous sont des exemples de contenu à venir. Abonnez-vous à notre newsletter pour être informé du lancement !
               </p>
             </div>
@@ -108,10 +108,10 @@ export function BlogPage() {
           {posts.map((post) => (
             <article
               key={post.id}
-              className="bg-white dark:bg-brand-900 rounded-xl border border-surface-border dark:border-brand-800 overflow-hidden shadow-sm hover:shadow-md transition-all cursor-pointer"
+              className="bg-white dark:bg-charbon-900 rounded-xl border border-creme-400 dark:border-charbon-800 overflow-hidden shadow-sm hover:shadow-md transition-all cursor-pointer"
             >
               {/* Image placeholder */}
-              <div className="aspect-video bg-gradient-to-br from-accent-500 to-purple-600 flex items-center justify-center">
+              <div className="aspect-video bg-gradient-to-br from-ambre-500 to-purple-600 flex items-center justify-center">
                 <span className="text-6xl">{post.image}</span>
               </div>
 
@@ -119,24 +119,24 @@ export function BlogPage() {
               <div className="p-6">
                 {/* Category & Date */}
                 <div className="flex items-center justify-between mb-3">
-                  <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-accent-100 dark:bg-brand-900/40 text-accent-600 dark:text-accent-300">
+                  <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-ambre-100 dark:bg-charbon-900/40 text-ambre-600 dark:text-ambre-300">
                     {post.category}
                   </span>
-                  <span className="text-xs text-brand-500 dark:text-brand-400">{post.date}</span>
+                  <span className="text-xs text-acier-500 dark:text-acier-400">{post.date}</span>
                 </div>
 
                 {/* Title */}
-                <h2 className="text-lg font-bold text-brand-900 dark:text-brand-100 mb-2 line-clamp-2">
+                <h2 className="text-lg font-bold text-charbon-900 dark:text-creme-300 mb-2 line-clamp-2">
                   {post.title}
                 </h2>
 
                 {/* Excerpt */}
-                <p className="text-sm text-brand-500 dark:text-brand-400 mb-4 line-clamp-3">
+                <p className="text-sm text-acier-500 dark:text-acier-400 mb-4 line-clamp-3">
                   {post.excerpt}
                 </p>
 
                 {/* Read More */}
-                <button className="inline-flex items-center gap-1 text-sm font-medium text-brand-700 dark:text-brand-300 hover:underline">
+                <button className="inline-flex items-center gap-1 text-sm font-medium text-charbon-700 dark:text-creme-500 hover:underline">
                   Lire la suite
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
@@ -148,22 +148,22 @@ export function BlogPage() {
         </div>
 
         {/* Newsletter CTA */}
-        <div className="mt-12 bg-gradient-to-r from-accent-500 to-purple-600 rounded-2xl p-8 md:p-12 text-center">
+        <div className="mt-12 bg-gradient-to-r from-ambre-500 to-purple-600 rounded-2xl p-8 md:p-12 text-center">
           <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
             Restez informé de nos nouveaux articles
           </h2>
-          <p className="text-accent-100 mb-6 max-w-2xl mx-auto">
+          <p className="text-ambre-100 mb-6 max-w-2xl mx-auto">
             Recevez nos derniers guides d'achat, comparatifs, et conseils directement dans votre boîte mail.
           </p>
           <form className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
             <input
               type="email"
               placeholder="Votre email"
-              className="flex-1 px-4 py-3 rounded-lg bg-white text-brand-900 placeholder-brand-400 focus:outline-none focus:ring-2 focus:ring-white"
+              className="flex-1 px-4 py-3 rounded-lg bg-white text-charbon-900 placeholder-acier-400 focus:outline-none focus:ring-2 focus:ring-white"
             />
             <button
               type="submit"
-              className="px-6 py-3 bg-white text-accent-500 font-medium rounded-lg hover:bg-accent-50 transition-colors"
+              className="px-6 py-3 bg-white text-ambre-500 font-medium rounded-lg hover:bg-ambre-50 transition-colors"
             >
               S'abonner
             </button>

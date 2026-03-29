@@ -63,12 +63,12 @@ export function FilterBar({ filters, onChange, onReset }: Props) {
   const cities = options?.cities ?? FALLBACK_CITIES
   const years = options?.years ?? FALLBACK_YEARS
 
-  const selectClasses = "rounded-lg border border-surface-border dark:border-brand-600 bg-surface-muted dark:bg-dark-secondary px-3 py-1.5 text-sm text-brand-900 dark:text-brand-100 focus:outline-none focus:ring-2 focus:ring-accent-400 dark:focus:ring-accent-400 transition-colors"
-  const inputClasses = "rounded-lg border border-surface-border dark:border-brand-600 bg-surface-muted dark:bg-dark-secondary px-3 py-1.5 text-sm text-brand-900 dark:text-brand-100 placeholder-brand-300 dark:placeholder-brand-500 focus:outline-none focus:ring-2 focus:ring-accent-400 dark:focus:ring-accent-400 transition-colors"
-  const labelClasses = "text-xs font-medium text-brand-400 dark:text-brand-400"
+  const selectClasses = "rounded-lg border border-creme-400 dark:border-charbon-600 bg-white dark:bg-dark-card px-3 py-1.5 text-sm text-charbon-900 dark:text-creme-200 focus:outline-none focus:ring-2 focus:ring-ambre-400 dark:focus:ring-ambre-400 transition-colors font-display"
+  const inputClasses = "rounded-lg border border-creme-400 dark:border-charbon-600 bg-white dark:bg-dark-card px-3 py-1.5 text-sm text-charbon-900 dark:text-creme-200 placeholder-acier-300 dark:placeholder-acier-500 focus:outline-none focus:ring-2 focus:ring-ambre-400 dark:focus:ring-ambre-400 transition-colors font-display"
+  const labelClasses = "text-xs font-medium text-acier-500 dark:text-acier-400 font-display"
 
   return (
-    <div className="rounded-xl border border-surface-border dark:border-brand-700 bg-white dark:bg-dark-secondary p-4 shadow-sm transition-colors" data-testid="filter-bar">
+    <div className="rounded-xl border border-creme-400 dark:border-charbon-700 bg-white dark:bg-dark-card p-4 shadow-sm transition-colors" data-testid="filter-bar">
       <div className="flex flex-wrap items-end gap-3">
 
         {/* Make - BUG #3 FIX: Dynamic options */}
@@ -245,7 +245,7 @@ export function FilterBar({ filters, onChange, onReset }: Props) {
           type="button"
           onClick={onReset}
           data-testid="filter-reset-btn"
-          className="ml-auto rounded-lg border border-surface-border dark:border-brand-600 bg-white dark:bg-dark-secondary px-4 py-1.5 text-sm font-medium text-brand-500 dark:text-brand-300 shadow-sm hover:bg-surface-muted dark:hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-400 dark:focus:ring-brand-500 transition-colors"
+          className="ml-auto rounded-lg border border-creme-400 dark:border-charbon-600 bg-white dark:bg-dark-card px-4 py-1.5 text-sm font-medium text-charbon-500 dark:text-creme-300 shadow-sm hover:bg-creme-100 dark:hover:bg-charbon-700 focus:outline-none focus:ring-2 focus:ring-ambre-400 dark:focus:ring-ambre-400 transition-colors font-display"
         >
           Réinitialiser
         </button>

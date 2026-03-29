@@ -9,7 +9,7 @@ export const config = {
   siteName: import.meta.env.VITE_SITE_NAME || 'AutoQC',
   
   // Tagline (pages marketing uniquement, PAS dans la navbar)
-  tagline: 'Comparez. Choisissez.',
+  tagline: 'L\'éditorial automobile du Québec',
   
   // Domaine du site (configurable via VITE_DOMAIN)
   domain: import.meta.env.VITE_DOMAIN || 'auto.canadaquebec.ca',

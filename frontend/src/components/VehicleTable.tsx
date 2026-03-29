@@ -16,16 +16,16 @@ import { FingerprintBadge } from './FingerprintBadge'
 // Source badge colours
 // ---------------------------------------------------------------------------
 const SOURCE_STYLES: Record<string, string> = {
-  crawler: 'bg-brand-50 text-brand-700 dark:bg-brand-900/40 dark:text-brand-300',
+  crawler: 'bg-creme-200 text-charbon-700 dark:bg-charbon-900/40 dark:text-creme-500',
   copilot: 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300',
   cline: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300',
   claude: 'bg-violet-100 text-violet-700 dark:bg-violet-900/40 dark:text-violet-300',
-  manual: 'bg-surface-muted text-brand-500 dark:bg-dark-secondary dark:text-brand-300',
+  manual: 'bg-creme text-acier-500 dark:bg-dark-card dark:text-creme-500',
   csv_import: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300',
 }
 
 function SourceBadge({ source }: { source: string }) {
-  const cls = SOURCE_STYLES[source] ?? 'bg-surface-muted text-brand-500 dark:bg-dark-secondary dark:text-brand-300'
+  const cls = SOURCE_STYLES[source] ?? 'bg-creme text-acier-500 dark:bg-dark-card dark:text-creme-500'
   return (
     <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${cls}`}>
       {source}
@@ -65,7 +65,7 @@ const createColumns = (showAdvanced: boolean) => {
     columnHelper.accessor('year', {
       id: 'year',
       header: 'Année',
-      cell: (i) => <span className="font-semibold text-brand-900 dark:text-brand-100">{i.getValue()}</span>,
+      cell: (i) => <span className="font-semibold text-charbon-900 dark:text-creme-300">{i.getValue()}</span>,
       size: 70,
       enableSorting: true,
     }),
@@ -73,19 +73,19 @@ const createColumns = (showAdvanced: boolean) => {
       id: 'make',
       header: 'Marque',
       size: 100,
-      cell: (i) => <span className="text-brand-900 dark:text-brand-100">{i.getValue()}</span>,
+      cell: (i) => <span className="text-charbon-900 dark:text-creme-300">{i.getValue()}</span>,
       enableSorting: true,
     }),
     columnHelper.accessor('model', {
       id: 'model',
       header: 'Modèle',
       size: 110,
-      cell: (i) => <span className="text-brand-900 dark:text-brand-100">{i.getValue()}</span>,
+      cell: (i) => <span className="text-charbon-900 dark:text-creme-300">{i.getValue()}</span>,
       enableSorting: true,
     }),
     columnHelper.accessor('trim', {
       header: 'Version',
-      cell: (i) => <span className="text-brand-700 dark:text-brand-300">{i.getValue() ?? '—'}</span>,
+      cell: (i) => <span className="text-charbon-700 dark:text-creme-500">{i.getValue() ?? '—'}</span>,
       size: 120,
       enableSorting: false,
     }),
@@ -98,7 +98,7 @@ const createColumns = (showAdvanced: boolean) => {
     columnHelper.accessor('drivetrain', {
       header: 'Traction',
       cell: (i) => (
-        <span className="rounded bg-surface-muted dark:bg-dark-secondary px-1.5 py-0.5 text-xs font-mono text-brand-700 dark:text-brand-300">
+        <span className="rounded bg-creme dark:bg-dark-card px-1.5 py-0.5 text-xs font-mono text-charbon-700 dark:text-creme-500">
           {i.getValue() ?? '—'}
         </span>
       ),
@@ -108,14 +108,14 @@ const createColumns = (showAdvanced: boolean) => {
     columnHelper.accessor('msrp', {
       id: 'msrp',
       header: 'PDSF',
-      cell: (i) => <span className="text-brand-400 dark:text-brand-400">{fmt(i.getValue())}</span>,
+      cell: (i) => <span className="text-acier-400 dark:text-acier-400">{fmt(i.getValue())}</span>,
       size: 110,
       enableSorting: true,
     }),
     columnHelper.accessor('sale_price', {
       id: 'sale_price',
       header: 'Prix vente',
-      cell: (i) => <span className="font-semibold text-brand-900 dark:text-brand-100">{fmt(i.getValue())}</span>,
+      cell: (i) => <span className="font-bold text-ambre-600 dark:text-ambre-400">{fmt(i.getValue())}</span>,
       size: 115,
       enableSorting: true,
     }),
@@ -125,12 +125,12 @@ const createColumns = (showAdvanced: boolean) => {
       cell: ({ row }) => {
         const msrp = row.original.msrp
         const sale = row.original.sale_price
-        if (!msrp || !sale) return <span className="text-brand-300 dark:text-brand-500">—</span>
+        if (!msrp || !sale) return <span className="text-acier-300 dark:text-acier-500">—</span>
         const savings = msrp - sale
         return savings > 0 ? (
           <span className="font-semibold text-green-600 dark:text-green-400">{fmt(savings)}</span>
         ) : (
-          <span className="text-brand-300 dark:text-brand-500">—</span>
+          <span className="text-acier-300 dark:text-acier-500">—</span>
         )
       },
       size: 100,
@@ -146,14 +146,14 @@ const createColumns = (showAdvanced: boolean) => {
     columnHelper.accessor((row) => row.dealer?.name, {
       id: 'dealer_name',
       header: 'Concess.',
-      cell: (i) => <span className="text-sm text-brand-700 dark:text-brand-300">{i.getValue() ?? '—'}</span>,
+      cell: (i) => <span className="text-sm text-charbon-700 dark:text-creme-500">{i.getValue() ?? '—'}</span>,
       size: 160,
       enableSorting: false,
     }),
     columnHelper.accessor((row) => row.dealer?.city, {
       id: 'dealer_city',
       header: 'Ville',
-      cell: (i) => <span className="text-sm text-brand-500 dark:text-brand-400">{i.getValue() ?? '—'}</span>,
+      cell: (i) => <span className="text-sm text-acier-500 dark:text-acier-400">{i.getValue() ?? '—'}</span>,
       size: 100,
       enableSorting: false,
     }),
@@ -172,7 +172,7 @@ const createColumns = (showAdvanced: boolean) => {
             href={row.original.listing_url}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-xs text-brand-700 dark:text-brand-300 hover:text-accent-400 hover:underline"
+            className="text-xs text-charbon-700 dark:text-creme-500 hover:text-ambre-400 hover:underline"
           >
             Voir →
           </a>
@@ -198,11 +198,11 @@ const createColumns = (showAdvanced: boolean) => {
         cell: (i) => {
           const km = i.getValue()
           return km ? (
-            <span className="text-sm text-brand-500 dark:text-brand-400">
+            <span className="text-sm text-acier-500 dark:text-acier-400">
               {km.toLocaleString('fr-CA')} km
             </span>
           ) : (
-            <span className="text-brand-300 dark:text-brand-500">—</span>
+            <span className="text-acier-300 dark:text-acier-500">—</span>
           )
         },
         size: 90,
@@ -210,7 +210,7 @@ const createColumns = (showAdvanced: boolean) => {
       }),
       columnHelper.accessor('color_ext', {
         header: 'Couleur',
-        cell: (i) => <span className="text-sm text-brand-500 dark:text-brand-400">{i.getValue() ?? '—'}</span>,
+        cell: (i) => <span className="text-sm text-acier-500 dark:text-acier-400">{i.getValue() ?? '—'}</span>,
         size: 120,
         enableSorting: false,
       })
@@ -333,7 +333,7 @@ export function VehicleTable({ data, total, filters, onFiltersChange, isLoading 
     <div className="flex flex-col gap-3" data-testid="vehicle-table">
       {/* Toolbar */}
       <div className="flex items-center justify-between flex-wrap gap-2">
-        <p className="text-sm text-brand-400 dark:text-brand-400" data-testid="vehicle-count">
+        <p className="text-sm text-acier-400 dark:text-acier-400" data-testid="vehicle-count">
           {isLoading ? 'Chargement…' : `${total.toLocaleString('fr-CA')} véhicules`}
         </p>
         <div className="flex items-center gap-2">
@@ -344,8 +344,8 @@ export function VehicleTable({ data, total, filters, onFiltersChange, isLoading 
             data-testid="toggle-advanced-btn"
             className={`rounded-lg border px-3 py-1.5 text-sm font-medium shadow-sm transition-colors ${
               showAdvanced
-                ? 'border-accent-400 bg-accent-50 text-accent-600 dark:bg-accent-700/20 dark:text-accent-300 dark:border-accent-500'
-                : 'border-surface-border dark:border-brand-700 bg-white dark:bg-dark-secondary text-brand-700 dark:text-brand-200 hover:bg-surface-muted dark:hover:bg-brand-800'
+                ? 'border-ambre-400 bg-ambre-50 text-ambre-600 dark:bg-ambre-700/20 dark:text-ambre-300 dark:border-ambre-500'
+                : 'border-charbon-900 dark:border-charbon-700 bg-white dark:bg-dark-card text-charbon-700 dark:text-creme-400 hover:bg-ambre-50 dark:hover:bg-ambre-700/20'
             }`}
           >
             {showAdvanced ? '− Colonnes avancées' : '+ Colonnes avancées'}
@@ -355,7 +355,7 @@ export function VehicleTable({ data, total, filters, onFiltersChange, isLoading 
             type="button"
             onClick={exportCSV}
             data-testid="export-csv-btn"
-            className="rounded-lg border border-surface-border dark:border-brand-700 bg-white dark:bg-dark-secondary px-3 py-1.5 text-sm font-medium text-brand-700 dark:text-brand-200 shadow-sm hover:bg-surface-muted dark:hover:bg-brand-800 transition-colors"
+            className="rounded-lg border border-charbon-900 dark:border-charbon-700 bg-white dark:bg-dark-card px-3 py-1.5 text-sm font-medium text-charbon-700 dark:text-creme-400 shadow-sm hover:bg-ambre-50 dark:hover:bg-ambre-700/20 transition-colors"
           >
             <span className="flex items-center gap-2">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -368,9 +368,9 @@ export function VehicleTable({ data, total, filters, onFiltersChange, isLoading 
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto rounded-xl border border-surface-border dark:border-brand-800 shadow-sm">
+      <div className="overflow-x-auto rounded-xl border border-creme-400 dark:border-charbon-700 shadow-sm">
         <table className="w-full text-sm">
-          <thead className="bg-surface-muted dark:bg-dark-secondary">
+          <thead className="bg-creme-300 dark:bg-dark-elevated">
             {table.getHeaderGroups().map((hg) => (
               <tr key={hg.id}>
                 {hg.headers.map((header) => {
@@ -379,8 +379,8 @@ export function VehicleTable({ data, total, filters, onFiltersChange, isLoading 
                   return (
                     <th
                       key={header.id}
-                      className={`whitespace-nowrap px-3 py-2.5 text-left text-xs font-semibold uppercase tracking-wide text-brand-400 dark:text-brand-400 select-none ${
-                        canSort ? 'cursor-pointer hover:text-brand-800 dark:hover:text-brand-200' : ''
+                      className={`whitespace-nowrap px-3 py-2.5 text-left text-xs font-semibold uppercase tracking-wide text-acier-400 dark:text-acier-400 select-none ${
+                        canSort ? 'cursor-pointer hover:text-charbon-700 dark:hover:text-creme-400' : ''
                       }`}
                       style={{ width: header.column.getSize() }}
                       onClick={canSort ? header.column.getToggleSortingHandler() : undefined}
@@ -388,7 +388,7 @@ export function VehicleTable({ data, total, filters, onFiltersChange, isLoading 
                       <span className="flex items-center gap-1">
                         {flexRender(header.column.columnDef.header, header.getContext())}
                         {canSort && (
-                          <span className="text-brand-300">
+                          <span className="text-acier-300">
                             {isSorted === 'asc' ? '↑' : isSorted === 'desc' ? '↓' : '⇅'}
                           </span>
                         )}
@@ -399,10 +399,10 @@ export function VehicleTable({ data, total, filters, onFiltersChange, isLoading 
               </tr>
             ))}
           </thead>
-          <tbody className="divide-y divide-surface-border dark:divide-brand-800 bg-white dark:bg-dark-primary">
+          <tbody className="divide-y divide-creme-400 dark:divide-charbon-700 bg-white dark:bg-dark-primary">
             {isLoading ? (
               <tr>
-                <td colSpan={columns.length} className="py-12 text-center text-brand-300 dark:text-brand-500">
+                <td colSpan={columns.length} className="py-12 text-center text-acier-300 dark:text-acier-500">
                   <div className="flex items-center justify-center gap-2">
                     <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
@@ -414,7 +414,7 @@ export function VehicleTable({ data, total, filters, onFiltersChange, isLoading 
               </tr>
             ) : table.getRowModel().rows.length === 0 ? (
               <tr>
-                <td colSpan={columns.length} className="py-12 text-center text-brand-300 dark:text-brand-500">
+                <td colSpan={columns.length} className="py-12 text-center text-acier-300 dark:text-acier-500">
                   Aucun véhicule trouvé avec ces filtres.
                 </td>
               </tr>
@@ -425,7 +425,7 @@ export function VehicleTable({ data, total, filters, onFiltersChange, isLoading 
                   <tr
                     key={row.id}
                     data-testid={`vehicle-row-${row.original.id}`}
-                    className={`transition-colors hover:bg-surface-muted dark:hover:bg-dark-secondary ${isCheapest ? 'bg-green-50 dark:bg-green-900/20' : ''}`}
+                    className={`transition-colors hover:bg-creme-100 dark:hover:bg-dark-card ${isCheapest ? 'bg-ambre-50 dark:bg-ambre-700/10' : ''}`}
                   >
                     {row.getVisibleCells().map((cell) => (
                       <td key={cell.id} className="px-3 py-2.5">
@@ -442,7 +442,7 @@ export function VehicleTable({ data, total, filters, onFiltersChange, isLoading 
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between text-sm text-brand-500 dark:text-brand-400" data-testid="pagination">
+        <div className="flex items-center justify-between text-sm text-acier-500 dark:text-acier-400" data-testid="pagination">
           <span>
             Page {filters.page} / {totalPages}
           </span>
@@ -452,7 +452,7 @@ export function VehicleTable({ data, total, filters, onFiltersChange, isLoading 
               disabled={filters.page <= 1}
               onClick={() => onFiltersChange({ page: filters.page - 1 })}
               data-testid="pagination-prev"
-              className="rounded-lg border border-surface-border dark:border-brand-700 bg-white dark:bg-dark-secondary px-3 py-1.5 disabled:opacity-40 hover:bg-surface-muted dark:hover:bg-brand-800 transition-colors"
+              className="rounded-lg border border-charbon-900 dark:border-charbon-700 bg-white dark:bg-dark-card px-3 py-1.5 disabled:opacity-40 hover:bg-ambre-50 dark:hover:bg-ambre-700/20 transition-colors"
             >
               ← Précédente
             </button>
@@ -461,7 +461,7 @@ export function VehicleTable({ data, total, filters, onFiltersChange, isLoading 
               disabled={filters.page >= totalPages}
               onClick={() => onFiltersChange({ page: filters.page + 1 })}
               data-testid="pagination-next"
-              className="rounded-lg border border-surface-border dark:border-brand-700 bg-white dark:bg-dark-secondary px-3 py-1.5 disabled:opacity-40 hover:bg-surface-muted dark:hover:bg-brand-800 transition-colors"
+              className="rounded-lg border border-charbon-900 dark:border-charbon-700 bg-white dark:bg-dark-card px-3 py-1.5 disabled:opacity-40 hover:bg-ambre-50 dark:hover:bg-ambre-700/20 transition-colors"
             >
               Suivante →
             </button>

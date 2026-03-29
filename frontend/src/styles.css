@@ -4,25 +4,29 @@
 
 @layer base {
   :root {
-    --color-primary: #1B1F3B;
-    --color-accent: #E63946;
-    --color-bg: #F6F6F4;
+    --color-primary: #0F0F0F;
+    --color-accent: #D4A847;
+    --color-bg: #F5F0E8;
     --color-surface: #FFFFFF;
-    --color-border: #E4E4E0;
-    --color-border-light: #F0F0EC;
-    --color-text-main: #1B1F3B;
-    --color-text-muted: #888888;
+    --color-border: #E0D4BF;
+    --color-border-light: #EDE5D6;
+    --color-text-main: #0F0F0F;
+    --color-text-muted: #8A9099;
+    --color-promo: #8B1A2A;
+    --color-filter-bg: #F0EBE1;
   }
 
   .dark {
-    --color-primary: #C1C5DF;
-    --color-accent: #F06E7A;
-    --color-bg: #0D0F20;
-    --color-surface: #13162E;
-    --color-border: #2A2E4A;
-    --color-border-light: #1E2240;
-    --color-text-main: #E0E2EF;
-    --color-text-muted: #8888AA;
+    --color-primary: #F5F0E8;
+    --color-accent: #D4A847;
+    --color-bg: #0F0F0F;
+    --color-surface: #1A1A1A;
+    --color-border: #2A2A2A;
+    --color-border-light: #242424;
+    --color-text-main: #E8E2D6;
+    --color-text-muted: #8A9099;
+    --color-promo: #D06678;
+    --color-filter-bg: #1E1E1E;
   }
 }
 
@@ -31,52 +35,45 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Dark mode transition */
+/* Dark mode transition — 300ms as specified */
 html {
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition: background-color 300ms ease, color 300ms ease;
+}
+html * {
+  transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
+  transition-duration: 300ms;
+  transition-timing-function: ease;
+}
+/* Exclude animations and transforms from blanket transition */
+html *[class*="animate-"], html *[class*="transition-"] {
+  transition-property: revert;
 }
 
-/* Table column resize handle (future feature) */
+/* Table column resize handle */
 th {
   position: relative;
 }
 
-/* Custom scrollbar for dark mode */
-.dark ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-.dark ::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.dark ::-webkit-scrollbar-thumb {
-  background: #3f3f46;
-  border-radius: 3px;
-}
-
-.dark ::-webkit-scrollbar-thumb:hover {
-  background: #52525b;
-}
-
-/* Light mode scrollbar refinement */
+/* Custom scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
-
 ::-webkit-scrollbar-track {
   background: transparent;
 }
-
 ::-webkit-scrollbar-thumb {
-  background: #d4d4d8;
+  background: #C9B898;
   border-radius: 3px;
 }
-
 ::-webkit-scrollbar-thumb:hover {
-  background: #a1a1aa;
+  background: #B09A70;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: #3D3D3D;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #525252;
 }
 
 /* Mobile base font sizing */
@@ -89,16 +86,20 @@ th {
 /* Focus visible styles */
 @layer utilities {
   .focus-ring {
-    @apply focus:outline-none focus:ring-2 focus:ring-accent-400 focus:ring-offset-2 dark:focus:ring-offset-dark-primary;
+    @apply focus:outline-none focus:ring-2 focus:ring-ambre-400 focus:ring-offset-2 dark:focus:ring-offset-dark-primary;
   }
 
-  /* Hide scrollbar but keep functionality */
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
+  }
+
+  /* Tabular numbers for prices */
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
   }
 }
 
@@ -108,4 +109,29 @@ th {
     backdrop-filter: blur(12px) saturate(180%);
     -webkit-backdrop-filter: blur(12px) saturate(180%);
   }
+}
+
+/* Card image zoom on hover */
+.card-hover-zoom:hover .card-image {
+  transform: scale(1.06);
+}
+
+/* Skeleton loader */
+.skeleton {
+  background: linear-gradient(90deg, var(--color-border-light) 25%, var(--color-border) 50%, var(--color-border-light) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-sweep 1.5s ease-in-out infinite;
+}
+@keyframes skeleton-sweep {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Toast animation */
+.toast-enter {
+  animation: slideUp 300ms ease-out forwards;
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
 }

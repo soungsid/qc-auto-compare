@@ -8,7 +8,7 @@ import { siteName, baseUrl, contactEmail } from '../config'
  */
 export function LegalPage() {
   return (
-    <div className="min-h-screen bg-brand-50 dark:bg-dark-primary text-brand-900 dark:text-brand-100 transition-colors flex flex-col">
+    <div className="min-h-screen bg-creme-200 dark:bg-dark-primary text-charbon-900 dark:text-creme-300 transition-colors flex flex-col">
       <SEO
         title="Mentions Légales"
         description={`Informations légales sur ${siteName} : collecte de données publiques, droits d'auteur, et politique de confidentialité.`}
@@ -20,18 +20,18 @@ export function LegalPage() {
 
       {/* Main Content */}
       <main className="mx-auto w-full max-w-4xl px-6 py-12 flex-1">
-        <article className="bg-white dark:bg-brand-900 rounded-xl border border-surface-border dark:border-brand-800 p-8 md:p-12 shadow-sm">
-          <h1 className="text-3xl md:text-4xl font-bold text-brand-900 dark:text-brand-100 mb-4">
+        <article className="bg-white dark:bg-charbon-900 rounded-xl border border-creme-400 dark:border-charbon-800 p-8 md:p-12 shadow-sm">
+          <h1 className="text-3xl md:text-4xl font-bold text-charbon-900 dark:text-creme-300 mb-4">
             Mentions Légales
           </h1>
-          <p className="text-sm text-brand-500 dark:text-brand-400 mb-8">
+          <p className="text-sm text-acier-500 dark:text-acier-400 mb-8">
             Dernière mise à jour : {new Date().toLocaleDateString('fr-CA', { year: 'numeric', month: 'long', day: 'numeric' })}
           </p>
 
-          <div className="prose dark:prose-invert max-w-none space-y-6 text-brand-700 dark:text-brand-300">
+          <div className="prose dark:prose-invert max-w-none space-y-6 text-charbon-700 dark:text-creme-500">
             {/* Section 1 */}
             <section>
-              <h2 className="text-2xl font-bold text-brand-900 dark:text-brand-100 mb-3">
+              <h2 className="text-2xl font-bold text-charbon-900 dark:text-creme-300 mb-3">
                 1. Nature du service
               </h2>
               <p>
@@ -43,7 +43,7 @@ export function LegalPage() {
 
             {/* Section 2 */}
             <section>
-              <h2 className="text-2xl font-bold text-brand-900 dark:text-brand-100 mb-3">
+              <h2 className="text-2xl font-bold text-charbon-900 dark:text-creme-300 mb-3">
                 2. Collecte et agrégationde données publiques
               </h2>
               <p className="mb-3">
@@ -65,7 +65,7 @@ export function LegalPage() {
 
             {/* Section 3 */}
             <section>
-              <h2 className="text-2xl font-bold text-brand-900 dark:text-brand-100 mb-3">
+              <h2 className="text-2xl font-bold text-charbon-900 dark:text-creme-300 mb-3">
                 3. Objectif de la plateforme
               </h2>
               <p>
@@ -78,7 +78,7 @@ export function LegalPage() {
 
             {/* Section 4 */}
             <section>
-              <h2 className="text-2xl font-bold text-brand-900 dark:text-brand-100 mb-3">
+              <h2 className="text-2xl font-bold text-charbon-900 dark:text-creme-300 mb-3">
                 4. Exactitude des informations
               </h2>
               <p>
@@ -92,7 +92,7 @@ export function LegalPage() {
 
             {/* Section 5 */}
             <section>
-              <h2 className="text-2xl font-bold text-brand-900 dark:text-brand-100 mb-3">
+              <h2 className="text-2xl font-bold text-charbon-900 dark:text-creme-300 mb-3">
                 5. Droit d'auteuret propriété intellectuelle
               </h2>
               <p>
@@ -105,7 +105,7 @@ export function LegalPage() {
 
             {/* Section 6 */}
             <section>
-              <h2 className="text-2xl font-bold text-brand-900 dark:text-brand-100 mb-3">
+              <h2 className="text-2xl font-bold text-charbon-900 dark:text-creme-300 mb-3">
                 6. Respect des robots.txtet politiques des sites
               </h2>
               <p>
@@ -117,14 +117,14 @@ export function LegalPage() {
 
             {/* Section 7 */}
             <section>
-              <h2 className="text-2xl font-bold text-brand-900 dark:text-brand-100 mb-3">
+              <h2 className="text-2xl font-bold text-charbon-900 dark:text-creme-300 mb-3">
                 7. Demande de retraitd'informations
               </h2>
               <p>
                 Si vous êtes un concessionnaire ou un propriétaire de données et souhaitez que vos
                 informations soient retirées ou modifiées sur notre plateforme, veuillez nous contacter à
                 l'adresse email suivante :{' '}
-                <a href={`mailto:${contactEmail}`} className="text-accent-500 dark:text-accent-400 hover:underline">
+                <a href={`mailto:${contactEmail}`} className="text-ambre-500 dark:text-ambre-400 hover:underline">
                   {contactEmail}
                 </a>
               </p>
@@ -132,7 +132,7 @@ export function LegalPage() {
 
             {/* Section 8 */}
             <section>
-              <h2 className="text-2xl font-bold text-brand-900 dark:text-brand-100 mb-3">
+              <h2 className="text-2xl font-bold text-charbon-900 dark:text-creme-300 mb-3">
                 8. Limitation de responsabilité
               </h2>
               <p>
@@ -144,17 +144,17 @@ export function LegalPage() {
 
             {/* Section 9 */}
             <section>
-              <h2 className="text-2xl font-bold text-brand-900 dark:text-brand-100 mb-3">
+              <h2 className="text-2xl font-bold text-charbon-900 dark:text-creme-300 mb-3">
                 9. Contact
               </h2>
               <p>
                 Pour toute question concernant ces mentions légales ou notre service, vous pouvez nous
                 contacter :
               </p>
-              <div className="mt-3 bg-brand-50 dark:bg-brand-800 p-4 rounded-lg">
+              <div className="mt-3 bg-creme-200 dark:bg-charbon-800 p-4 rounded-lg">
                 <p className="font-medium">{siteName}</p>
-                <p>Email : <a href={`mailto:${contactEmail}`} className="text-accent-500 dark:text-accent-400 hover:underline">{contactEmail}</a></p>
-                <p>Site web : <a href={baseUrl} className="text-accent-500 dark:text-accent-400 hover:underline">{baseUrl.replace('https://', '')}</a></p>
+                <p>Email : <a href={`mailto:${contactEmail}`} className="text-ambre-500 dark:text-ambre-400 hover:underline">{contactEmail}</a></p>
+                <p>Site web : <a href={baseUrl} className="text-ambre-500 dark:text-ambre-400 hover:underline">{baseUrl.replace('https://', '')}</a></p>
               </div>
             </section>
           </div>

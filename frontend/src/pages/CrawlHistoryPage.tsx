@@ -94,7 +94,7 @@ export function CrawlHistoryPage() {
     : undefined
 
   return (
-    <div className="min-h-screen bg-brand-50 dark:bg-dark-primary text-brand-900 dark:text-brand-100">
+    <div className="min-h-screen bg-creme-200 dark:bg-dark-primary text-charbon-900 dark:text-creme-300">
       <Navbar stats={navStats} />
 
       <main className="max-w-screen-xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
@@ -102,7 +102,7 @@ export function CrawlHistoryPage() {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Historique des crawls</h1>
-            <p className="text-sm text-brand-500 dark:text-brand-400 mt-1">
+            <p className="text-sm text-acier-500 dark:text-acier-400 mt-1">
               Suivi des importations de véhicules par concessionnaire
             </p>
           </div>
@@ -110,7 +110,7 @@ export function CrawlHistoryPage() {
             type="button"
             onClick={() => triggerMutation.mutate()}
             disabled={triggerMutation.isPending || status?.running}
-            className="inline-flex items-center gap-2 px-4 py-2.5 bg-brand-900 dark:bg-brand-100 text-white dark:text-brand-900 font-medium rounded-lg hover:bg-brand-800 dark:hover:bg-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors min-h-[44px]"
+            className="inline-flex items-center gap-2 px-4 py-2.5 bg-charbon-900 dark:bg-creme-300 text-white dark:text-charbon-900 font-medium rounded-lg hover:bg-charbon-800 dark:hover:bg-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors min-h-[44px]"
           >
             {triggerMutation.isPending || status?.running ? (
               <>
@@ -161,7 +161,7 @@ export function CrawlHistoryPage() {
             <select
               value={days}
               onChange={(e) => setDays(Number(e.target.value))}
-              className="px-3 py-2 text-sm rounded-lg border border-brand-300 dark:border-brand-700 bg-white dark:bg-brand-900 text-brand-900 dark:text-brand-100 min-h-[44px]"
+              className="px-3 py-2 text-sm rounded-lg border border-creme-500 dark:border-charbon-700 bg-white dark:bg-charbon-900 text-charbon-900 dark:text-creme-300 min-h-[44px]"
             >
               <option value={7}>7 derniers jours</option>
               <option value={14}>14 derniers jours</option>
@@ -173,7 +173,7 @@ export function CrawlHistoryPage() {
               <select
                 value={sourceFilter}
                 onChange={(e) => setSourceFilter(e.target.value)}
-                className="px-3 py-2 text-sm rounded-lg border border-brand-300 dark:border-brand-700 bg-white dark:bg-brand-900 text-brand-900 dark:text-brand-100 min-h-[44px]"
+                className="px-3 py-2 text-sm rounded-lg border border-creme-500 dark:border-charbon-700 bg-white dark:bg-charbon-900 text-charbon-900 dark:text-creme-300 min-h-[44px]"
               >
                 <option value="">Tous les concessionnaires</option>
                 {sources.map((s) => (
@@ -197,7 +197,7 @@ export function CrawlHistoryPage() {
         {/* Loading state */}
         {isLoading && (
           <div className="flex items-center justify-center py-20">
-            <svg className="animate-spin w-6 h-6 text-brand-400" fill="none" viewBox="0 0 24 24">
+            <svg className="animate-spin w-6 h-6 text-acier-400" fill="none" viewBox="0 0 24 24">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
             </svg>
@@ -211,7 +211,7 @@ export function CrawlHistoryPage() {
             <button
               type="button"
               onClick={() => refetch()}
-              className="text-sm text-brand-500 dark:text-brand-400 hover:text-brand-900 dark:hover:text-brand-100 underline"
+              className="text-sm text-acier-500 dark:text-acier-400 hover:text-charbon-900 dark:hover:text-creme-300 underline"
             >
               Réessayer
             </button>
@@ -220,7 +220,7 @@ export function CrawlHistoryPage() {
 
         {/* Empty state */}
         {!isLoading && !error && entries.length === 0 && (
-          <div className="text-center py-20 text-brand-500 dark:text-brand-400">
+          <div className="text-center py-20 text-acier-500 dark:text-acier-400">
             <svg className="w-12 h-12 mx-auto mb-4 opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
             </svg>
@@ -246,13 +246,13 @@ export function CrawlHistoryPage() {
                 )
 
                 return (
-                  <div key={date} className="border border-surface-border dark:border-brand-800 rounded-lg overflow-hidden">
+                  <div key={date} className="border border-creme-400 dark:border-charbon-800 rounded-lg overflow-hidden">
                     {/* Date header */}
-                    <div className="bg-brand-100 dark:bg-brand-900 px-4 py-3 flex items-center justify-between">
+                    <div className="bg-creme-300 dark:bg-charbon-900 px-4 py-3 flex items-center justify-between">
                       <h3 className="text-sm font-semibold capitalize">
                         {formatDate(date)}
                       </h3>
-                      <div className="flex items-center gap-3 text-xs text-brand-500 dark:text-brand-400">
+                      <div className="flex items-center gap-3 text-xs text-acier-500 dark:text-acier-400">
                         <span className="text-emerald-600 dark:text-emerald-400">+{dayTotals.created}</span>
                         <span className="text-sky-600 dark:text-sky-400">↻{dayTotals.updated}</span>
                         {dayTotals.errors > 0 && (
@@ -263,16 +263,16 @@ export function CrawlHistoryPage() {
                     </div>
 
                     {/* Entries table */}
-                    <div className="divide-y divide-surface-border dark:divide-brand-800">
+                    <div className="divide-y divide-creme-400 dark:divide-charbon-800">
                       {dateEntries
                         .sort((a, b) => b.total - a.total)
                         .map((entry) => (
                           <div
                             key={`${entry.date}-${entry.source}`}
-                            className="px-4 py-3 flex items-center justify-between hover:bg-brand-50 dark:hover:bg-brand-800/50 transition-colors"
+                            className="px-4 py-3 flex items-center justify-between hover:bg-creme-200 dark:hover:bg-charbon-800/50 transition-colors"
                           >
                             <div className="flex items-center gap-3 min-w-0">
-                              <span className="w-2 h-2 rounded-full shrink-0 bg-brand-400 dark:bg-brand-500" />
+                              <span className="w-2 h-2 rounded-full shrink-0 bg-acier-400 dark:bg-acier-500" />
                               <span className="text-sm font-medium truncate">{entry.source}</span>
                             </div>
                             <div className="flex items-center gap-4 text-xs tabular-nums shrink-0">
@@ -287,7 +287,7 @@ export function CrawlHistoryPage() {
                                 </span>
                               )}
                               {entry.skipped > 0 && (
-                                <span className="text-brand-400 dark:text-brand-500" title="Ignorés">
+                                <span className="text-acier-400 dark:text-acier-500" title="Ignorés">
                                   ={entry.skipped}
                                 </span>
                               )}
@@ -296,7 +296,7 @@ export function CrawlHistoryPage() {
                                   ✗{entry.errors}
                                 </span>
                               )}
-                              <span className="text-brand-500 dark:text-brand-400 w-12 text-right">
+                              <span className="text-acier-500 dark:text-acier-400 w-12 text-right">
                                 {entry.total}
                               </span>
                             </div>
