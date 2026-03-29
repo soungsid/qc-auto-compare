@@ -22,6 +22,15 @@ function isActive(href: string): boolean {
   return pathname.startsWith(href)
 }
 
+function spaNavigate(e: React.MouseEvent<HTMLAnchorElement>) {
+  e.preventDefault()
+  const href = e.currentTarget.getAttribute('href')
+  if (href) {
+    window.history.pushState({}, '', href)
+    window.dispatchEvent(new PopStateEvent('popstate'))
+  }
+}
+
 export function Navbar({ stats }: NavbarProps) {
   const [mobileOpen, setMobileOpen] = useState(false)
 
@@ -47,7 +56,7 @@ export function Navbar({ stats }: NavbarProps) {
     <>
       <header className="sticky top-0 z-50 h-14 bg-charbon-900 flex items-center px-5 gap-6">
         {/* Logo */}
-        <a href="/" className="shrink-0 font-display font-bold text-xl tracking-tight">
+        <a href="/" onClick={spaNavigate} className="shrink-0 font-display font-bold text-xl tracking-tight">
           <span className="text-creme-200">Auto</span>
           <span className="text-ambre-400">QC</span>
         </a>
@@ -60,6 +69,7 @@ export function Navbar({ stats }: NavbarProps) {
               <a
                 key={link.href}
                 href={link.href}
+                onClick={spaNavigate}
                 className={`uppercase tracking-widest text-[10px] font-medium whitespace-nowrap transition-colors ${
                   active
                     ? 'text-ambre-400'
@@ -136,7 +146,7 @@ export function Navbar({ stats }: NavbarProps) {
               <a
                 key={link.href}
                 href={link.href}
-                onClick={closeMobile}
+                onClick={(e) => { spaNavigate(e); closeMobile() }}
                 className={`flex items-center gap-3 px-5 py-3 uppercase tracking-widest text-[10px] font-medium transition-colors ${
                   active
                     ? 'text-ambre-400 bg-charbon-800'
@@ -154,7 +164,7 @@ export function Navbar({ stats }: NavbarProps) {
           <div className="mt-2 pt-2 border-t border-charbon-700">
             <a
               href="/crawl-history"
-              onClick={closeMobile}
+              onClick={(e) => { spaNavigate(e); closeMobile() }}
               className={`flex items-center gap-3 px-5 py-3 uppercase tracking-widest text-[10px] transition-colors ${
                 isActive('/crawl-history')
                   ? 'text-ambre-400 font-medium bg-charbon-800'

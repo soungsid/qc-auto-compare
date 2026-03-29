@@ -2,20 +2,29 @@
  * Footer commun à toute l'application — editorial automobile aesthetic
  */
 
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
+
+function spaNavigate(e: React.MouseEvent<HTMLAnchorElement>) {
+  e.preventDefault()
+  const href = e.currentTarget.getAttribute('href')
+  if (href) {
+    window.history.pushState({}, '', href)
+    window.dispatchEvent(new PopStateEvent('popstate'))
+  }
+}
 
 export function Footer() {
   const currentYear = new Date().getFullYear()
   const [email, setEmail] = useState('')
   const [subscribeStatus, setSubscribeStatus] = useState<'idle' | 'success' | 'error'>('idle')
 
-  const handleSubscribe = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubscribe = useCallback((e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (!email) return
     setSubscribeStatus('success')
     setEmail('')
     setTimeout(() => setSubscribeStatus('idle'), 4000)
-  }
+  }, [email])
 
   return (
     <footer className="bg-charbon-900 transition-colors">
@@ -39,27 +48,27 @@ export function Footer() {
             </h4>
             <ul className="space-y-2.5 text-sm">
               <li>
-                <a href="/" className="text-creme-400 hover:text-creme-200 transition-colors">
+                <a href="/" className="text-creme-400 hover:text-creme-200 transition-colors" onClick={spaNavigate}>
                   Recherche de véhicules
                 </a>
               </li>
               <li>
-                <a href="/dealers" className="text-creme-400 hover:text-creme-200 transition-colors" data-testid="footer-dealers-link">
+                <a href="/dealers" className="text-creme-400 hover:text-creme-200 transition-colors" onClick={spaNavigate} data-testid="footer-dealers-link">
                   Concessionnaires
                 </a>
               </li>
               <li>
-                <a href="/crawl-history" className="text-creme-400 hover:text-creme-200 transition-colors">
+                <a href="/crawl-history" className="text-creme-400 hover:text-creme-200 transition-colors" onClick={spaNavigate}>
                   Historique crawl
                 </a>
               </li>
               <li>
-                <a href="/about" className="text-creme-400 hover:text-creme-200 transition-colors">
+                <a href="/about" className="text-creme-400 hover:text-creme-200 transition-colors" onClick={spaNavigate}>
                   À propos
                 </a>
               </li>
               <li>
-                <a href="/contact" className="text-creme-400 hover:text-creme-200 transition-colors">
+                <a href="/contact" className="text-creme-400 hover:text-creme-200 transition-colors" onClick={spaNavigate}>
                   Contact
                 </a>
               </li>
@@ -73,27 +82,27 @@ export function Footer() {
             </h4>
             <ul className="space-y-2.5 text-sm">
               <li>
-                <a href="/?city=Montréal" className="text-creme-400 hover:text-creme-200 transition-colors">
+                <a href="/?city=Montréal" className="text-creme-400 hover:text-creme-200 transition-colors" onClick={spaNavigate}>
                   Véhicules à Montréal
                 </a>
               </li>
               <li>
-                <a href="/?city=Québec" className="text-creme-400 hover:text-creme-200 transition-colors">
+                <a href="/?city=Québec" className="text-creme-400 hover:text-creme-200 transition-colors" onClick={spaNavigate}>
                   Véhicules à Québec
                 </a>
               </li>
               <li>
-                <a href="/?city=Laval" className="text-creme-400 hover:text-creme-200 transition-colors">
+                <a href="/?city=Laval" className="text-creme-400 hover:text-creme-200 transition-colors" onClick={spaNavigate}>
                   Véhicules à Laval
                 </a>
               </li>
               <li>
-                <a href="/?city=Brossard" className="text-creme-400 hover:text-creme-200 transition-colors">
+                <a href="/?city=Brossard" className="text-creme-400 hover:text-creme-200 transition-colors" onClick={spaNavigate}>
                   Véhicules à Brossard
                 </a>
               </li>
               <li>
-                <a href="/?city=Lévis" className="text-creme-400 hover:text-creme-200 transition-colors">
+                <a href="/?city=Lévis" className="text-creme-400 hover:text-creme-200 transition-colors" onClick={spaNavigate}>
                   Véhicules à Lévis
                 </a>
               </li>
@@ -107,27 +116,27 @@ export function Footer() {
             </h4>
             <ul className="space-y-2.5 text-sm">
               <li>
-                <a href="/?make=Nissan" className="text-creme-400 hover:text-creme-200 transition-colors">
+                <a href="/?make=Nissan" className="text-creme-400 hover:text-creme-200 transition-colors" onClick={spaNavigate}>
                   Nissan
                 </a>
               </li>
               <li>
-                <a href="/?make=Toyota" className="text-creme-400 hover:text-creme-200 transition-colors">
+                <a href="/?make=Toyota" className="text-creme-400 hover:text-creme-200 transition-colors" onClick={spaNavigate}>
                   Toyota
                 </a>
               </li>
               <li>
-                <a href="/?make=Hyundai" className="text-creme-400 hover:text-creme-200 transition-colors">
+                <a href="/?make=Hyundai" className="text-creme-400 hover:text-creme-200 transition-colors" onClick={spaNavigate}>
                   Hyundai
                 </a>
               </li>
               <li>
-                <a href="/?make=Kia" className="text-creme-400 hover:text-creme-200 transition-colors">
+                <a href="/?make=Kia" className="text-creme-400 hover:text-creme-200 transition-colors" onClick={spaNavigate}>
                   Kia
                 </a>
               </li>
               <li>
-                <a href="/?make=Chevrolet" className="text-creme-400 hover:text-creme-200 transition-colors">
+                <a href="/?make=Chevrolet" className="text-creme-400 hover:text-creme-200 transition-colors" onClick={spaNavigate}>
                   Chevrolet
                 </a>
               </li>
@@ -174,10 +183,10 @@ export function Footer() {
             © {currentYear} AutoQC. Tous droits réservés.
           </div>
           <div className="flex gap-6">
-            <a href="/legal" className="hover:text-creme-200 transition-colors">
+            <a href="/legal" className="hover:text-creme-200 transition-colors" onClick={spaNavigate}>
               Mentions légales
             </a>
-            <a href="/privacy" className="hover:text-creme-200 transition-colors">
+            <a href="/privacy" className="hover:text-creme-200 transition-colors" onClick={spaNavigate}>
               Politique de confidentialité
             </a>
           </div>

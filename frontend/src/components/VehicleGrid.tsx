@@ -9,22 +9,7 @@ interface Props {
   isLoading?: boolean
 }
 
-function SkeletonCard({ featured = false }: { featured?: boolean }) {
-  if (featured) {
-    return (
-      <div className="rounded-xl overflow-hidden bg-white dark:bg-dark-card border border-creme-300 dark:border-charbon-600">
-        <div className="flex flex-col md:flex-row">
-          <div className="md:w-2/3 aspect-[3/1] md:aspect-auto md:min-h-[260px] skeleton" />
-          <div className="md:w-1/3 p-6 space-y-3">
-            <div className="h-8 w-32 skeleton rounded" />
-            <div className="h-4 w-24 skeleton rounded" />
-            <div className="h-4 w-full skeleton rounded" />
-            <div className="h-10 w-full skeleton rounded-lg mt-auto" />
-          </div>
-        </div>
-      </div>
-    )
-  }
+function SkeletonCard() {
   return (
     <div className="rounded-xl overflow-hidden bg-white dark:bg-dark-card border border-creme-300 dark:border-charbon-600">
       <div className="aspect-[16/9] skeleton" />
@@ -47,43 +32,20 @@ export function VehicleGrid({ data, total, filters, onFiltersChange, isLoading }
     <div className="flex flex-col gap-6" data-testid="vehicle-grid">
       {/* Loading state — skeleton grid */}
       {isLoading ? (
-        <div className="space-y-6">
-          <SkeletonCard featured />
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <SkeletonCard /><SkeletonCard />
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <SkeletonCard /><SkeletonCard /><SkeletonCard />
-          </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <SkeletonCard key={i} />
+          ))}
         </div>
       ) : data.length === 0 ? (
         <div className="text-center py-16 text-acier-400 dark:text-acier-500 font-serif italic">
           Aucun véhicule trouvé avec ces filtres.
         </div>
       ) : (
-        <div className="space-y-6">
-          {/* Featured card — first item, full width */}
-          {data.length > 0 && (
-            <VehicleCard key={data[0].id} vehicle={data[0]} featured />
-          )}
-
-          {/* 2-column section — items 2-3 */}
-          {data.length > 1 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              {data.slice(1, 3).map((vehicle) => (
-                <VehicleCard key={vehicle.id} vehicle={vehicle} />
-              ))}
-            </div>
-          )}
-
-          {/* 3-column section — items 4+ */}
-          {data.length > 3 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {data.slice(3).map((vehicle) => (
-                <VehicleCard key={vehicle.id} vehicle={vehicle} />
-              ))}
-            </div>
-          )}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {data.map((vehicle) => (
+            <VehicleCard key={vehicle.id} vehicle={vehicle} />
+          ))}
         </div>
       )}
 

@@ -13,13 +13,13 @@ import type { VehicleFilters, Vehicle } from '../types'
 type ViewMode = 'table' | 'cards'
 
 const sortOptions = [
-  { value: 'sale_price_asc', label: 'Prix ↑' },
-  { value: 'sale_price_desc', label: 'Prix ↓' },
-  { value: 'created_at_desc', label: 'Récent' },
-  { value: 'make_asc', label: 'Marque' },
-  { value: 'year_desc', label: 'Année' },
-  { value: 'mileage_km_asc', label: 'Km ↑' },
-] as const
+  { value: 'sale_price_asc', sort: 'sale_price', order: 'asc' as const, label: 'Prix ↑' },
+  { value: 'sale_price_desc', sort: 'sale_price', order: 'desc' as const, label: 'Prix ↓' },
+  { value: 'created_at_desc', sort: 'created_at', order: 'desc' as const, label: 'Récent' },
+  { value: 'make_asc', sort: 'make', order: 'asc' as const, label: 'Marque' },
+  { value: 'year_desc', sort: 'year', order: 'desc' as const, label: 'Année' },
+  { value: 'mileage_km_asc', sort: 'mileage_km', order: 'asc' as const, label: 'Km ↑' },
+]
 
 function exportCSV(data: Vehicle[]) {
   const headers = [
@@ -153,9 +153,7 @@ export function ListingPage() {
                 <button
                   key={opt.value}
                   onClick={() => {
-                    const [sort, order] = opt.value.split('_')
-                    const o = order as 'asc' | 'desc'
-                    handleFiltersChange({ sort, order: o, page: 1 })
+                    handleFiltersChange({ sort: opt.sort, order: opt.order, page: 1 })
                   }}
                   className={`text-[10px] px-3 py-1.5 rounded-md font-medium transition-colors ${
                     currentSort === opt.value
