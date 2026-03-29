@@ -1,4 +1,4 @@
-import { ThemeToggle } from '../components/ThemeToggle'
+import { Navbar } from '../components/Navbar'
 import { Footer } from '../components/Footer'
 import { SEO, getOrganizationSchema } from '../components/SEO'
 import { siteName, baseUrl, contactEmail } from '../config'
@@ -8,7 +8,7 @@ import { siteName, baseUrl, contactEmail } from '../config'
  */
 export function LegalPage() {
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 transition-colors flex flex-col">
+    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 transition-colors flex flex-col">
       <SEO
         title="Mentions Légales"
         description={`Informations légales sur ${siteName} : collecte de données publiques, droits d'auteur, et politique de confidentialité.`}
@@ -16,37 +16,22 @@ export function LegalPage() {
         structuredData={getOrganizationSchema()}
         noindex={true}
       />
-      {/* Header */}
-      <header className="border-b border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm transition-colors">
-        <div className="mx-auto flex max-w-screen-2xl items-center justify-between px-6 py-4">
-          <div>
-            <a href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-              <svg className="w-7 h-7 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-              </svg>
-              <h1 className="text-xl font-bold text-gray-900 dark:text-white">
-                {siteName}
-              </h1>
-            </a>
-          </div>
-          <ThemeToggle />
-        </div>
-      </header>
+      <Navbar />
 
       {/* Main Content */}
       <main className="mx-auto w-full max-w-4xl px-6 py-12 flex-1">
-        <article className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 p-8 md:p-12 shadow-sm">
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+        <article className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 p-8 md:p-12 shadow-sm">
+          <h1 className="text-3xl md:text-4xl font-bold text-zinc-900 dark:text-zinc-100 mb-4">
             Mentions Légales
           </h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mb-8">
+          <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-8">
             Dernière mise à jour : {new Date().toLocaleDateString('fr-CA', { year: 'numeric', month: 'long', day: 'numeric' })}
           </p>
 
-          <div className="prose dark:prose-invert max-w-none space-y-6 text-gray-700 dark:text-gray-300">
+          <div className="prose dark:prose-invert max-w-none space-y-6 text-zinc-700 dark:text-zinc-300">
             {/* Section 1 */}
             <section>
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+              <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mb-3">
                 1. Nature du service
               </h2>
               <p>
@@ -58,8 +43,8 @@ export function LegalPage() {
 
             {/* Section 2 */}
             <section>
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
-                2. Collecte et agrégation de données publiques
+              <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mb-3">
+                2. Collecte et agrégationde données publiques
               </h2>
               <p className="mb-3">
                 <strong>{siteName} collecte uniquement des informations publiquement disponibles</strong> sur
@@ -80,7 +65,7 @@ export function LegalPage() {
 
             {/* Section 3 */}
             <section>
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+              <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mb-3">
                 3. Objectif de la plateforme
               </h2>
               <p>
@@ -93,7 +78,7 @@ export function LegalPage() {
 
             {/* Section 4 */}
             <section>
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+              <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mb-3">
                 4. Exactitude des informations
               </h2>
               <p>
@@ -107,8 +92,8 @@ export function LegalPage() {
 
             {/* Section 5 */}
             <section>
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
-                5. Droit d'auteur et propriété intellectuelle
+              <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mb-3">
+                5. Droit d'auteuret propriété intellectuelle
               </h2>
               <p>
                 Les données affichées sur {siteName} proviennent de sources publiques et
@@ -120,8 +105,8 @@ export function LegalPage() {
 
             {/* Section 6 */}
             <section>
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
-                6. Respect des robots.txt et politiques des sites
+              <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mb-3">
+                6. Respect des robots.txtet politiques des sites
               </h2>
               <p>
                 Notre système de collecte automatisée respecte les fichiers robots.txt et les politiques
@@ -132,8 +117,8 @@ export function LegalPage() {
 
             {/* Section 7 */}
             <section>
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
-                7. Demande de retrait d'informations
+              <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mb-3">
+                7. Demande de retraitd'informations
               </h2>
               <p>
                 Si vous êtes un concessionnaire ou un propriétaire de données et souhaitez que vos
@@ -147,7 +132,7 @@ export function LegalPage() {
 
             {/* Section 8 */}
             <section>
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+              <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mb-3">
                 8. Limitation de responsabilité
               </h2>
               <p>
@@ -159,14 +144,14 @@ export function LegalPage() {
 
             {/* Section 9 */}
             <section>
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+              <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mb-3">
                 9. Contact
               </h2>
               <p>
                 Pour toute question concernant ces mentions légales ou notre service, vous pouvez nous
                 contacter :
               </p>
-              <div className="mt-3 bg-gray-50 dark:bg-slate-700 p-4 rounded-lg">
+              <div className="mt-3 bg-zinc-50 dark:bg-zinc-800 p-4 rounded-lg">
                 <p className="font-medium">{siteName}</p>
                 <p>Email : <a href={`mailto:${contactEmail}`} className="text-blue-600 dark:text-blue-400 hover:underline">{contactEmail}</a></p>
                 <p>Site web : <a href={baseUrl} className="text-blue-600 dark:text-blue-400 hover:underline">{baseUrl.replace('https://', '')}</a></p>

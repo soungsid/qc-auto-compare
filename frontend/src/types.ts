@@ -109,3 +109,33 @@ export interface StatsResponse {
   vehicles_by_source: Record<string, number>
   last_updated_at?: string
 }
+
+// ---------------------------------------------------------------------------
+// Crawl History
+// ---------------------------------------------------------------------------
+
+export interface CrawlHistoryEntry {
+  date: string
+  source: string
+  created: number
+  updated: number
+  skipped: number
+  errors: number
+  total: number
+}
+
+export interface CrawlHistoryResponse {
+  entries: CrawlHistoryEntry[]
+  total_entries: number
+}
+
+export interface CrawlStatusJob {
+  spider: string
+  status: string
+  started_at?: string
+}
+
+export interface CrawlStatusResponse {
+  running: boolean
+  jobs: CrawlStatusJob[]
+}

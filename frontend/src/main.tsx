@@ -7,6 +7,7 @@ import { LegalPage } from './pages/LegalPage'
 import { AboutPage } from './pages/AboutPage'
 import { ContactPage } from './pages/ContactPage'
 import { BlogPage } from './pages/BlogPage'
+import { CrawlHistoryPage } from './pages/CrawlHistoryPage'
 import { GTM } from './components/GTM'
 import './styles.css'
 
@@ -44,6 +45,9 @@ function App() {
   }
   if (currentPath === '/blog') {
     return <BlogPage />
+  }
+  if (currentPath === '/crawl-history') {
+    return <CrawlHistoryPage />
   }
   return <ListingPage />
 }

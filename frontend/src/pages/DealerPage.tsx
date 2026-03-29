@@ -1,6 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import axios from 'axios'
+import { Navbar } from '../components/Navbar'
+import { Footer } from '../components/Footer'
 import { VehicleTable } from '../components/VehicleTable'
 import { DEFAULT_FILTERS, type Dealer, type VehicleFilters, type VehicleListResponse } from '../types'
 
@@ -43,7 +45,7 @@ export function DealerPage({ slug }: Props) {
 
   if (dealerLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center text-gray-400">
+      <div className="flex min-h-screen items-center justify-center text-zinc-400">
         Chargement du concessionnaire…
       </div>
     )
@@ -58,24 +60,26 @@ export function DealerPage({ slug }: Props) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="border-b border-gray-200 bg-white shadow-sm">
+    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 flex flex-col">
+      <Navbar />
+
+      {/* Dealer Info */}
+      <div className="border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
         <div className="mx-auto max-w-screen-xl px-6 py-4">
-          <a href="/" className="mb-2 inline-block text-xs text-blue-600 hover:underline">
+          <a href="/" className="mb-2 inline-block text-xs text-zinc-700 dark:text-zinc-300 hover:underline">
             ← Retour au listing
           </a>
           <div className="flex items-start justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">{dealer.name}</h1>
-              <p className="text-sm text-gray-500">
+              <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">{dealer.name}</h1>
+              <p className="text-sm text-zinc-500 dark:text-zinc-400">
                 {dealer.brand} · {dealer.city}
               </p>
             </div>
-            <div className="text-right text-sm text-gray-500">
+            <div className="text-right text-sm text-zinc-500 dark:text-zinc-400">
               {dealer.phone && (
                 <p>
-                  <a href={`tel:${dealer.phone}`} className="text-blue-600 hover:underline">
+                  <a href={`tel:${dealer.phone}`} className="text-zinc-700 dark:text-zinc-300 hover:underline">
                     {dealer.phone}
                   </a>
                 </p>
@@ -86,14 +90,14 @@ export function DealerPage({ slug }: Props) {
                     href={dealer.website}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-blue-600 hover:underline"
+                    className="text-zinc-700 dark:text-zinc-300 hover:underline"
                   >
                     Site officiel ↗
                   </a>
                 </p>
               )}
               {dealer.last_crawled_at && (
-                <p className="mt-1 text-xs text-gray-400">
+                <p className="mt-1 text-xs text-zinc-400 dark:text-zinc-500">
                   Dernier crawl :{' '}
                   {new Date(dealer.last_crawled_at).toLocaleString('fr-CA', {
                     dateStyle: 'short',
@@ -104,9 +108,9 @@ export function DealerPage({ slug }: Props) {
             </div>
           </div>
         </div>
-      </header>
+      </div>
 
-      <main className="mx-auto max-w-screen-xl px-6 py-6">
+      <main className="mx-auto max-w-screen-xl px-6 py-6 flex-1">
         <VehicleTable
           data={vehicles?.items ?? []}
           total={vehicles?.total ?? 0}
@@ -115,6 +119,8 @@ export function DealerPage({ slug }: Props) {
           isLoading={vehiclesLoading}
         />
       </main>
+
+      <Footer />
     </div>
   )
 }

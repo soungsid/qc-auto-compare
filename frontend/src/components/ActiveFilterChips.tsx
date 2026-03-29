@@ -109,18 +109,18 @@ export function ActiveFilterChips({ filters, onRemove, onReset }: Props) {
           key={chip.id}
           type="button"
           onClick={() => onRemove(chip.keys)}
-          className="inline-flex items-center gap-1.5 rounded-full border border-blue-200 dark:border-blue-700 bg-blue-50 dark:bg-blue-900/30 px-3 py-1 text-sm font-medium text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors"
+          className="inline-flex items-center gap-1.5 rounded-full border border-zinc-300 dark:border-zinc-600 bg-zinc-100 dark:bg-zinc-800 px-3 py-1 text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors min-h-[36px]"
           data-testid={`chip-${chip.id}`}
         >
           {chip.label}
-          <span className="text-blue-400 dark:text-blue-500 leading-none" aria-label="Supprimer ce filtre">×</span>
+          <span className="text-zinc-400 dark:text-zinc-500 leading-none" aria-label="Supprimer ce filtre">×</span>
         </button>
       ))}
       {chips.length > 1 && (
         <button
           type="button"
           onClick={onReset}
-          className="text-xs text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 underline transition-colors"
+          className="text-xs text-zinc-400 dark:text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300 underline transition-colors"
           data-testid="chip-reset-all"
         >
           Effacer tout

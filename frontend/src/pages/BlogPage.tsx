@@ -1,4 +1,4 @@
-import { ThemeToggle } from '../components/ThemeToggle'
+import { Navbar } from '../components/Navbar'
 import { Footer } from '../components/Footer'
 import { SEO, getOrganizationSchema, getBreadcrumbSchema } from '../components/SEO'
 import { siteName, baseUrl } from '../config'
@@ -65,7 +65,7 @@ export function BlogPage() {
   ])
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 transition-colors flex flex-col">
+    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 transition-colors flex flex-col">
       <SEO
         title="Blog - Guides et conseils auto"
         description="Découvrez nos guides d'achat, comparatifs de véhicules, conseils de négociation et actualités du marché automobile québécois."
@@ -75,30 +75,15 @@ export function BlogPage() {
           "@graph": [getOrganizationSchema(), breadcrumbs]
         }}
       />
-      {/* Header */}
-      <header className="border-b border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm transition-colors">
-        <div className="mx-auto flex max-w-screen-2xl items-center justify-between px-6 py-4">
-          <div>
-            <a href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-              <svg className="w-7 h-7 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-              </svg>
-              <h1 className="text-xl font-bold text-gray-900 dark:text-white">
-                {siteName}
-              </h1>
-            </a>
-          </div>
-          <ThemeToggle />
-        </div>
-      </header>
+      <Navbar />
 
       {/* Main Content */}
       <main className="mx-auto w-full max-w-screen-xl px-6 py-12 flex-1">
         <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-2">
+          <h1 className="text-3xl md:text-4xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">
             Blog
           </h1>
-          <p className="text-gray-600 dark:text-gray-400">
+          <p className="text-zinc-600 dark:text-zinc-400">
             Conseils, guides d'achat, et actualités du monde automobile québécois
           </p>
         </div>
@@ -123,7 +108,7 @@ export function BlogPage() {
           {posts.map((post) => (
             <article
               key={post.id}
-              className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 overflow-hidden shadow-sm hover:shadow-md transition-all cursor-pointer"
+              className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 overflow-hidden shadow-sm hover:shadow-md transition-all cursor-pointer"
             >
               {/* Image placeholder */}
               <div className="aspect-video bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
@@ -137,21 +122,21 @@ export function BlogPage() {
                   <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300">
                     {post.category}
                   </span>
-                  <span className="text-xs text-gray-500 dark:text-gray-400">{post.date}</span>
+                  <span className="text-xs text-zinc-500 dark:text-zinc-400">{post.date}</span>
                 </div>
 
                 {/* Title */}
-                <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-2 line-clamp-2">
+                <h2 className="text-lg font-bold text-zinc-900 dark:text-zinc-100 mb-2 line-clamp-2">
                   {post.title}
                 </h2>
 
                 {/* Excerpt */}
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 line-clamp-3">
+                <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-4 line-clamp-3">
                   {post.excerpt}
                 </p>
 
                 {/* Read More */}
-                <button className="inline-flex items-center gap-1 text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline">
+                <button className="inline-flex items-center gap-1 text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:underline">
                   Lire la suite
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
@@ -174,7 +159,7 @@ export function BlogPage() {
             <input
               type="email"
               placeholder="Votre email"
-              className="flex-1 px-4 py-3 rounded-lg bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white"
+              className="flex-1 px-4 py-3 rounded-lg bg-white text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-white"
             />
             <button
               type="submit"

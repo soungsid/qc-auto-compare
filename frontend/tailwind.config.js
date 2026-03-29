@@ -5,24 +5,28 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Custom brand colors
         brand: {
-          50: '#eff6ff',
-          100: '#dbeafe',
-          200: '#bfdbfe',
-          300: '#93c5fd',
-          400: '#60a5fa',
-          500: '#3b82f6',
-          600: '#2563eb',
-          700: '#1d4ed8',
-          800: '#1e40af',
-          900: '#1e3a8a',
+          50: '#f0f4ff',
+          100: '#e0e9ff',
+          200: '#c7d6fe',
+          300: '#a4bdfc',
+          400: '#7c9cf8',
+          500: '#5b7bf2',
+          600: '#4263e8',
+          700: '#3451d1',
+          800: '#2c43a9',
+          900: '#283b85',
         },
       },
       backgroundColor: {
-        'dark-primary': '#0f172a',
-        'dark-secondary': '#1e293b',
-        'dark-tertiary': '#334155',
+        'dark-primary': '#111113',
+        'dark-secondary': '#1a1a1e',
+        'dark-tertiary': '#252529',
+      },
+      fontSize: {
+        'mobile-xs': ['0.8125rem', { lineHeight: '1.25rem' }],
+        'mobile-sm': ['0.875rem', { lineHeight: '1.375rem' }],
+        'mobile-base': ['1rem', { lineHeight: '1.625rem' }],
       },
     },
   },

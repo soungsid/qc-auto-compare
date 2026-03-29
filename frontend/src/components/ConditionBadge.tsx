@@ -9,15 +9,15 @@ interface Props {
 const CONDITION_STYLES: Record<string, { label: string; className: string }> = {
   new: {
     label: 'Neuf',
-    className: 'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300 ring-green-600/20',
+    className: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300 ring-emerald-600/20',
   },
   used: {
     label: 'Occasion',
-    className: 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300 ring-gray-500/20',
+    className: 'bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300 ring-zinc-500/20',
   },
   certified: {
     label: 'Certifié',
-    className: 'bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300 ring-blue-600/20',
+    className: 'bg-sky-50 text-sky-700 dark:bg-sky-900/30 dark:text-sky-300 ring-sky-600/20',
   },
 }
 

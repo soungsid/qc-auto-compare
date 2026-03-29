@@ -3,10 +3,6 @@ import { ConditionBadge } from './ConditionBadge'
 import { FingerprintBadge } from './FingerprintBadge'
 import { LeaseOfferBadge } from './LeaseOfferBadge'
 
-/**
- * FEATURE #2: Vehicle card component for grid view
- */
-
 interface Props {
   vehicle: Vehicle
 }
@@ -40,11 +36,11 @@ export function VehicleCard({ vehicle }: Props) {
 
   return (
     <div
-      className="relative flex flex-col rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm overflow-hidden transition-all hover:shadow-md hover:border-blue-300 dark:hover:border-blue-600"
+      className="relative flex flex-col rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden transition-all hover:border-zinc-300 dark:hover:border-zinc-700"
       data-testid={`vehicle-card-${vehicle.id}`}
     >
       {/* Image section */}
-      <div className="relative aspect-[16/10] bg-gray-100 dark:bg-slate-700 overflow-hidden">
+      <div className="relative aspect-[16/10] bg-zinc-100 dark:bg-zinc-800 overflow-hidden">
         {image_url ? (
           <img
             src={image_url}
@@ -53,9 +49,9 @@ export function VehicleCard({ vehicle }: Props) {
             loading="lazy"
           />
         ) : (
-          <div className="flex items-center justify-center h-full text-gray-400 dark:text-gray-500">
+          <div className="flex items-center justify-center h-full text-zinc-400 dark:text-zinc-600">
             <div className="text-center">
-              <svg className="w-12 h-12 mx-auto mb-2 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-10 h-10 mx-auto mb-1.5 opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 9l-7 7-7-7" />
                 <circle cx="12" cy="12" r="10" strokeWidth={1.5} />
               </svg>
@@ -66,33 +62,33 @@ export function VehicleCard({ vehicle }: Props) {
       </div>
 
       {/* Content section */}
-      <div className="flex-1 p-4 flex flex-col gap-3">
+      <div className="flex-1 p-4 flex flex-col gap-2.5">
         {/* Header: Condition + Year */}
         <div className="flex items-center gap-2">
           <ConditionBadge condition={condition} />
-          <span className="text-sm font-semibold text-gray-500 dark:text-gray-400">{year}</span>
+          <span className="text-sm font-medium text-zinc-400 dark:text-zinc-500">{year}</span>
         </div>
 
         {/* Title */}
         <div>
-          <h3 className="text-lg font-bold text-gray-900 dark:text-white leading-tight">
+          <h3 className="text-base sm:text-lg font-semibold text-zinc-900 dark:text-zinc-100 leading-tight">
             {make} {model}
-            {trim && <span className="text-sm font-normal text-gray-600 dark:text-gray-400"> {trim}</span>}
+            {trim && <span className="text-sm font-normal text-zinc-500 dark:text-zinc-400"> {trim}</span>}
           </h3>
         </div>
 
         {/* Price */}
         <div className="flex items-baseline gap-2">
-          <span className="text-xl font-bold text-gray-900 dark:text-white">
+          <span className="text-lg sm:text-xl font-bold text-zinc-900 dark:text-zinc-100">
             {fmt(sale_price)}
           </span>
           {msrp && msrp !== sale_price && (
-            <span className="text-sm text-gray-400 dark:text-gray-500 line-through">
+            <span className="text-sm text-zinc-400 dark:text-zinc-500 line-through">
               {fmt(msrp)}
             </span>
           )}
           {savings != null && savings > 0 && (
-            <span className="text-sm font-semibold text-green-600 dark:text-green-400">
+            <span className="text-sm font-semibold text-emerald-600 dark:text-emerald-400">
               -{fmt(savings)}
             </span>
           )}
@@ -101,34 +97,33 @@ export function VehicleCard({ vehicle }: Props) {
         {/* Lease payment */}
         {lease_offers && lease_offers.length > 0 && (
           <div className="flex items-center gap-2">
-            <span className="text-xs text-gray-500 dark:text-gray-400">Location:</span>
+            <span className="text-xs text-zinc-500 dark:text-zinc-400">Location:</span>
             <LeaseOfferBadge offers={lease_offers} />
           </div>
         )}
 
         {/* Details */}
-        <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-gray-600 dark:text-gray-400">
+        <div className="flex flex-wrap gap-x-3 gap-y-1 text-mobile-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
           {dealer && (
             <span className="flex items-center gap-1 group relative">
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
               <span className="cursor-help">
                 {dealer.name} — {dealer.city}
               </span>
-              {/* Tooltip with phone */}
               {dealer.phone && (
-                <span className="invisible group-hover:visible absolute left-0 top-full mt-1 z-10 px-3 py-2 text-xs bg-gray-900 dark:bg-slate-700 text-white rounded-lg shadow-lg whitespace-nowrap">
+                <span className="invisible group-hover:visible absolute left-0 top-full mt-1 z-10 px-3 py-2 text-xs bg-zinc-900 dark:bg-zinc-700 text-white rounded-lg whitespace-nowrap">
                   📞 {dealer.phone}
-                  <span className="absolute left-4 -top-1 w-2 h-2 bg-gray-900 dark:bg-slate-700 transform rotate-45"></span>
+                  <span className="absolute left-4 -top-1 w-2 h-2 bg-zinc-900 dark:bg-zinc-700 transform rotate-45"></span>
                 </span>
               )}
             </span>
           )}
           {color_ext && (
             <span className="flex items-center gap-1">
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
               </svg>
               {color_ext}
@@ -136,16 +131,16 @@ export function VehicleCard({ vehicle }: Props) {
           )}
           {(drivetrain || transmission) && (
             <span className="flex items-center gap-1">
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
-              {[drivetrain, transmission].filter(Boolean).join(' • ')}
+              {[drivetrain, transmission].filter(Boolean).join(' · ')}
             </span>
           )}
           {mileage_km != null && mileage_km > 0 && (
             <span className="flex items-center gap-1">
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
               {mileage_km.toLocaleString('fr-CA')} km
@@ -155,24 +150,23 @@ export function VehicleCard({ vehicle }: Props) {
       </div>
 
       {/* Footer */}
-      <div className="border-t border-gray-100 dark:border-slate-700 px-4 py-3 flex items-center justify-between">
+      <div className="border-t border-zinc-100 dark:border-zinc-800 px-4 py-3 flex items-center justify-between">
         {listing_url ? (
           <a
             href={listing_url}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline"
+            className="inline-flex items-center gap-1 text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
           >
             Voir le véhicule
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
             </svg>
           </a>
         ) : (
-          <span className="text-sm text-gray-400">—</span>
+          <span className="text-sm text-zinc-400">—</span>
         )}
         
-        {/* Fingerprint */}
         <FingerprintBadge fingerprint={fingerprint} />
       </div>
     </div>

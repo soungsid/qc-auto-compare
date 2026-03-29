@@ -2,7 +2,7 @@
 
 import os
 import logging
-from datetime import datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from typing import Optional
 
 import docker
@@ -13,7 +13,7 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_db
-from app.db.models import Dealer, Vehicle
+from app.db.models import Dealer, IngestLog, Vehicle
 
 log = logging.getLogger(__name__)
 
@@ -114,6 +114,22 @@ class StatsResponse(BaseModel):
     total_dealers: int
     vehicles_by_source: dict[str, int]
     last_updated_at: Optional[datetime]
+
+
+class CrawlHistoryEntry(BaseModel):
+    date: str  # ISO date string YYYY-MM-DD
+    source: str
+    total: int
+    created: int
+    updated: int
+    skipped: int
+    errors: int
+
+
+class CrawlHistoryResponse(BaseModel):
+    entries: list[CrawlHistoryEntry]
+    total_entries: int
+    date_range: dict  # {"from": "2026-01-01", "to": "2026-03-29"}
 
 
 class ReconcileRequest(BaseModel):
@@ -328,6 +344,66 @@ async def get_stats(db: AsyncSession = Depends(get_db)) -> StatsResponse:
         total_dealers=total_dealers,
         vehicles_by_source=vehicles_by_source,
         last_updated_at=last_updated_row,
+    )
+
+
+# ---------------------------------------------------------------------------
+# GET /api/crawl/history
+# ---------------------------------------------------------------------------
+
+@router.get("/history", response_model=CrawlHistoryResponse)
+async def crawl_history(
+    days: int = 30,
+    source: Optional[str] = None,
+    db: AsyncSession = Depends(get_db),
+) -> CrawlHistoryResponse:
+    """Return crawl activity grouped by date and ingest source."""
+    days = min(max(days, 1), 90)
+    cutoff_date = datetime.now(timezone.utc) - timedelta(days=days)
+
+    date_col = func.date(IngestLog.created_at).label("day")
+
+    stmt = (
+        select(
+            date_col,
+            IngestLog.ingest_source.label("source"),
+            func.count().label("total"),
+            func.count().filter(IngestLog.action == "created").label("created"),
+            func.count().filter(IngestLog.action == "updated").label("updated"),
+            func.count().filter(IngestLog.action == "skipped").label("skipped"),
+            func.count().filter(IngestLog.action == "error").label("errors"),
+        )
+        .where(IngestLog.created_at >= cutoff_date)
+        .group_by(date_col, IngestLog.ingest_source)
+        .order_by(date_col.desc(), IngestLog.ingest_source.asc())
+    )
+
+    if source:
+        stmt = stmt.where(IngestLog.ingest_source == source)
+
+    rows = await db.execute(stmt)
+    results = rows.all()
+
+    entries = [
+        CrawlHistoryEntry(
+            date=str(row.day),
+            source=row.source,
+            total=row.total,
+            created=row.created,
+            updated=row.updated,
+            skipped=row.skipped,
+            errors=row.errors,
+        )
+        for row in results
+    ]
+
+    today = date.today().isoformat()
+    from_date = (date.today() - timedelta(days=days)).isoformat()
+
+    return CrawlHistoryResponse(
+        entries=entries,
+        total_entries=len(entries),
+        date_range={"from": from_date, "to": today},
     )
 
 

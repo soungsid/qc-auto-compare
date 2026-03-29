@@ -20,12 +20,12 @@ const SOURCE_STYLES: Record<string, string> = {
   copilot: 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300',
   cline: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300',
   claude: 'bg-violet-100 text-violet-700 dark:bg-violet-900/40 dark:text-violet-300',
-  manual: 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300',
+  manual: 'bg-zinc-100 text-zinc-600 dark:bg-gray-700 dark:text-zinc-300',
   csv_import: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300',
 }
 
 function SourceBadge({ source }: { source: string }) {
-  const cls = SOURCE_STYLES[source] ?? 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300'
+  const cls = SOURCE_STYLES[source] ?? 'bg-zinc-100 text-zinc-600 dark:bg-gray-700 dark:text-zinc-300'
   return (
     <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${cls}`}>
       {source}
@@ -65,7 +65,7 @@ const createColumns = (showAdvanced: boolean) => {
     columnHelper.accessor('year', {
       id: 'year',
       header: 'Année',
-      cell: (i) => <span className="font-semibold text-gray-900 dark:text-white">{i.getValue()}</span>,
+      cell: (i) => <span className="font-semibold text-zinc-900 dark:text-zinc-100">{i.getValue()}</span>,
       size: 70,
       enableSorting: true,
     }),
@@ -73,19 +73,19 @@ const createColumns = (showAdvanced: boolean) => {
       id: 'make',
       header: 'Marque',
       size: 100,
-      cell: (i) => <span className="text-gray-900 dark:text-gray-100">{i.getValue()}</span>,
+      cell: (i) => <span className="text-zinc-900 dark:text-gray-100">{i.getValue()}</span>,
       enableSorting: true,
     }),
     columnHelper.accessor('model', {
       id: 'model',
       header: 'Modèle',
       size: 110,
-      cell: (i) => <span className="text-gray-900 dark:text-gray-100">{i.getValue()}</span>,
+      cell: (i) => <span className="text-zinc-900 dark:text-gray-100">{i.getValue()}</span>,
       enableSorting: true,
     }),
     columnHelper.accessor('trim', {
       header: 'Version',
-      cell: (i) => <span className="text-gray-700 dark:text-gray-300">{i.getValue() ?? '—'}</span>,
+      cell: (i) => <span className="text-zinc-700 dark:text-zinc-300">{i.getValue() ?? '—'}</span>,
       size: 120,
       enableSorting: false,
     }),
@@ -98,7 +98,7 @@ const createColumns = (showAdvanced: boolean) => {
     columnHelper.accessor('drivetrain', {
       header: 'Traction',
       cell: (i) => (
-        <span className="rounded bg-gray-100 dark:bg-slate-700 px-1.5 py-0.5 text-xs font-mono text-gray-700 dark:text-gray-300">
+        <span className="rounded bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 text-xs font-mono text-zinc-700 dark:text-zinc-300">
           {i.getValue() ?? '—'}
         </span>
       ),
@@ -108,14 +108,14 @@ const createColumns = (showAdvanced: boolean) => {
     columnHelper.accessor('msrp', {
       id: 'msrp',
       header: 'PDSF',
-      cell: (i) => <span className="text-gray-500 dark:text-gray-400">{fmt(i.getValue())}</span>,
+      cell: (i) => <span className="text-zinc-500 dark:text-zinc-400">{fmt(i.getValue())}</span>,
       size: 110,
       enableSorting: true,
     }),
     columnHelper.accessor('sale_price', {
       id: 'sale_price',
       header: 'Prix vente',
-      cell: (i) => <span className="font-semibold text-gray-900 dark:text-white">{fmt(i.getValue())}</span>,
+      cell: (i) => <span className="font-semibold text-zinc-900 dark:text-zinc-100">{fmt(i.getValue())}</span>,
       size: 115,
       enableSorting: true,
     }),
@@ -125,12 +125,12 @@ const createColumns = (showAdvanced: boolean) => {
       cell: ({ row }) => {
         const msrp = row.original.msrp
         const sale = row.original.sale_price
-        if (!msrp || !sale) return <span className="text-gray-400 dark:text-gray-500">—</span>
+        if (!msrp || !sale) return <span className="text-zinc-400 dark:text-zinc-500">—</span>
         const savings = msrp - sale
         return savings > 0 ? (
           <span className="font-semibold text-green-600 dark:text-green-400">{fmt(savings)}</span>
         ) : (
-          <span className="text-gray-400 dark:text-gray-500">—</span>
+          <span className="text-zinc-400 dark:text-zinc-500">—</span>
         )
       },
       size: 100,
@@ -146,14 +146,14 @@ const createColumns = (showAdvanced: boolean) => {
     columnHelper.accessor((row) => row.dealer?.name, {
       id: 'dealer_name',
       header: 'Concess.',
-      cell: (i) => <span className="text-sm text-gray-700 dark:text-gray-300">{i.getValue() ?? '—'}</span>,
+      cell: (i) => <span className="text-sm text-zinc-700 dark:text-zinc-300">{i.getValue() ?? '—'}</span>,
       size: 160,
       enableSorting: false,
     }),
     columnHelper.accessor((row) => row.dealer?.city, {
       id: 'dealer_city',
       header: 'Ville',
-      cell: (i) => <span className="text-sm text-gray-600 dark:text-gray-400">{i.getValue() ?? '—'}</span>,
+      cell: (i) => <span className="text-sm text-zinc-600 dark:text-zinc-400">{i.getValue() ?? '—'}</span>,
       size: 100,
       enableSorting: false,
     }),
@@ -172,7 +172,7 @@ const createColumns = (showAdvanced: boolean) => {
             href={row.original.listing_url}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-xs text-blue-600 dark:text-blue-400 hover:underline"
+            className="text-xs text-zinc-700 dark:text-zinc-300 hover:underline"
           >
             Voir →
           </a>
@@ -198,11 +198,11 @@ const createColumns = (showAdvanced: boolean) => {
         cell: (i) => {
           const km = i.getValue()
           return km ? (
-            <span className="text-sm text-gray-600 dark:text-gray-400">
+            <span className="text-sm text-zinc-600 dark:text-zinc-400">
               {km.toLocaleString('fr-CA')} km
             </span>
           ) : (
-            <span className="text-gray-400 dark:text-gray-500">—</span>
+            <span className="text-zinc-400 dark:text-zinc-500">—</span>
           )
         },
         size: 90,
@@ -210,7 +210,7 @@ const createColumns = (showAdvanced: boolean) => {
       }),
       columnHelper.accessor('color_ext', {
         header: 'Couleur',
-        cell: (i) => <span className="text-sm text-gray-600 dark:text-gray-400">{i.getValue() ?? '—'}</span>,
+        cell: (i) => <span className="text-sm text-zinc-600 dark:text-zinc-400">{i.getValue() ?? '—'}</span>,
         size: 120,
         enableSorting: false,
       })
@@ -333,7 +333,7 @@ export function VehicleTable({ data, total, filters, onFiltersChange, isLoading 
     <div className="flex flex-col gap-3" data-testid="vehicle-table">
       {/* Toolbar */}
       <div className="flex items-center justify-between flex-wrap gap-2">
-        <p className="text-sm text-gray-500 dark:text-gray-400" data-testid="vehicle-count">
+        <p className="text-sm text-zinc-500 dark:text-zinc-400" data-testid="vehicle-count">
           {isLoading ? 'Chargement…' : `${total.toLocaleString('fr-CA')} véhicules`}
         </p>
         <div className="flex items-center gap-2">
@@ -345,7 +345,7 @@ export function VehicleTable({ data, total, filters, onFiltersChange, isLoading 
             className={`rounded-lg border px-3 py-1.5 text-sm font-medium shadow-sm transition-colors ${
               showAdvanced
                 ? 'border-blue-500 bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-600'
-                : 'border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-slate-700'
+                : 'border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-gray-200 hover:bg-zinc-50 dark:hover:bg-zinc-800'
             }`}
           >
             {showAdvanced ? '− Colonnes avancées' : '+ Colonnes avancées'}
@@ -355,7 +355,7 @@ export function VehicleTable({ data, total, filters, onFiltersChange, isLoading 
             type="button"
             onClick={exportCSV}
             data-testid="export-csv-btn"
-            className="rounded-lg border border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-200 shadow-sm hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
+            className="rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-1.5 text-sm font-medium text-zinc-700 dark:text-gray-200 shadow-sm hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors"
           >
             <span className="flex items-center gap-2">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -368,9 +368,9 @@ export function VehicleTable({ data, total, filters, onFiltersChange, isLoading 
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto rounded-xl border border-gray-200 dark:border-slate-700 shadow-sm">
+      <div className="overflow-x-auto rounded-xl border border-zinc-200 dark:border-zinc-800 shadow-sm">
         <table className="w-full text-sm">
-          <thead className="bg-gray-50 dark:bg-slate-800">
+          <thead className="bg-zinc-50 dark:bg-zinc-900">
             {table.getHeaderGroups().map((hg) => (
               <tr key={hg.id}>
                 {hg.headers.map((header) => {
@@ -379,8 +379,8 @@ export function VehicleTable({ data, total, filters, onFiltersChange, isLoading 
                   return (
                     <th
                       key={header.id}
-                      className={`whitespace-nowrap px-3 py-2.5 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 select-none ${
-                        canSort ? 'cursor-pointer hover:text-gray-800 dark:hover:text-gray-200' : ''
+                      className={`whitespace-nowrap px-3 py-2.5 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400 select-none ${
+                        canSort ? 'cursor-pointer hover:text-zinc-800 dark:hover:text-gray-200' : ''
                       }`}
                       style={{ width: header.column.getSize() }}
                       onClick={canSort ? header.column.getToggleSortingHandler() : undefined}
@@ -388,7 +388,7 @@ export function VehicleTable({ data, total, filters, onFiltersChange, isLoading 
                       <span className="flex items-center gap-1">
                         {flexRender(header.column.columnDef.header, header.getContext())}
                         {canSort && (
-                          <span className="text-gray-400">
+                          <span className="text-zinc-400">
                             {isSorted === 'asc' ? '↑' : isSorted === 'desc' ? '↓' : '⇅'}
                           </span>
                         )}
@@ -399,10 +399,10 @@ export function VehicleTable({ data, total, filters, onFiltersChange, isLoading 
               </tr>
             ))}
           </thead>
-          <tbody className="divide-y divide-gray-100 dark:divide-slate-700 bg-white dark:bg-slate-900">
+          <tbody className="divide-y divide-gray-100 dark:divide-zinc-800 bg-white dark:bg-zinc-950">
             {isLoading ? (
               <tr>
-                <td colSpan={columns.length} className="py-12 text-center text-gray-400 dark:text-gray-500">
+                <td colSpan={columns.length} className="py-12 text-center text-zinc-400 dark:text-zinc-500">
                   <div className="flex items-center justify-center gap-2">
                     <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
@@ -414,7 +414,7 @@ export function VehicleTable({ data, total, filters, onFiltersChange, isLoading 
               </tr>
             ) : table.getRowModel().rows.length === 0 ? (
               <tr>
-                <td colSpan={columns.length} className="py-12 text-center text-gray-400 dark:text-gray-500">
+                <td colSpan={columns.length} className="py-12 text-center text-zinc-400 dark:text-zinc-500">
                   Aucun véhicule trouvé avec ces filtres.
                 </td>
               </tr>
@@ -425,7 +425,7 @@ export function VehicleTable({ data, total, filters, onFiltersChange, isLoading 
                   <tr
                     key={row.id}
                     data-testid={`vehicle-row-${row.original.id}`}
-                    className={`transition-colors hover:bg-gray-50 dark:hover:bg-slate-800 ${isCheapest ? 'bg-green-50 dark:bg-green-900/20' : ''}`}
+                    className={`transition-colors hover:bg-zinc-50 dark:hover:bg-slate-800 ${isCheapest ? 'bg-green-50 dark:bg-green-900/20' : ''}`}
                   >
                     {row.getVisibleCells().map((cell) => (
                       <td key={cell.id} className="px-3 py-2.5">
@@ -442,7 +442,7 @@ export function VehicleTable({ data, total, filters, onFiltersChange, isLoading 
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400" data-testid="pagination">
+        <div className="flex items-center justify-between text-sm text-zinc-600 dark:text-zinc-400" data-testid="pagination">
           <span>
             Page {filters.page} / {totalPages}
           </span>
@@ -452,7 +452,7 @@ export function VehicleTable({ data, total, filters, onFiltersChange, isLoading 
               disabled={filters.page <= 1}
               onClick={() => onFiltersChange({ page: filters.page - 1 })}
               data-testid="pagination-prev"
-              className="rounded-lg border border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-1.5 disabled:opacity-40 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
+              className="rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-1.5 disabled:opacity-40 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors"
             >
               ← Précédente
             </button>
@@ -461,7 +461,7 @@ export function VehicleTable({ data, total, filters, onFiltersChange, isLoading 
               disabled={filters.page >= totalPages}
               onClick={() => onFiltersChange({ page: filters.page + 1 })}
               data-testid="pagination-next"
-              className="rounded-lg border border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-1.5 disabled:opacity-40 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
+              className="rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-1.5 disabled:opacity-40 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors"
             >
               Suivante →
             </button>
