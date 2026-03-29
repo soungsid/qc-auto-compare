@@ -2,6 +2,30 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  :root {
+    --color-primary: #1B1F3B;
+    --color-accent: #E63946;
+    --color-bg: #F6F6F4;
+    --color-surface: #FFFFFF;
+    --color-border: #E4E4E0;
+    --color-border-light: #F0F0EC;
+    --color-text-main: #1B1F3B;
+    --color-text-muted: #888888;
+  }
+
+  .dark {
+    --color-primary: #C1C5DF;
+    --color-accent: #F06E7A;
+    --color-bg: #0D0F20;
+    --color-surface: #13162E;
+    --color-border: #2A2E4A;
+    --color-border-light: #1E2240;
+    --color-text-main: #E0E2EF;
+    --color-text-muted: #8888AA;
+  }
+}
+
 /* Smooth scrolling */
 html {
   scroll-behavior: smooth;
@@ -65,7 +89,16 @@ th {
 /* Focus visible styles */
 @layer utilities {
   .focus-ring {
-    @apply focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 dark:focus:ring-offset-zinc-900;
+    @apply focus:outline-none focus:ring-2 focus:ring-accent-400 focus:ring-offset-2 dark:focus:ring-offset-dark-primary;
+  }
+
+  /* Hide scrollbar but keep functionality */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
   }
 }
 

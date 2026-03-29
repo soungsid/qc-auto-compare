@@ -1,6 +1,4 @@
 import type { Vehicle } from '../types'
-import { ConditionBadge } from './ConditionBadge'
-import { FingerprintBadge } from './FingerprintBadge'
 import { LeaseOfferBadge } from './LeaseOfferBadge'
 
 interface Props {
@@ -33,14 +31,16 @@ export function VehicleCard({ vehicle }: Props) {
   } = vehicle
 
   const savings = msrp && sale_price ? msrp - sale_price : null
+  const conditionLabel = condition?.toLowerCase() === 'new' ? 'Neuf' : 'Occasion'
 
   return (
     <div
-      className="relative flex flex-col rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden transition-all hover:border-zinc-300 dark:hover:border-zinc-700"
+      className="relative flex flex-row sm:flex-col rounded-lg border border-surface-border dark:border-brand-700 bg-white dark:bg-dark-secondary overflow-hidden transition-all hover:border-brand-200 dark:hover:border-brand-600"
       data-testid={`vehicle-card-${vehicle.id}`}
+      data-fingerprint={fingerprint}
     >
-      {/* Image section */}
-      <div className="relative aspect-[16/10] bg-zinc-100 dark:bg-zinc-800 overflow-hidden">
+      {/* Image with badges */}
+      <div className="relative w-[100px] sm:w-full h-auto sm:h-[90px] min-h-[80px] bg-brand-50 dark:bg-dark-tertiary overflow-hidden flex-shrink-0">
         {image_url ? (
           <img
             src={image_url}
@@ -49,126 +49,110 @@ export function VehicleCard({ vehicle }: Props) {
             loading="lazy"
           />
         ) : (
-          <div className="flex items-center justify-center h-full text-zinc-400 dark:text-zinc-600">
-            <div className="text-center">
-              <svg className="w-10 h-10 mx-auto mb-1.5 opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 9l-7 7-7-7" />
-                <circle cx="12" cy="12" r="10" strokeWidth={1.5} />
-              </svg>
-              <span className="text-sm font-medium">{make} {model}</span>
-            </div>
+          <div className="flex items-center justify-center h-full">
+            <svg className="w-8 h-8 text-brand-200 dark:text-brand-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.079-.504 1.005-1.12l-1.035-8.276A2.25 2.25 0 0018.118 7.5H5.882a2.25 2.25 0 00-2.237 2.004L2.61 17.631A1.005 1.005 0 003.62 18.75" />
+            </svg>
           </div>
         )}
+
+        {/* Badges overlay */}
+        <div className="absolute top-[7px] left-[7px] flex gap-1">
+          <span className="bg-brand-700 text-white text-[8px] font-bold px-1.5 py-0.5 rounded tracking-wide">
+            {conditionLabel}
+          </span>
+          <span className="hidden sm:inline bg-surface-muted text-brand-500 dark:bg-dark-tertiary dark:text-brand-300 text-[8px] font-semibold px-1.5 py-0.5 rounded border border-surface-border dark:border-brand-600">
+            {year}
+          </span>
+        </div>
       </div>
 
-      {/* Content section */}
-      <div className="flex-1 p-4 flex flex-col gap-2.5">
-        {/* Header: Condition + Year */}
-        <div className="flex items-center gap-2">
-          <ConditionBadge condition={condition} />
-          <span className="text-sm font-medium text-zinc-400 dark:text-zinc-500">{year}</span>
-        </div>
+      {/* Body + Footer wrapper for mobile horizontal layout */}
+      <div className="flex-1 min-w-0 flex flex-col">
+        {/* Body */}
+        <div className="px-3 pt-2 sm:pt-2.5 pb-1 sm:pb-1.5 flex-1 flex flex-col">
+        {/* Brand */}
+        <span className="text-[9px] text-brand-400 dark:text-brand-500 uppercase tracking-wider">{make}</span>
 
-        {/* Title */}
-        <div>
-          <h3 className="text-base sm:text-lg font-semibold text-zinc-900 dark:text-zinc-100 leading-tight">
-            {make} {model}
-            {trim && <span className="text-sm font-normal text-zinc-500 dark:text-zinc-400"> {trim}</span>}
-          </h3>
-        </div>
+        {/* Name */}
+        <h3 className="text-[13px] font-bold text-brand-700 dark:text-brand-100 leading-tight mt-0.5 mb-1.5">
+          {model}
+          {trim && <span className="font-normal text-[11px] text-brand-400 dark:text-brand-500 ml-1">{trim}</span>}
+        </h3>
 
         {/* Price */}
-        <div className="flex items-baseline gap-2">
-          <span className="text-lg sm:text-xl font-bold text-zinc-900 dark:text-zinc-100">
+        <div className="flex items-baseline gap-2 mb-2">
+          <span className="text-[15px] font-extrabold text-accent-400" style={{ letterSpacing: '-0.03em' }}>
             {fmt(sale_price)}
           </span>
           {msrp && msrp !== sale_price && (
-            <span className="text-sm text-zinc-400 dark:text-zinc-500 line-through">
-              {fmt(msrp)}
-            </span>
+            <span className="text-[11px] text-brand-300 line-through">{fmt(msrp)}</span>
           )}
           {savings != null && savings > 0 && (
-            <span className="text-sm font-semibold text-emerald-600 dark:text-emerald-400">
+            <span className="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">
               -{fmt(savings)}
             </span>
           )}
         </div>
 
-        {/* Lease payment */}
+        {/* Lease */}
         {lease_offers && lease_offers.length > 0 && (
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-zinc-500 dark:text-zinc-400">Location:</span>
+          <div className="mb-2">
             <LeaseOfferBadge offers={lease_offers} />
           </div>
         )}
 
-        {/* Details */}
-        <div className="flex flex-wrap gap-x-3 gap-y-1 text-mobile-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
+        {/* Meta */}
+        <div className="flex flex-col gap-0.5 mb-2">
           {dealer && (
-            <span className="flex items-center gap-1 group relative">
-              <svg className="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-              <span className="cursor-help">
-                {dealer.name} — {dealer.city}
-              </span>
-              {dealer.phone && (
-                <span className="invisible group-hover:visible absolute left-0 top-full mt-1 z-10 px-3 py-2 text-xs bg-zinc-900 dark:bg-zinc-700 text-white rounded-lg whitespace-nowrap">
-                  📞 {dealer.phone}
-                  <span className="absolute left-4 -top-1 w-2 h-2 bg-zinc-900 dark:bg-zinc-700 transform rotate-45"></span>
-                </span>
-              )}
-            </span>
+            <div className="text-[9px] text-brand-400 dark:text-brand-500 flex items-center gap-1">
+              <span>📍</span>
+              <span>{dealer.name} — {dealer.city}</span>
+            </div>
           )}
-          {color_ext && (
-            <span className="flex items-center gap-1">
-              <svg className="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
-              </svg>
-              {color_ext}
-            </span>
-          )}
-          {(drivetrain || transmission) && (
-            <span className="flex items-center gap-1">
-              <svg className="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-              {[drivetrain, transmission].filter(Boolean).join(' · ')}
-            </span>
-          )}
-          {mileage_km != null && mileage_km > 0 && (
-            <span className="flex items-center gap-1">
-              <svg className="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
-              {mileage_km.toLocaleString('fr-CA')} km
-            </span>
-          )}
+          <div className="text-[9px] text-brand-400 dark:text-brand-500 flex items-center gap-1">
+            {mileage_km != null && mileage_km > 0 && (
+              <span>{mileage_km.toLocaleString('fr-CA')} km</span>
+            )}
+            {drivetrain && (
+              <>
+                <span className="w-[3px] h-[3px] rounded-full bg-brand-300 dark:bg-brand-600" />
+                <span>{drivetrain}</span>
+              </>
+            )}
+            {transmission && (
+              <>
+                <span className="w-[3px] h-[3px] rounded-full bg-brand-300 dark:bg-brand-600" />
+                <span>{transmission === 'Automatique' ? 'Auto' : transmission}</span>
+              </>
+            )}
+          </div>
         </div>
       </div>
 
       {/* Footer */}
-      <div className="border-t border-zinc-100 dark:border-zinc-800 px-4 py-3 flex items-center justify-between">
+      <div className="border-t sm:border-t border-surface-border-light dark:border-brand-700 px-3 py-1.5 flex items-center justify-between mt-auto">
+        <div className="flex gap-1.5 flex-wrap">
+          {color_ext && (
+            <span className="text-[9px] bg-surface-muted dark:bg-dark-tertiary text-brand-400 dark:text-brand-400 px-1.5 py-0.5 rounded">
+              {color_ext}
+            </span>
+          )}
+        </div>
         {listing_url ? (
           <a
             href={listing_url}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+            className="text-[10px] font-bold text-accent-400 hover:text-accent-500 transition-colors"
           >
-            Voir le véhicule
-            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-            </svg>
+            Voir →
           </a>
         ) : (
-          <span className="text-sm text-zinc-400">—</span>
+          <span className="text-[10px] text-brand-300">—</span>
         )}
-        
-        <FingerprintBadge fingerprint={fingerprint} />
       </div>
+      </div>{/* end body+footer wrapper */}
     </div>
   )
 }

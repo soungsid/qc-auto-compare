@@ -63,7 +63,6 @@ export function VehicleSearchFilters({ onChange, onReset, collapsed = false, onT
     drivetrain: false,
     color: false,
   })
-  const [showAllBrands, setShowAllBrands] = useState(false)
   const [expandedBrands, setExpandedBrands] = useState<Record<string, boolean>>({})
   const [filterOptions, setFilterOptions] = useState<FilterOptions | null>(null)
   const [selectedBrands, setSelectedBrands] = useState<string[]>(() =>
@@ -92,6 +91,7 @@ export function VehicleSearchFilters({ onChange, onReset, collapsed = false, onT
   const [priceSliderValues, setPriceSliderValues] = useState({ min: 0, max: 100000 })
   const [mileageSliderValues, setMileageSliderValues] = useState({ min: 0, max: 300000 })
   const [selectedYears, setSelectedYears] = useState<number[]>([])
+  const [brandSearchQuery, setBrandSearchQuery] = useState('')
 
   // Track first fetch to properly initialize slider bounds
   const isFirstFetch = useRef(true)
@@ -285,6 +285,7 @@ export function VehicleSearchFilters({ onChange, onReset, collapsed = false, onT
     setPriceSliderValues({ min: filterOptions?.price_range.min || 0, max: filterOptions?.price_range.max || 100000 })
     setMileageSliderValues({ min: 0, max: filterOptions?.mileage_range.max || 300000 })
     setSelectedYears([])
+    setBrandSearchQuery('')
     onReset()
   }
 
@@ -323,9 +324,10 @@ export function VehicleSearchFilters({ onChange, onReset, collapsed = false, onT
     'Beige': '#F5F5DC',
   }
 
-  const visibleBrands = showAllBrands 
-    ? filterOptions?.brands || [] 
-    : (filterOptions?.brands || []).slice(0, 8)
+  // Search-based brand filtering (replaces showAllBrands pagination)
+  const visibleBrands = (filterOptions?.brands || []).filter(b =>
+    brandSearchQuery === '' || b.brand.toLowerCase().includes(brandSearchQuery.toLowerCase())
+  )
 
   return (
     <>
@@ -333,10 +335,10 @@ export function VehicleSearchFilters({ onChange, onReset, collapsed = false, onT
       <button
         type="button"
         onClick={() => setMobileOpen(true)}
-        className="lg:hidden fixed bottom-6 right-6 z-30 flex items-center gap-2 px-4 py-3 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 font-medium rounded-full shadow-lg hover:bg-zinc-800 dark:hover:bg-white transition-colors min-h-[48px]"
+        className="lg:hidden fixed bottom-5 right-5 z-30 flex items-center gap-2 px-4 py-3 bg-accent-400 text-white font-bold rounded-full shadow-lg hover:bg-accent-500 transition-colors min-h-[48px] text-[11px]"
         data-testid="mobile-filters-btn"
       >
-        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
         </svg>
         Filtres{activeFiltersCount > 0 && ` (${activeFiltersCount})`}
@@ -347,26 +349,35 @@ export function VehicleSearchFilters({ onChange, onReset, collapsed = false, onT
         <div className="fixed inset-0 bg-black/40 z-40 lg:hidden" onClick={() => setMobileOpen(false)} />
       )}
 
-      {/* Sidebar */}
+      {/* Sidebar (desktop) / Bottom sheet (mobile) */}
       <div
         className={`
-          fixed lg:sticky top-0 left-0 h-screen lg:h-auto
-          ${collapsed ? 'w-16 lg:w-16' : 'w-[85vw] max-w-sm lg:w-72'}
-          bg-white dark:bg-zinc-900 
-          border-r lg:border border-zinc-200 dark:border-zinc-800
+          fixed lg:sticky
+          bottom-0 lg:top-0 lg:bottom-auto
+          left-0 right-0 lg:left-auto lg:right-auto
+          w-full ${collapsed ? 'lg:w-16' : 'lg:w-[220px]'}
+          max-h-[85vh] lg:max-h-none lg:h-screen
+          rounded-t-[10px] lg:rounded-none
+          bg-white dark:bg-dark-secondary
+          lg:border-r border-surface-border dark:border-brand-700
           overflow-y-auto z-50 lg:z-auto
           transition-all duration-300
-          ${mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+          ${mobileOpen ? 'translate-y-0' : 'translate-y-full lg:translate-y-0'}
         `}
         data-testid="filters-sidebar"
       >
+        {/* Mobile handle bar */}
+        <div className="flex justify-center pt-3 pb-1 lg:hidden">
+          <div className="w-10 h-1 rounded-full bg-gray-300 dark:bg-gray-600" />
+        </div>
+
         {/* Header */}
-        <div className="sticky top-0 bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 p-4 flex items-center justify-between z-10">
+        <div className="sticky top-0 bg-white dark:bg-dark-secondary p-[14px] flex items-center justify-between z-10">
           {!collapsed && (
-            <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
+            <h3 className="text-[12px] font-bold text-brand-700 dark:text-brand-200 flex items-center gap-2">
               Filtres
               {totalResults !== undefined && (
-                <span className="text-xs font-normal text-zinc-500 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 rounded-full">
+                <span className="text-[10px] font-normal text-gray-400 dark:text-gray-500 bg-brand-50 dark:bg-brand-700/30 px-2 py-0.5 rounded-full">
                   {totalResults.toLocaleString('fr-CA')}
                 </span>
               )}
@@ -377,10 +388,10 @@ export function VehicleSearchFilters({ onChange, onReset, collapsed = false, onT
               <button
                 type="button"
                 onClick={onToggleCollapse}
-                className="hidden lg:block text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300"
+                className="hidden lg:block text-gray-400 hover:text-brand-700 dark:hover:text-brand-200"
                 title={collapsed ? 'Développer' : 'Réduire'}
               >
-                <svg className={`w-5 h-5 transition-transform ${collapsed ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className={`w-4 h-4 transition-transform ${collapsed ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                 </svg>
               </button>
@@ -390,7 +401,7 @@ export function VehicleSearchFilters({ onChange, onReset, collapsed = false, onT
                 <button
                   type="button"
                   onClick={handleReset}
-                  className="text-sm text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200"
+                  className="text-[10px] text-accent-400 hover:text-accent-500"
                   data-testid="reset-filters-btn"
                 >
                   Réinitialiser
@@ -398,9 +409,9 @@ export function VehicleSearchFilters({ onChange, onReset, collapsed = false, onT
                 <button
                   type="button"
                   onClick={() => setMobileOpen(false)}
-                  className="lg:hidden p-2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 min-h-[44px] min-w-[44px] flex items-center justify-center"
+                  className="lg:hidden p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 min-h-[44px] min-w-[44px] flex items-center justify-center"
                 >
-                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </button>
@@ -424,50 +435,44 @@ export function VehicleSearchFilters({ onChange, onReset, collapsed = false, onT
             <IconButton icon="🎨" label="Couleur" onClick={() => { if (onToggleCollapse) onToggleCollapse() }} />
           </div>
         ) : (
-          <div className="p-4 space-y-4">
+          <div className="p-[14px] space-y-4">
           {/* Type de véhicule */}
           <Section
             title="Type de véhicule"
             isOpen={openSections.type}
             onToggle={() => toggleSection('type')}
           >
-            <div className="space-y-2.5">
-              <label className="flex items-center gap-2.5 cursor-pointer min-h-[44px] sm:min-h-0">
-                <input
-                  type="radio"
-                  name="vehicle-type"
-                  value="all"
-                  checked={vehicleCondition === 'all'}
-                  onChange={() => setVehicleCondition('all')}
-                  className="w-4 h-4 text-zinc-900 dark:text-zinc-100"
-                  data-testid="filter-condition-all"
-                />
-                <span className="text-sm text-zinc-700 dark:text-zinc-300">Tous les véhicules</span>
-              </label>
-              <label className="flex items-center gap-2.5 cursor-pointer min-h-[44px] sm:min-h-0">
-                <input
-                  type="radio"
-                  name="vehicle-type"
-                  value="used"
-                  checked={vehicleCondition === 'used'}
-                  onChange={() => setVehicleCondition('used')}
-                  className="w-4 h-4 text-zinc-900 dark:text-zinc-100"
-                  data-testid="filter-condition-used"
-                />
-                <span className="text-sm text-zinc-700 dark:text-zinc-300">Véhicules d'occasion</span>
-              </label>
-              <label className="flex items-center gap-2.5 cursor-pointer min-h-[44px] sm:min-h-0">
-                <input
-                  type="radio"
-                  name="vehicle-type"
-                  value="new"
-                  checked={vehicleCondition === 'new'}
-                  onChange={() => setVehicleCondition('new')}
-                  className="w-4 h-4 text-zinc-900 dark:text-zinc-100"
-                  data-testid="filter-condition-new"
-                />
-                <span className="text-sm text-zinc-700 dark:text-zinc-300">Véhicules neufs</span>
-              </label>
+            <div className="space-y-2">
+              <div
+                className="flex items-center gap-2 cursor-pointer min-h-[44px] sm:min-h-0"
+                onClick={() => setVehicleCondition('all')}
+                data-testid="filter-condition-all"
+              >
+                <div className={`w-3 h-3 rounded-full border-[1.5px] flex items-center justify-center flex-shrink-0 transition-colors ${vehicleCondition === 'all' ? 'border-brand-700 dark:border-brand-200' : 'border-gray-300 dark:border-gray-500'}`}>
+                  {vehicleCondition === 'all' && <div className="w-[5px] h-[5px] rounded-full bg-brand-700 dark:bg-brand-200" />}
+                </div>
+                <span className="text-[11px] text-gray-600 dark:text-gray-300">Tous les véhicules</span>
+              </div>
+              <div
+                className="flex items-center gap-2 cursor-pointer min-h-[44px] sm:min-h-0"
+                onClick={() => setVehicleCondition('used')}
+                data-testid="filter-condition-used"
+              >
+                <div className={`w-3 h-3 rounded-full border-[1.5px] flex items-center justify-center flex-shrink-0 transition-colors ${vehicleCondition === 'used' ? 'border-brand-700 dark:border-brand-200' : 'border-gray-300 dark:border-gray-500'}`}>
+                  {vehicleCondition === 'used' && <div className="w-[5px] h-[5px] rounded-full bg-brand-700 dark:bg-brand-200" />}
+                </div>
+                <span className="text-[11px] text-gray-600 dark:text-gray-300">Véhicules d'occasion</span>
+              </div>
+              <div
+                className="flex items-center gap-2 cursor-pointer min-h-[44px] sm:min-h-0"
+                onClick={() => setVehicleCondition('new')}
+                data-testid="filter-condition-new"
+              >
+                <div className={`w-3 h-3 rounded-full border-[1.5px] flex items-center justify-center flex-shrink-0 transition-colors ${vehicleCondition === 'new' ? 'border-brand-700 dark:border-brand-200' : 'border-gray-300 dark:border-gray-500'}`}>
+                  {vehicleCondition === 'new' && <div className="w-[5px] h-[5px] rounded-full bg-brand-700 dark:bg-brand-200" />}
+                </div>
+                <span className="text-[11px] text-gray-600 dark:text-gray-300">Véhicules neufs</span>
+              </div>
             </div>
           </Section>
 
@@ -478,32 +483,44 @@ export function VehicleSearchFilters({ onChange, onReset, collapsed = false, onT
             onToggle={() => toggleSection('brand')}
           >
             <div className="space-y-2">
+              {/* Brand search input */}
+              <input
+                type="text"
+                value={brandSearchQuery}
+                onChange={(e) => setBrandSearchQuery(e.target.value)}
+                placeholder="Rechercher une marque…"
+                className="w-full px-2 py-1.5 text-[11px] border border-surface-border dark:border-brand-700 rounded bg-white dark:bg-dark-secondary text-gray-600 dark:text-gray-300 placeholder-gray-300 dark:placeholder-gray-500 focus:outline-none focus:border-brand-700 dark:focus:border-brand-200"
+              />
               {visibleBrands.length === 0 && (
-                <p className="text-sm text-zinc-400 italic">Aucune marque disponible</p>
+                <p className="text-[11px] text-gray-400 italic">Aucune marque disponible</p>
               )}
               {visibleBrands.map((brandData) => (
                 <div key={brandData.brand}>
                   <div className="flex items-center justify-between">
-                    <label className="flex items-center gap-2 cursor-pointer flex-1">
-                      <input
-                        type="checkbox"
-                        checked={selectedBrands.includes(brandData.brand)}
-                        onChange={() => handleBrandSelect(brandData.brand)}
-                        className="w-4 h-4 text-zinc-700 dark:text-zinc-300 rounded"
-                        data-testid={`filter-brand-${brandData.brand}`}
-                      />
-                      <span className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
-                        {brandData.brand} <span className="text-zinc-400">({brandData.total_count})</span>
+                    <div
+                      className="flex items-center gap-2 cursor-pointer flex-1"
+                      onClick={() => handleBrandSelect(brandData.brand)}
+                      data-testid={`filter-brand-${brandData.brand}`}
+                    >
+                      <div className={`w-[11px] h-[11px] rounded-[2px] border-[1.5px] flex items-center justify-center flex-shrink-0 transition-colors ${selectedBrands.includes(brandData.brand) ? 'border-brand-700 bg-brand-700 dark:border-brand-200 dark:bg-brand-200' : 'border-gray-300 dark:border-gray-500'}`}>
+                        {selectedBrands.includes(brandData.brand) && (
+                          <svg className="w-[7px] h-[7px] text-white dark:text-brand-900" fill="none" viewBox="0 0 10 10" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M2 5L4.5 7.5L8 2" />
+                          </svg>
+                        )}
+                      </div>
+                      <span className="text-[11px] text-gray-600 dark:text-gray-300">
+                        {brandData.brand} <span className="text-gray-300 dark:text-gray-500">({brandData.total_count})</span>
                       </span>
-                    </label>
+                    </div>
                     {brandData.models.length > 0 && (
                       <button
                         type="button"
                         onClick={() => toggleBrand(brandData.brand)}
-                        className="p-1 text-zinc-400 hover:text-zinc-600"
+                        className="p-1 text-gray-400 hover:text-gray-600"
                       >
                         <svg
-                          className={`w-4 h-4 transition-transform ${expandedBrands[brandData.brand] ? 'rotate-180' : ''}`}
+                          className={`w-3 h-3 transition-transform ${expandedBrands[brandData.brand] ? 'rotate-180' : ''}`}
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke="currentColor"
@@ -516,34 +533,29 @@ export function VehicleSearchFilters({ onChange, onReset, collapsed = false, onT
                   
                   {/* Models */}
                   {expandedBrands[brandData.brand] && (
-                    <div className="ml-6 mt-2 space-y-1">
+                    <div className="ml-5 mt-1.5 space-y-1">
                       {brandData.models.map((modelData) => (
-                        <label key={modelData.model} className="flex items-center gap-2 cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={(selectedModels[brandData.brand] || []).includes(modelData.model)}
-                            onChange={() => handleModelSelect(brandData.brand, modelData.model)}
-                            className="w-3.5 h-3.5 text-zinc-700 dark:text-zinc-300 rounded"
-                          />
-                          <span className="text-xs text-zinc-600 dark:text-zinc-400">
-                            {modelData.model} <span className="text-zinc-400">({modelData.count})</span>
+                        <div
+                          key={modelData.model}
+                          className="flex items-center gap-2 cursor-pointer"
+                          onClick={() => handleModelSelect(brandData.brand, modelData.model)}
+                        >
+                          <div className={`w-[11px] h-[11px] rounded-[2px] border-[1.5px] flex items-center justify-center flex-shrink-0 transition-colors ${(selectedModels[brandData.brand] || []).includes(modelData.model) ? 'border-brand-700 bg-brand-700 dark:border-brand-200 dark:bg-brand-200' : 'border-gray-300 dark:border-gray-500'}`}>
+                            {(selectedModels[brandData.brand] || []).includes(modelData.model) && (
+                              <svg className="w-[7px] h-[7px] text-white dark:text-brand-900" fill="none" viewBox="0 0 10 10" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M2 5L4.5 7.5L8 2" />
+                              </svg>
+                            )}
+                          </div>
+                          <span className="text-[11px] text-gray-600 dark:text-gray-300">
+                            {modelData.model} <span className="text-gray-300 dark:text-gray-500">({modelData.count})</span>
                           </span>
-                        </label>
+                        </div>
                       ))}
                     </div>
                   )}
                 </div>
               ))}
-              
-              {filterOptions && filterOptions.brands.length > 8 && (
-                <button
-                  type="button"
-                  onClick={() => setShowAllBrands(!showAllBrands)}
-                  className="text-sm text-zinc-900 dark:text-zinc-100 hover:underline"
-                >
-                  {showAllBrands ? 'Montrer moins' : 'Montrer toutes les marques'}
-                </button>
-              )}
             </div>
           </Section>
 
@@ -553,9 +565,9 @@ export function VehicleSearchFilters({ onChange, onReset, collapsed = false, onT
             isOpen={openSections.bodyType}
             onToggle={() => toggleSection('bodyType')}
           >
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 gap-1.5">
               {filterOptions?.body_types.length === 0 && (
-                <p className="col-span-2 text-sm text-zinc-400 italic">Aucun type disponible</p>
+                <p className="col-span-2 text-[11px] text-gray-400 italic">Aucun type disponible</p>
               )}
               {filterOptions?.body_types.map((bt) => (
                 <button
@@ -569,30 +581,53 @@ export function VehicleSearchFilters({ onChange, onReset, collapsed = false, onT
                     )
                   }}
                   className={`
-                    flex flex-col items-center justify-center p-3 rounded-lg border-2 transition-all
+                    flex flex-col items-center justify-center py-[6px] px-[4px] rounded-[5px] transition-all text-center
                     ${selectedBodyTypes.includes(bt.body_type)
-                      ? 'border-zinc-900 dark:border-zinc-300 bg-zinc-100 dark:bg-zinc-800'
-                      : 'border-zinc-200 dark:border-zinc-700 hover:border-zinc-300'
+                      ? 'border-[1.5px] border-brand-700 dark:border-brand-200 bg-brand-50 dark:bg-brand-700/30'
+                      : 'border-[0.5px] border-surface-border dark:border-brand-700 hover:border-gray-300'
                     }
                   `}
                   data-testid={`filter-body-${bt.body_type}`}
                 >
-                  <span className="text-2xl mb-1">{bodyTypeIcons[bt.body_type] || '🚗'}</span>
-                  <span className="text-xs font-medium text-zinc-700 dark:text-zinc-300">{bt.body_type}</span>
-                  <span className="text-xs text-zinc-400">({bt.count})</span>
+                  <span className="text-[16px] mb-0.5">{bodyTypeIcons[bt.body_type] || '🚗'}</span>
+                  <span className={`text-[9px] ${selectedBodyTypes.includes(bt.body_type) ? 'font-semibold text-brand-700 dark:text-brand-200' : 'text-gray-600 dark:text-gray-300'}`}>{bt.body_type}</span>
+                  <span className="text-[9px] text-gray-300 dark:text-gray-500">({bt.count})</span>
                 </button>
               ))}
             </div>
           </Section>
 
-          {/* Prix - Slider bidirectionnel */}
+          {/* Prix - Text inputs + Slider */}
           <Section
             title="Prix"
             isOpen={openSections.price}
             onToggle={() => toggleSection('price')}
           >
-            <div className="space-y-3">
-              <div className="flex justify-between text-sm text-zinc-600 dark:text-zinc-400">
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <input
+                  type="number"
+                  value={priceSliderValues.min}
+                  onChange={(e) => {
+                    const val = parseInt(e.target.value)
+                    if (!isNaN(val)) setPriceSliderValues(prev => ({ ...prev, min: Math.max(priceRange.min, Math.min(val, prev.max)) }))
+                  }}
+                  className="w-full px-2 py-1.5 text-[11px] border border-surface-border dark:border-brand-700 rounded bg-white dark:bg-dark-secondary text-gray-600 dark:text-gray-300 focus:outline-none focus:border-brand-700"
+                  data-testid="price-input-min"
+                />
+                <span className="text-[9px] text-gray-400 flex-shrink-0">—</span>
+                <input
+                  type="number"
+                  value={priceSliderValues.max}
+                  onChange={(e) => {
+                    const val = parseInt(e.target.value)
+                    if (!isNaN(val)) setPriceSliderValues(prev => ({ ...prev, max: Math.min(priceRange.max, Math.max(val, prev.min)) }))
+                  }}
+                  className="w-full px-2 py-1.5 text-[11px] border border-surface-border dark:border-brand-700 rounded bg-white dark:bg-dark-secondary text-gray-600 dark:text-gray-300 focus:outline-none focus:border-brand-700"
+                  data-testid="price-input-max"
+                />
+              </div>
+              <div className="flex justify-between text-[10px] text-gray-400 dark:text-gray-500">
                 <span>{priceSliderValues.min.toLocaleString('fr-CA')} $</span>
                 <span>{priceSliderValues.max.toLocaleString('fr-CA')} $</span>
               </div>
@@ -607,14 +642,37 @@ export function VehicleSearchFilters({ onChange, onReset, collapsed = false, onT
             </div>
           </Section>
 
-          {/* Kilométrage - Slider bidirectionnel */}
+          {/* Kilométrage - Text inputs + Slider */}
           <Section
             title="Kilométrage"
             isOpen={openSections.mileage}
             onToggle={() => toggleSection('mileage')}
           >
-            <div className="space-y-3">
-              <div className="flex justify-between text-sm text-zinc-600 dark:text-zinc-400">
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <input
+                  type="number"
+                  value={mileageSliderValues.min}
+                  onChange={(e) => {
+                    const val = parseInt(e.target.value)
+                    if (!isNaN(val)) setMileageSliderValues(prev => ({ ...prev, min: Math.max(mileageRange.min, Math.min(val, prev.max)) }))
+                  }}
+                  className="w-full px-2 py-1.5 text-[11px] border border-surface-border dark:border-brand-700 rounded bg-white dark:bg-dark-secondary text-gray-600 dark:text-gray-300 focus:outline-none focus:border-brand-700"
+                  data-testid="mileage-input-min"
+                />
+                <span className="text-[9px] text-gray-400 flex-shrink-0">—</span>
+                <input
+                  type="number"
+                  value={mileageSliderValues.max}
+                  onChange={(e) => {
+                    const val = parseInt(e.target.value)
+                    if (!isNaN(val)) setMileageSliderValues(prev => ({ ...prev, max: Math.min(mileageRange.max, Math.max(val, prev.min)) }))
+                  }}
+                  className="w-full px-2 py-1.5 text-[11px] border border-surface-border dark:border-brand-700 rounded bg-white dark:bg-dark-secondary text-gray-600 dark:text-gray-300 focus:outline-none focus:border-brand-700"
+                  data-testid="mileage-input-max"
+                />
+              </div>
+              <div className="flex justify-between text-[10px] text-gray-400 dark:text-gray-500">
                 <span>{mileageSliderValues.min.toLocaleString('fr-CA')} km</span>
                 <span>{mileageSliderValues.max.toLocaleString('fr-CA')} km</span>
               </div>
@@ -629,32 +687,37 @@ export function VehicleSearchFilters({ onChange, onReset, collapsed = false, onT
             </div>
           </Section>
 
-          {/* Année - Checkboxes */}
+          {/* Année - Custom checkboxes */}
           <Section
             title="Année"
             isOpen={openSections.year}
             onToggle={() => toggleSection('year')}
           >
-            <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
+            <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
               {(filterOptions?.years.list ?? []).map(({ year, count }) => (
-                <label key={year} className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={selectedYears.includes(year)}
-                    onChange={() => {
-                      setSelectedYears(prev =>
-                        prev.includes(year)
-                          ? prev.filter(y => y !== year)
-                          : [...prev, year]
-                      )
-                    }}
-                    className="w-4 h-4 text-zinc-700 dark:text-zinc-300 rounded"
-                    data-testid={`filter-year-${year}`}
-                  />
-                  <span className="text-sm text-zinc-700 dark:text-zinc-300">
-                    {year} <span className="text-zinc-400">({count})</span>
+                <div
+                  key={year}
+                  className="flex items-center gap-2 cursor-pointer"
+                  onClick={() => {
+                    setSelectedYears(prev =>
+                      prev.includes(year)
+                        ? prev.filter(y => y !== year)
+                        : [...prev, year]
+                    )
+                  }}
+                  data-testid={`filter-year-${year}`}
+                >
+                  <div className={`w-[11px] h-[11px] rounded-[2px] border-[1.5px] flex items-center justify-center flex-shrink-0 transition-colors ${selectedYears.includes(year) ? 'border-brand-700 bg-brand-700 dark:border-brand-200 dark:bg-brand-200' : 'border-gray-300 dark:border-gray-500'}`}>
+                    {selectedYears.includes(year) && (
+                      <svg className="w-[7px] h-[7px] text-white dark:text-brand-900" fill="none" viewBox="0 0 10 10" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M2 5L4.5 7.5L8 2" />
+                      </svg>
+                    )}
+                  </div>
+                  <span className="text-[11px] text-gray-600 dark:text-gray-300">
+                    {year} <span className="text-gray-300 dark:text-gray-500">({count})</span>
                   </span>
-                </label>
+                </div>
               ))}
             </div>
           </Section>
@@ -665,29 +728,34 @@ export function VehicleSearchFilters({ onChange, onReset, collapsed = false, onT
             isOpen={openSections.transmission}
             onToggle={() => toggleSection('transmission')}
           >
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               {filterOptions?.transmissions.length === 0 && (
-                <p className="text-sm text-zinc-400 italic">Aucune transmission disponible</p>
+                <p className="text-[11px] text-gray-400 italic">Aucune transmission disponible</p>
               )}
               {filterOptions?.transmissions.map((trans) => (
-                <label key={trans.transmission} className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={selectedTransmissions.includes(trans.transmission)}
-                    onChange={() => {
-                      setSelectedTransmissions(prev =>
-                        prev.includes(trans.transmission)
-                          ? prev.filter(t => t !== trans.transmission)
-                          : [...prev, trans.transmission]
-                      )
-                    }}
-                    className="w-4 h-4 text-zinc-700 dark:text-zinc-300 rounded"
-                    data-testid={`filter-transmission-${trans.transmission}`}
-                  />
-                  <span className="text-sm text-zinc-700 dark:text-zinc-300">
-                    {formatTransmission(trans.transmission)} <span className="text-zinc-400">({trans.count})</span>
+                <div
+                  key={trans.transmission}
+                  className="flex items-center gap-2 cursor-pointer"
+                  onClick={() => {
+                    setSelectedTransmissions(prev =>
+                      prev.includes(trans.transmission)
+                        ? prev.filter(t => t !== trans.transmission)
+                        : [...prev, trans.transmission]
+                    )
+                  }}
+                  data-testid={`filter-transmission-${trans.transmission}`}
+                >
+                  <div className={`w-[11px] h-[11px] rounded-[2px] border-[1.5px] flex items-center justify-center flex-shrink-0 transition-colors ${selectedTransmissions.includes(trans.transmission) ? 'border-brand-700 bg-brand-700 dark:border-brand-200 dark:bg-brand-200' : 'border-gray-300 dark:border-gray-500'}`}>
+                    {selectedTransmissions.includes(trans.transmission) && (
+                      <svg className="w-[7px] h-[7px] text-white dark:text-brand-900" fill="none" viewBox="0 0 10 10" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M2 5L4.5 7.5L8 2" />
+                      </svg>
+                    )}
+                  </div>
+                  <span className="text-[11px] text-gray-600 dark:text-gray-300">
+                    {formatTransmission(trans.transmission)} <span className="text-gray-300 dark:text-gray-500">({trans.count})</span>
                   </span>
-                </label>
+                </div>
               ))}
             </div>
           </Section>
@@ -698,29 +766,34 @@ export function VehicleSearchFilters({ onChange, onReset, collapsed = false, onT
             isOpen={openSections.fuel}
             onToggle={() => toggleSection('fuel')}
           >
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               {filterOptions?.fuel_types.length === 0 && (
-                <p className="text-sm text-zinc-400 italic">Aucun carburant disponible</p>
+                <p className="text-[11px] text-gray-400 italic">Aucun carburant disponible</p>
               )}
               {filterOptions?.fuel_types.map((ft) => (
-                <label key={ft.fuel_type} className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={selectedFuelTypes.includes(ft.fuel_type)}
-                    onChange={() => {
-                      setSelectedFuelTypes(prev =>
-                        prev.includes(ft.fuel_type)
-                          ? prev.filter(f => f !== ft.fuel_type)
-                          : [...prev, ft.fuel_type]
-                      )
-                    }}
-                    className="w-4 h-4 text-zinc-700 dark:text-zinc-300 rounded"
-                    data-testid={`filter-fuel-${ft.fuel_type}`}
-                  />
-                  <span className="text-sm text-zinc-700 dark:text-zinc-300">
-                    {ft.fuel_type} <span className="text-zinc-400">({ft.count})</span>
+                <div
+                  key={ft.fuel_type}
+                  className="flex items-center gap-2 cursor-pointer"
+                  onClick={() => {
+                    setSelectedFuelTypes(prev =>
+                      prev.includes(ft.fuel_type)
+                        ? prev.filter(f => f !== ft.fuel_type)
+                        : [...prev, ft.fuel_type]
+                    )
+                  }}
+                  data-testid={`filter-fuel-${ft.fuel_type}`}
+                >
+                  <div className={`w-[11px] h-[11px] rounded-[2px] border-[1.5px] flex items-center justify-center flex-shrink-0 transition-colors ${selectedFuelTypes.includes(ft.fuel_type) ? 'border-brand-700 bg-brand-700 dark:border-brand-200 dark:bg-brand-200' : 'border-gray-300 dark:border-gray-500'}`}>
+                    {selectedFuelTypes.includes(ft.fuel_type) && (
+                      <svg className="w-[7px] h-[7px] text-white dark:text-brand-900" fill="none" viewBox="0 0 10 10" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M2 5L4.5 7.5L8 2" />
+                      </svg>
+                    )}
+                  </div>
+                  <span className="text-[11px] text-gray-600 dark:text-gray-300">
+                    {ft.fuel_type} <span className="text-gray-300 dark:text-gray-500">({ft.count})</span>
                   </span>
-                </label>
+                </div>
               ))}
             </div>
           </Section>
@@ -731,29 +804,34 @@ export function VehicleSearchFilters({ onChange, onReset, collapsed = false, onT
             isOpen={openSections.drivetrain}
             onToggle={() => toggleSection('drivetrain')}
           >
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               {filterOptions?.drivetrains.length === 0 && (
-                <p className="text-sm text-zinc-400 italic">Aucune traction disponible</p>
+                <p className="text-[11px] text-gray-400 italic">Aucune traction disponible</p>
               )}
               {filterOptions?.drivetrains.map((dt) => (
-                <label key={dt.drivetrain} className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={selectedDrivetrains.includes(dt.drivetrain)}
-                    onChange={() => {
-                      setSelectedDrivetrains(prev =>
-                        prev.includes(dt.drivetrain)
-                          ? prev.filter(d => d !== dt.drivetrain)
-                          : [...prev, dt.drivetrain]
-                      )
-                    }}
-                    className="w-4 h-4 text-zinc-700 dark:text-zinc-300 rounded"
-                    data-testid={`filter-drivetrain-${dt.drivetrain}`}
-                  />
-                  <span className="text-sm text-zinc-700 dark:text-zinc-300">
-                    {dt.drivetrain} <span className="text-zinc-400">({dt.count})</span>
+                <div
+                  key={dt.drivetrain}
+                  className="flex items-center gap-2 cursor-pointer"
+                  onClick={() => {
+                    setSelectedDrivetrains(prev =>
+                      prev.includes(dt.drivetrain)
+                        ? prev.filter(d => d !== dt.drivetrain)
+                        : [...prev, dt.drivetrain]
+                    )
+                  }}
+                  data-testid={`filter-drivetrain-${dt.drivetrain}`}
+                >
+                  <div className={`w-[11px] h-[11px] rounded-[2px] border-[1.5px] flex items-center justify-center flex-shrink-0 transition-colors ${selectedDrivetrains.includes(dt.drivetrain) ? 'border-brand-700 bg-brand-700 dark:border-brand-200 dark:bg-brand-200' : 'border-gray-300 dark:border-gray-500'}`}>
+                    {selectedDrivetrains.includes(dt.drivetrain) && (
+                      <svg className="w-[7px] h-[7px] text-white dark:text-brand-900" fill="none" viewBox="0 0 10 10" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M2 5L4.5 7.5L8 2" />
+                      </svg>
+                    )}
+                  </div>
+                  <span className="text-[11px] text-gray-600 dark:text-gray-300">
+                    {dt.drivetrain} <span className="text-gray-300 dark:text-gray-500">({dt.count})</span>
                   </span>
-                </label>
+                </div>
               ))}
             </div>
           </Section>
@@ -777,8 +855,8 @@ export function VehicleSearchFilters({ onChange, onReset, collapsed = false, onT
                     )
                   }}
                   className={`
-                    w-8 h-8 rounded-full border-2 transition-all
-                    ${selectedColors.includes(name) ? 'ring-2 ring-zinc-500 ring-offset-2' : 'border-zinc-300'}
+                    w-7 h-7 rounded-full border-2 transition-all
+                    ${selectedColors.includes(name) ? 'ring-2 ring-brand-700 dark:ring-brand-200 ring-offset-2' : 'border-gray-300 dark:border-gray-600'}
                   `}
                   style={{ backgroundColor: hex }}
                   title={name}
@@ -790,16 +868,16 @@ export function VehicleSearchFilters({ onChange, onReset, collapsed = false, onT
         </div>
         )}
 
-        {/* UX-05: Sticky footer mobile — "Voir les N résultats" */}
+        {/* Mobile CTA — "Appliquer les filtres" */}
         {!collapsed && mobileOpen && (
-          <div className="sticky bottom-0 bg-white dark:bg-zinc-900 border-t border-zinc-200 dark:border-zinc-800 p-4 lg:hidden">
+          <div className="sticky bottom-0 bg-white dark:bg-dark-secondary border-t border-surface-border dark:border-brand-700 p-3 lg:hidden">
             <button
               type="button"
               onClick={() => setMobileOpen(false)}
-              className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-zinc-900 dark:bg-zinc-100 hover:bg-zinc-800 dark:hover:bg-white text-white font-semibold rounded-lg transition-colors shadow-md"
+              className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-accent-400 hover:bg-accent-500 text-white font-semibold rounded-lg transition-colors"
               data-testid="mobile-see-results-btn"
             >
-              Voir{totalResults !== undefined ? ` les ${totalResults.toLocaleString('fr-CA')}` : ''} résultats →
+              Appliquer les filtres
             </button>
           </div>
         )}
@@ -820,12 +898,12 @@ function IconButton({ icon, label, onClick }: IconButtonProps) {
     <button
       type="button"
       onClick={onClick}
-      className="w-full p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-colors group relative"
+      className="w-full p-2 rounded-lg hover:bg-surface-muted dark:hover:bg-brand-700/30 transition-colors group relative"
       title={label}
     >
       <span className="text-2xl">{icon}</span>
       {/* Tooltip */}
-      <span className="invisible group-hover:visible absolute left-full ml-2 top-1/2 -translate-y-1/2 z-50 px-2 py-1 text-xs bg-gray-900 dark:bg-zinc-800 text-white rounded whitespace-nowrap">
+      <span className="invisible group-hover:visible absolute left-full ml-2 top-1/2 -translate-y-1/2 z-50 px-2 py-1 text-[10px] bg-brand-700 dark:bg-brand-200 text-white dark:text-brand-900 rounded whitespace-nowrap">
         {label}
       </span>
     </button>
@@ -842,23 +920,15 @@ interface SectionProps {
 
 function Section({ title, isOpen, onToggle, children }: SectionProps) {
   return (
-    <div className="border-b border-zinc-200 dark:border-zinc-800 pb-4">
+    <div className="pb-3">
       <button
         type="button"
         onClick={onToggle}
-        className="flex items-center justify-between w-full text-left mb-3"
+        className="flex items-center w-full text-left mb-2"
       >
-        <h4 className="text-sm font-semibold uppercase tracking-wide text-zinc-700 dark:text-zinc-300">
+        <h4 className="text-[9px] font-bold uppercase tracking-[0.1em] text-gray-400 dark:text-gray-500">
           {title}
         </h4>
-        <svg
-          className={`w-4 h-4 text-zinc-400 transition-transform ${isOpen ? 'rotate-180' : ''}`}
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-        </svg>
       </button>
       {isOpen && <div>{children}</div>}
     </div>
@@ -893,11 +963,11 @@ function DualRangeSlider({ min, max, step, values, onChange, testIdPrefix }: Dua
   return (
     <div className="relative h-6">
       {/* Background track */}
-      <div className="absolute w-full h-2 bg-zinc-200 dark:bg-zinc-700 rounded top-1/2 -translate-y-1/2" />
+      <div className="absolute w-full h-1.5 bg-gray-200 dark:bg-brand-700/30 rounded top-1/2 -translate-y-1/2" />
       
       {/* Active track (filled portion) */}
       <div
-        className="absolute h-2 bg-zinc-700 dark:bg-zinc-400 rounded top-1/2 -translate-y-1/2"
+        className="absolute h-1.5 bg-brand-700 dark:bg-brand-200 rounded top-1/2 -translate-y-1/2"
         style={{
           left: `${minPercent}%`,
           width: `${maxPercent - minPercent}%`
@@ -912,7 +982,7 @@ function DualRangeSlider({ min, max, step, values, onChange, testIdPrefix }: Dua
         step={step}
         value={values.min}
         onChange={handleMinChange}
-        className="absolute w-full h-2 appearance-none bg-transparent pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:bg-zinc-900 dark:bg-zinc-100 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-md [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:bg-zinc-900 dark:bg-zinc-100 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:border-0 top-1/2 -translate-y-1/2"
+        className="absolute w-full h-1.5 appearance-none bg-transparent pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:bg-brand-700 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-md [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-3.5 [&::-moz-range-thumb]:h-3.5 [&::-moz-range-thumb]:bg-brand-700 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:border-0 top-1/2 -translate-y-1/2"
         data-testid={`${testIdPrefix}-slider-min`}
       />
       
@@ -924,7 +994,7 @@ function DualRangeSlider({ min, max, step, values, onChange, testIdPrefix }: Dua
         step={step}
         value={values.max}
         onChange={handleMaxChange}
-        className="absolute w-full h-2 appearance-none bg-transparent pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:bg-zinc-900 dark:bg-zinc-100 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-md [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:bg-zinc-900 dark:bg-zinc-100 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:border-0 top-1/2 -translate-y-1/2"
+        className="absolute w-full h-1.5 appearance-none bg-transparent pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:bg-brand-700 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-md [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-3.5 [&::-moz-range-thumb]:h-3.5 [&::-moz-range-thumb]:bg-brand-700 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:border-0 top-1/2 -translate-y-1/2"
         data-testid={`${testIdPrefix}-slider-max`}
       />
     </div>

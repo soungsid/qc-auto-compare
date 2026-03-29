@@ -1,5 +1,5 @@
 /**
- * AMÉLIORATION #3: Condition badge with French labels and colors
+ * Condition badge — dark pill style per redesign spec
  */
 
 interface Props {
@@ -9,15 +9,15 @@ interface Props {
 const CONDITION_STYLES: Record<string, { label: string; className: string }> = {
   new: {
     label: 'Neuf',
-    className: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300 ring-emerald-600/20',
+    className: 'bg-emerald-700 text-white dark:bg-emerald-600',
   },
   used: {
     label: 'Occasion',
-    className: 'bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300 ring-zinc-500/20',
+    className: 'bg-brand-700 text-white dark:bg-brand-600',
   },
   certified: {
     label: 'Certifié',
-    className: 'bg-sky-50 text-sky-700 dark:bg-sky-900/30 dark:text-sky-300 ring-sky-600/20',
+    className: 'bg-sky-700 text-white dark:bg-sky-600',
   },
 }
 
@@ -26,7 +26,7 @@ export function ConditionBadge({ condition }: Props) {
   
   return (
     <span
-      className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ring-1 ring-inset ${style.className}`}
+      className={`inline-flex items-center rounded px-1.5 py-0.5 text-[8px] font-bold tracking-wide ${style.className}`}
       data-testid={`condition-badge-${condition}`}
     >
       {style.label}

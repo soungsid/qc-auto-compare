@@ -45,7 +45,7 @@ export function DealerPage({ slug }: Props) {
 
   if (dealerLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center text-zinc-400">
+      <div className="flex min-h-screen items-center justify-center text-brand-400">
         Chargement du concessionnaire…
       </div>
     )
@@ -60,26 +60,26 @@ export function DealerPage({ slug }: Props) {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 flex flex-col">
+    <div className="min-h-screen bg-brand-50 dark:bg-dark-primary text-brand-900 dark:text-brand-100 flex flex-col">
       <Navbar />
 
       {/* Dealer Info */}
-      <div className="border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
+      <div className="border-b border-surface-border dark:border-brand-800 bg-white dark:bg-brand-900">
         <div className="mx-auto max-w-screen-xl px-6 py-4">
-          <a href="/" className="mb-2 inline-block text-xs text-zinc-700 dark:text-zinc-300 hover:underline">
+          <a href="/" className="mb-2 inline-block text-xs text-brand-700 dark:text-brand-300 hover:underline">
             ← Retour au listing
           </a>
           <div className="flex items-start justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">{dealer.name}</h1>
-              <p className="text-sm text-zinc-500 dark:text-zinc-400">
+              <h1 className="text-2xl font-bold text-brand-900 dark:text-brand-100">{dealer.name}</h1>
+              <p className="text-sm text-brand-500 dark:text-brand-400">
                 {dealer.brand} · {dealer.city}
               </p>
             </div>
-            <div className="text-right text-sm text-zinc-500 dark:text-zinc-400">
+            <div className="text-right text-sm text-brand-500 dark:text-brand-400">
               {dealer.phone && (
                 <p>
-                  <a href={`tel:${dealer.phone}`} className="text-zinc-700 dark:text-zinc-300 hover:underline">
+                  <a href={`tel:${dealer.phone}`} className="text-brand-700 dark:text-brand-300 hover:underline">
                     {dealer.phone}
                   </a>
                 </p>
@@ -90,14 +90,14 @@ export function DealerPage({ slug }: Props) {
                     href={dealer.website}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-zinc-700 dark:text-zinc-300 hover:underline"
+                    className="text-brand-700 dark:text-brand-300 hover:underline"
                   >
                     Site officiel ↗
                   </a>
                 </p>
               )}
               {dealer.last_crawled_at && (
-                <p className="mt-1 text-xs text-zinc-400 dark:text-zinc-500">
+                <p className="mt-1 text-xs text-brand-400 dark:text-brand-500">
                   Dernier crawl :{' '}
                   {new Date(dealer.last_crawled_at).toLocaleString('fr-CA', {
                     dateStyle: 'short',

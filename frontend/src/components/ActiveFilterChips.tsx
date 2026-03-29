@@ -65,7 +65,6 @@ function buildChips(filters: Partial<VehicleFilters>): Chip[] {
     chips.push({ id: 'drivetrain', label: filters.drivetrain, keys: ['drivetrain'] })
   }
 
-  // Year range — combine into one chip
   if (filters.year_min || filters.year_max) {
     const label =
       filters.year_min && filters.year_max
@@ -76,7 +75,6 @@ function buildChips(filters: Partial<VehicleFilters>): Chip[] {
     chips.push({ id: 'year', label, keys: ['year_min', 'year_max'] })
   }
 
-  // Price range — combine into one chip
   if (filters.min_price || filters.max_price) {
     const label =
       filters.min_price && filters.max_price
@@ -103,24 +101,24 @@ export function ActiveFilterChips({ filters, onRemove, onReset }: Props) {
   if (chips.length === 0) return null
 
   return (
-    <div className="flex flex-wrap items-center gap-2" data-testid="active-filter-chips">
+    <div className="flex flex-nowrap sm:flex-wrap items-center gap-1.5 overflow-x-auto scrollbar-hide pb-1 sm:pb-0" data-testid="active-filter-chips">
       {chips.map((chip) => (
         <button
           key={chip.id}
           type="button"
           onClick={() => onRemove(chip.keys)}
-          className="inline-flex items-center gap-1.5 rounded-full border border-zinc-300 dark:border-zinc-600 bg-zinc-100 dark:bg-zinc-800 px-3 py-1 text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors min-h-[36px]"
+          className="inline-flex items-center gap-1 rounded-full border border-surface-border dark:border-brand-600 bg-white dark:bg-dark-secondary px-2.5 py-0.5 text-[10px] font-medium text-brand-700 dark:text-brand-200 hover:bg-brand-50 dark:hover:bg-brand-700/30 transition-colors"
           data-testid={`chip-${chip.id}`}
         >
           {chip.label}
-          <span className="text-zinc-400 dark:text-zinc-500 leading-none" aria-label="Supprimer ce filtre">×</span>
+          <span className="text-brand-400 dark:text-brand-500 leading-none text-xs" aria-label="Supprimer ce filtre">×</span>
         </button>
       ))}
       {chips.length > 1 && (
         <button
           type="button"
           onClick={onReset}
-          className="text-xs text-zinc-400 dark:text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300 underline transition-colors"
+          className="text-[10px] text-accent-400 hover:text-accent-500 transition-colors ml-1"
           data-testid="chip-reset-all"
         >
           Effacer tout

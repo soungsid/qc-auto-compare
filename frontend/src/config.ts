@@ -6,7 +6,10 @@
 // Variables d'environnement avec valeurs par défaut
 export const config = {
   // Nom du site (configurable via VITE_SITE_NAME)
-  siteName: import.meta.env.VITE_SITE_NAME || 'Auto Québec',
+  siteName: import.meta.env.VITE_SITE_NAME || 'AutoQC',
+  
+  // Tagline (pages marketing uniquement, PAS dans la navbar)
+  tagline: 'Comparez. Choisissez.',
   
   // Domaine du site (configurable via VITE_DOMAIN)
   domain: import.meta.env.VITE_DOMAIN || 'auto.canadaquebec.ca',
