@@ -359,7 +359,7 @@ async def crawl_history(
 ) -> CrawlHistoryResponse:
     """Return crawl activity grouped by date and ingest source."""
     days = min(max(days, 1), 90)
-    cutoff_date = datetime.now(timezone.utc) - timedelta(days=days)
+    cutoff_date = datetime.utcnow() - timedelta(days=days)
 
     date_col = func.date(IngestLog.created_at).label("day")
 
