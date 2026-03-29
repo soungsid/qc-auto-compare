@@ -1,7 +1,7 @@
 import { Navbar } from '../components/Navbar'
 import { Footer } from '../components/Footer'
 import { SEO, getOrganizationSchema, getBreadcrumbSchema } from '../components/SEO'
-import { siteName, baseUrl } from '../config'
+import { baseUrl } from '../config'
 
 /**
  * Page Blog - Articles et actualités

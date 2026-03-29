@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from 'react'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useState, useEffect } from 'react'
+import { useQuery, useMutation } from '@tanstack/react-query'
 import { Navbar } from '../components/Navbar'
 import { Footer } from '../components/Footer'
 import { fetchCrawlHistory, fetchCrawlStatus, triggerCrawlRun, fetchStats } from '../api'
@@ -26,7 +26,6 @@ function StatCard({ label, value, color }: { label: string; value: number; color
 }
 
 export function CrawlHistoryPage() {
-  const queryClient = useQueryClient()
   const [days, setDays] = useState(30)
   const [sourceFilter, setSourceFilter] = useState<string>('')
 

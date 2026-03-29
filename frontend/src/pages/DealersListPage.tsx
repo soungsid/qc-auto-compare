@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { Navbar } from '../components/Navbar'
 import { Footer } from '../components/Footer'
 import { SEO, getDealerSchema, getBreadcrumbSchema } from '../components/SEO'
-import { siteName, baseUrl, backendUrl } from '../config'
+import { baseUrl, backendUrl } from '../config'
 import type { Dealer } from '../types'
 
 /**
